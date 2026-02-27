@@ -19,6 +19,9 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+console.log('[auth] ADMIN_PASSWORD set:', Boolean(process.env.ADMIN_PASSWORD));
+console.log('[auth] JWT_SECRET set:', Boolean(process.env.JWT_SECRET));
+
 app.use(cors());
 app.use(express.json());
 
