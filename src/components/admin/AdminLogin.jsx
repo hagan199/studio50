@@ -19,8 +19,12 @@ export default function AdminLogin() {
       const res = await api.post('/api/auth/login', { password });
       localStorage.setItem('studio50_token', res.data.token);
       navigate('/admin');
-    } catch {
-      setError('Invalid password. Please try again.');
+    } catch (err) {
+      const message =
+        err?.response?.data?.error ||
+        err?.message ||
+        'Invalid password. Please try again.';
+      setError(message);
     } finally {
       setLoading(false);
     }
