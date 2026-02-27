@@ -6,6 +6,13 @@ dotenv.config();
 
 const router = Router();
 
+router.get('/status', (req, res) => {
+  return res.json({
+    hasAdminPassword: Boolean(process.env.ADMIN_PASSWORD),
+    hasJwtSecret: Boolean(process.env.JWT_SECRET),
+  });
+});
+
 router.post('/login', (req, res) => {
   const { password } = req.body ?? {};
 
