@@ -1,0 +1,72 @@
+.section-flex-long {
+  display: flex;
+  min-height: 500px;
+  overflow: hidden;
+}
+
+.section-child-flex.bg-home {
+  flex: 1;
+  background-image: url('/images/Fashionable-Group-of-Friends-with-Stylish-Clothes-at-Music-Festival1.jpg.webp');
+  background-position: center 40%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  min-height: 500px;
+  position: relative;
+}
+
+.credibility-img-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.section-child-flex.long {
+  flex: 1;
+  padding: 60px 40px;
+  text-align: left;
+  background-color: white;
+}
+
+.section-child-flex.long .test-text {
+  color: var(--color-black);
+}
+
+.section-child-flex.long .content-list-item {
+  transition: transform 0.3s ease;
+}
+
+.section-child-flex.long .content-list-item:hover {
+  transform: translateX(6px);
+}
+
+.section-child-flex.long .content-list-item .section-small-title {
+  color: var(--color-black);
+}
+
+.section-child-flex.long .content-list-item img {
+  filter: none;
+  transition: transform 0.3s ease;
+}
+
+.section-child-flex.long .content-list-item:hover img {
+  transform: scale(1.15);
+}
+
+.button-w.vert {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+  align-items: flex-start;
+}
+
+@media screen and (max-width: 767px) {
+  .section-flex-long {
+    flex-direction: column;
+  }
+
+  .section-child-flex.bg-home {
+    min-height: 300px;
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "sectionTitle": "Our Services",
+  "items": [
+    {
+      "id": "svc-1",
+      "title": "Photography",
+      "description": "Professional photography for events, products, portraits, and more.",
+      "icon": "camera",
+      "imageUrl": "",
+      "order": 1
+    },
+    {
+      "id": "svc-2",
+      "title": "Graphic Design",
+      "description": "Brand identity, print materials, and digital design solutions.",
+      "icon": "palette",
+      "imageUrl": "",
+      "order": 2
+    },
+    {
+      "id": "svc-3",
+      "title": "Videography",
+      "description": "Cinematic video production for all occasions and platforms.",
+      "icon": "video",
+      "imageUrl": "",
+      "order": 3
+    },
+    {
+      "id": "svc-4",
+      "title": "Social Media Management",
+      "description": "Strategy, content creation, and community engagement.",
+      "icon": "share",
+      "imageUrl": "",
+      "order": 4
+    },
+    {
+      "id": "svc-5",
+      "title": "Website Design",
+      "description": "Modern, responsive websites that convert visitors into customers.",
+      "icon": "globe",
+      "imageUrl": "",
+      "order": 5
+    },
+    {
+      "id": "svc-6",
+      "title": "Live Productions",
+      "description": "End-to-end live event production and streaming services.",
+      "icon": "broadcast",
+      "imageUrl": "",
+      "order": 6
+    }
+  ]
+}

@@ -1,0 +1,140 @@
+.contact {
+  padding: 120px 0;
+  background: var(--color-bg);
+}
+
+.contact__content {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.contact__label {
+  display: inline-block;
+  color: var(--color-accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.contact__title {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+  margin-bottom: 24px;
+}
+
+.contact__title em {
+  font-style: italic;
+  color: var(--color-accent);
+}
+
+.contact__desc {
+  font-size: 1.05rem;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+  margin-bottom: 40px;
+}
+
+.contact__info {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.contact__phone,
+.contact__whatsapp {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.contact__phone {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.contact__phone:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.contact__whatsapp {
+  background: #25D366;
+  color: #fff;
+}
+
+.contact__whatsapp:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(37, 211, 102, 0.3);
+}
+
+.contact__email {
+  display: inline-block;
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+  margin-bottom: 32px;
+  transition: color 0.3s;
+}
+
+.contact__email:hover {
+  color: var(--color-accent);
+}
+
+.contact__socials {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.contact__social {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-surface);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  color: var(--color-text);
+  transition: background 0.3s, transform 0.3s, color 0.3s;
+}
+
+.contact__social svg {
+  width: 20px;
+  height: 20px;
+}
+
+.contact__social:hover {
+  background: var(--color-primary);
+  transform: translateY(-3px);
+  color: var(--color-text);
+}
+
+.contact__website {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 479px) {
+  .contact {
+    padding: 80px 0;
+  }
+
+  .contact__info {
+    flex-direction: column;
+    align-items: center;
+  }
+}

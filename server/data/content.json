@@ -1,0 +1,206 @@
+{
+  "brand": {
+    "name": "Studio",
+    "shortName": "HMR",
+    "tagline": "All",
+    "logoUrl": "/images/hmr-logo-new.avif"
+  },
+  "hero": {
+    "headline": "Discovering Talent. Activating Regions. Empowering Youth.",
+    "subheadline": "Hype My Region (HMR) is a merit-based national talent development platform implemented under the governance of JMP4AFRICA.",
+    "backgroundImageUrl": "/images/frican-students-walking-outdoors.avif",
+    "galleryImages": [],
+    "ctaText": "Apply to Audition",
+    "ctaLink": "#auditions"
+  },
+  "about": {
+    "sectionTitle": "Why Hype My Region",
+    "sectionSubtitle": "Our Mission",
+    "text": "Across Ghana, young people are talented, creative, and entrepreneurial—but opportunities are often fragmented, urban-centred or inaccessible. HMR exists to unlock regional talent and enterprise, bridge the gap between skills and opportunity, and create inclusive platforms where youth can be seen, trained, mentored and supported.",
+    "imageUrl": "/images/Fashionable-Group-of-Friends-with-Stylish-Clothes-at-Music-Festival1.jpg.webp",
+    "galleryImages": []
+  },
+  "auditionProcess": {
+    "heading": "Auditioning for HMR is easy",
+    "subheading": "We've made the process simple so you can focus on your talent.",
+    "paymentNote": "Payments are non-refundable and confirm intent to participate.",
+    "pwdNote": "PWD applicants are exempt from the registration fee and should indicate their status during application.",
+    "steps": [
+      {
+        "id": 1,
+        "title": "Pay to Participate",
+        "desc": "Dial *737*689# and follow the prompts to pay the GHS 100 registration fee. (Free for Persons With Disabilities – PWDs). Save your transaction ID to complete your application.",
+        "linkLabel": "Pay Online",
+        "linkHref": "https://paystack.shop/pay/audition-forms"
+      },
+      {
+        "id": 2,
+        "title": "Complete. Get Endorsed & Apply",
+        "desc": "Download and complete the application form, get it endorsed, add a 60-second video and enter your transaction ID before uploading online for verification.",
+        "linkLabel": "Get Audition Forms",
+        "linkHref": "#auditions"
+      },
+      {
+        "id": 3,
+        "title": "Audition & Develop",
+        "desc": "Present yourself at the scheduled audition venue for assessment and development. Verified applicants will be notified of venue, date and time.",
+        "linkLabel": "",
+        "linkHref": ""
+      },
+      {
+        "id": 4,
+        "title": "Broadcast & Activate",
+        "desc": "Selected talents advance to Zonal Showcases and may progress to the National Finale, with opportunities for broadcast exposure, mentorship and regional activation.",
+        "linkLabel": "",
+        "linkHref": ""
+      }
+    ]
+  },
+  "whyHMR": {
+    "whyTitle": "Why Hype My Region",
+    "whyIntro": "Across Ghana, young people are talented, creative, and entrepreneurial—but opportunities are often fragmented, urban-centred or inaccessible.",
+    "whyItems": [
+      "Unlock regional talent and enterprise",
+      "Bridge the gap between skills and opportunity",
+      "Create inclusive platforms where youth can be seen, trained, mentored and supported",
+      "Anchor youth development within communities and local leadership",
+      "Merit-based assessment by independent judges",
+      "Equal opportunity regardless of background or location"
+    ],
+    "whatTitle": "What we do",
+    "whatIntro": "HMR delivers a multi-phase national program that combines live events, enterprise activation and media production:",
+    "whatItems": [
+      "Regional Auditions & Talent Discovery",
+      "Cultural Showcases & Festival Activations",
+      "Trade Fairs & SME Exhibitions",
+      "Episodic Content Production & Broadcast",
+      "Mentorship, Enterprise & Legacy Programs",
+      "Grand Finale & National Recognition"
+    ]
+  },
+  "latestContent": {
+    "heading": "Latest Content",
+    "items": [
+      {
+        "id": 1,
+        "type": "video",
+        "title": "Official promo video",
+        "subtitle": "",
+        "tag": "",
+        "poster": "/images/audition-homepage-img.avif",
+        "videoMp4": "/media/hmr-audition-promo-video_mp4.mp4",
+        "videoWebm": "/media/hmr-audition-promo-video_webm.webm",
+        "wide": false
+      },
+      {
+        "id": 2,
+        "type": "image",
+        "title": "Audition & Episodes",
+        "subtitle": "Watch the journey unfold",
+        "tag": "COMING SOON",
+        "imageUrl": "/images/audition-homepage-img.avif",
+        "wide": false
+      },
+      {
+        "id": 3,
+        "type": "video",
+        "title": "Project Promos",
+        "subtitle": "Community Impact Initiatives",
+        "tag": "COMING SOON",
+        "poster": "",
+        "videoMp4": "/media/5400721_Coll_wavebreak_People_1920x1080_mp4.mp4",
+        "videoWebm": "/media/5400721_Coll_wavebreak_People_1920x1080_webm.webm",
+        "wide": true
+      }
+    ]
+  },
+  "marquee": {
+    "heading": "What HMR Seeks",
+    "subheading": "HMR welcomes youth-led ideas, talents and enterprise solutions that demonstrate clear potential to create jobs, strengthen communities, and generate measurable social or economic impact at the community, regional or national level.",
+    "footerNote": "HMR places priority on impact-driven, bankable ideas and solutions over performance-only or entertainment-focused submissions.",
+    "categories": [
+      {
+        "id": 1,
+        "label": "Entrepreneurship",
+        "imageUrl": "/images/2150627964.avif",
+        "alt": false
+      },
+      {
+        "id": 2,
+        "label": "Creative Arts",
+        "imageUrl": "/images/performing-arts.avif",
+        "alt": true
+      },
+      {
+        "id": 3,
+        "label": "Agriculture",
+        "imageUrl": "/images/2148761764.avif",
+        "alt": false
+      },
+      {
+        "id": 4,
+        "label": "Technology",
+        "imageUrl": "/images/2149145024.avif",
+        "alt": true
+      },
+      {
+        "id": 5,
+        "label": "Community Development",
+        "imageUrl": "/images/women-shea.avif",
+        "alt": false
+      },
+      {
+        "id": 6,
+        "label": "Sustainable Business",
+        "imageUrl": "/images/solar-install.avif",
+        "alt": true
+      }
+    ]
+  },
+  "roadmap": {
+    "heading": "Your roadmap to national recognition",
+    "subheading": "Discover how HMR bridges the gap between regional talent and the national stage through a transparent, three-tier merit system applied with consistent standards across all 16 regions.",
+    "quote": "All stages follow the same judging standards nationwide to ensure total fairness and transparency.",
+    "stages": [
+      {
+        "id": 1,
+        "title": "Open Auditions",
+        "desc": "Participants audition in their regions before independent judges.",
+        "imageUrl": "/images/audition-homepage-img.avif"
+      },
+      {
+        "id": 2,
+        "title": "Regional (Zonal) Showcases",
+        "desc": "Top talents from each region perform at zonal showcases.",
+        "imageUrl": "/images/47184.avif"
+      },
+      {
+        "id": 3,
+        "title": "National Finale",
+        "desc": "Outstanding talents advance to a national stage for final assessment and recognition.",
+        "imageUrl": "/images/Last-Eight-Nigerian-Idol.avif"
+      }
+    ]
+  },
+  "credibility": {
+    "title": "Why is HMR credible?",
+    "items": [
+      "Multi-sector stakeholder collaboration",
+      "Structured regional rollout",
+      "Clear youth enterprise outcomes",
+      "Measurable impact & reporting",
+      "Media-ready content production"
+    ],
+    "footerText": "HMR is not just a show. It's a system for discovery, development, and deployment of youth potential.",
+    "ctaText": "Get involved today",
+    "ctaLink": "#auditions",
+    "secondaryCtaText": "View program calendar",
+    "secondaryCtaLink": "#programs"
+  },
+  "cta": {
+    "heading": "Ready to join the movement",
+    "subtitle": "Have a talent or an idea in mind that would place your region above others? Hype My Region is here to bring it to life.",
+    "buttonText": "Start your journey today",
+    "buttonLink": "#auditions"
+  }
+}

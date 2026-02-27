@@ -1,0 +1,13 @@
+{
+  "phone": "050 134 5492",
+  "whatsappLink": "https://wa.me/233501345492",
+  "email": "info@studio50global.com",
+  "website": "www.studio50global.com",
+  "address": "",
+  "socialLinks": [
+    { "platform": "linkedin", "url": "https://linkedin.com/company/studio50global", "icon": "linkedin" },
+    { "platform": "facebook", "url": "https://facebook.com/studio50global", "icon": "facebook" },
+    { "platform": "instagram", "url": "https://instagram.com/studio50global", "icon": "instagram" },
+    { "platform": "youtube", "url": "https://youtube.com/@studio50global", "icon": "youtube" }
+  ]
+}

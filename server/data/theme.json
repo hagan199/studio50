@@ -1,0 +1,18 @@
+{
+  "colors": {
+    "primary": "#5D3A1A",
+    "primaryLight": "#8B5E3C",
+    "secondary": "#8B6914",
+    "accent": "#D4A843",
+    "background": "#0A0A0A",
+    "backgroundLight": "#1A1A1A",
+    "surface": "#2A2A2A",
+    "text": "#FFFFFF",
+    "textSecondary": "#CCCCCC",
+    "textDark": "#111111"
+  },
+  "fonts": {
+    "heading": "'Bricolage Grotesque', sans-serif",
+    "body": "'Inter', sans-serif"
+  }
+}
