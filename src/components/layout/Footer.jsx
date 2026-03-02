@@ -1,6 +1,8 @@
 import './Footer.css';
+import { useEffect, useState } from 'react';
+import api from '../../utils/api';
 
-const navLinks = [
+const fallbackNavLinks = [
   { label: 'Home', href: '#' },
   { label: 'About us', href: '#about' },
   { label: 'Programs & Activities', href: '#programs' },
@@ -10,6 +12,23 @@ const navLinks = [
 ];
 
 export default function Footer() {
+  const [navLinks, setNavLinks] = useState(fallbackNavLinks);
+
+  useEffect(() => {
+    api
+      .get('/api/menu')
+      .then((res) => {
+        const items = (res.data?.items || [])
+          .slice()
+          .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+          .map((item) => ({ label: item.label, href: item.href }))
+          .filter((item) => item.label && item.href);
+
+        if (items.length) setNavLinks(items);
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <footer className="footer-section" id="contact">
       <div className="footer-w">

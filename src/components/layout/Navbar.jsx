@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../../utils/api';
 import './Navbar.css';
 
-const navLinks = [
+const fallbackNavLinks = [
   { label: 'Home', href: '#' },
   { label: 'About Us', href: '#about' },
   { label: 'Programs & Zonal Activities', href: '#programs' },
@@ -15,6 +15,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [brand, setBrand] = useState(null);
+  const [navLinks, setNavLinks] = useState(fallbackNavLinks);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -24,6 +25,21 @@ export default function Navbar() {
 
   useEffect(() => {
     api.get('/api/content').then((res) => setBrand(res.data.brand)).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    api
+      .get('/api/menu')
+      .then((res) => {
+        const items = (res.data?.items || [])
+          .slice()
+          .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+          .map((item) => ({ label: item.label, href: item.href }))
+          .filter((item) => item.label && item.href);
+
+        if (items.length) setNavLinks(items);
+      })
+      .catch(() => {});
   }, []);
 
   return (
@@ -41,7 +57,7 @@ export default function Navbar() {
             <a
               key={link.label}
               href={link.href}
-              className={`nav-link${link.label === 'Home' ? ' active' : ''}`}
+              className={`nav-link${link.href === '#' || link.href === '/' ? ' active' : ''}`}
               onClick={() => setMenuOpen(false)}
             >
               <div className="clip">

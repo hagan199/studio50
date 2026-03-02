@@ -1,0 +1,40 @@
+{
+  "items": [
+    {
+      "id": "menu-home",
+      "label": "Home",
+      "href": "#",
+      "order": 1
+    },
+    {
+      "id": "menu-about",
+      "label": "About Us",
+      "href": "#about",
+      "order": 2
+    },
+    {
+      "id": "menu-programs",
+      "label": "aLL & Zonal Activities",
+      "href": "#programs",
+      "order": 3
+    },
+    {
+      "id": "menu-awards",
+      "label": "Awards & Partners",
+      "href": "#awards",
+      "order": 4
+    },
+    {
+      "id": "menu-auditions",
+      "label": "Auditions",
+      "href": "#auditions",
+      "order": 5
+    },
+    {
+      "id": "menu-contact",
+      "label": "Contact Us",
+      "href": "#contact",
+      "order": 6
+    }
+  ]
+}
