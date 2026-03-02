@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import path from "path";
+import fs from "fs";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 
@@ -39,10 +40,14 @@ app.use("/api/images", imagesRoutes);
 app.use("/api/menu", menuRoutes);
 
 // Serve React build in production
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "..", "dist")));
+const distDir = path.join(__dirname, "..", "dist");
+const hasDist = fs.existsSync(distDir);
+
+// Serve the built React app when available (Railway/Nixpacks often builds dist during deploy)
+if (process.env.NODE_ENV === "production" || hasDist) {
+  app.use(express.static(distDir));
   app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "..", "dist", "index.html"));
+    res.sendFile(path.join(distDir, "index.html"));
   });
 }
 
