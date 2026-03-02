@@ -13,6 +13,7 @@ const fallbackNavLinks = [
 
 export default function Footer() {
   const [navLinks, setNavLinks] = useState(fallbackNavLinks);
+  const [brand, setBrand] = useState(null);
 
   useEffect(() => {
     api
@@ -29,12 +30,20 @@ export default function Footer() {
       .catch(() => {});
   }, []);
 
+  useEffect(() => {
+    api.get('/api/content').then((res) => setBrand(res.data.brand)).catch(() => {});
+  }, []);
+
   return (
     <footer className="footer-section" id="contact">
       <div className="footer-w">
         <div className="footer-logo-w">
           <a href="#" className="footer-brand-link">
-            <img src="/images/hmr-logo-new.avif" alt="HMR" className="footer-logo-img" />
+            <img
+              src={brand?.logoUrl || '/images/hmr-logo-new.avif'}
+              alt={brand?.name || 'Hype My Region'}
+              className="footer-logo-img"
+            />
           </a>
         </div>
         <div className="footer-content-w">

@@ -1,6 +1,23 @@
 import { useState, useRef } from 'react';
 import api from '../../utils/api';
 
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // keep in sync with server (10MB)
+const ALLOWED_IMAGE_MIMES = new Set([
+  'image/jpeg',
+  'image/png',
+  'image/gif',
+  'image/webp',
+  'image/avif',
+  'image/svg+xml',
+]);
+
+function validateImageFile(file) {
+  if (!file) return 'No file selected';
+  if (file.size > MAX_IMAGE_BYTES) return 'File too large (max 10MB)';
+  if (!ALLOWED_IMAGE_MIMES.has(file.type)) return 'Unsupported file type (JPG, PNG, GIF, WEBP, AVIF, SVG only)';
+  return null;
+}
+
 // Single image: value = string, onChange(string)
 // Multiple images: multiple=true, value = [string], onChange([string])
 export default function ImageField({ label, value, onChange, category = 'general', multiple = false }) {
@@ -10,8 +27,10 @@ export default function ImageField({ label, value, onChange, category = 'general
 
   const uploadFile = async (file) => {
     const formData = new FormData();
-    formData.append('image', file);
     formData.append('category', category);
+    // NOTE: multer storage.destination may read req.body.category while streaming.
+    // Ensure category field arrives BEFORE the file.
+    formData.append('image', file);
     const res = await api.post('/api/images/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
@@ -24,18 +43,32 @@ export default function ImageField({ label, value, onChange, category = 'general
     try {
       if (multiple) {
         const urls = [];
+        const errors = [];
         for (const file of files) {
-          if (file.type.startsWith('image/')) {
-            urls.push(await uploadFile(file));
+          const validationError = validateImageFile(file);
+          if (validationError) {
+            errors.push(`${file.name}: ${validationError}`);
+            continue;
           }
+          urls.push(await uploadFile(file));
         }
+
+        if (errors.length) {
+          alert(errors.slice(0, 5).join('\n') + (errors.length > 5 ? `\n...and ${errors.length - 5} more` : ''));
+        }
+
         onChange([...(value || []), ...urls]);
       } else {
+        const validationError = validateImageFile(files[0]);
+        if (validationError) {
+          alert(validationError);
+          return;
+        }
         const url = await uploadFile(files[0]);
         onChange(url);
       }
-    } catch {
-      alert('Upload failed');
+    } catch (err) {
+      alert(err?.response?.data?.error || 'Upload failed');
     } finally {
       setUploading(false);
       if (fileRef.current) fileRef.current.value = '';
@@ -128,7 +161,7 @@ export default function ImageField({ label, value, onChange, category = 'general
       <input
         ref={fileRef}
         type="file"
-        accept="image/*"
+        accept="image/png,image/jpeg,image/gif,image/webp,image/avif,image/svg+xml"
         multiple={multiple}
         style={{ display: 'none' }}
         onChange={onFileChange}

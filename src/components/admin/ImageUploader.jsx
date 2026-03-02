@@ -1,6 +1,23 @@
 import { useState, useEffect, useRef } from 'react';
 import api from '../../utils/api';
 
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // keep in sync with server (10MB)
+const ALLOWED_IMAGE_MIMES = new Set([
+  'image/jpeg',
+  'image/png',
+  'image/gif',
+  'image/webp',
+  'image/avif',
+  'image/svg+xml',
+]);
+
+function validateImageFile(file) {
+  if (!file) return 'No file selected';
+  if (file.size > MAX_IMAGE_BYTES) return 'File too large (max 10MB)';
+  if (!ALLOWED_IMAGE_MIMES.has(file.type)) return 'Unsupported file type (JPG, PNG, GIF, WEBP, AVIF, SVG only)';
+  return null;
+}
+
 export default function ImageUploader() {
   const [category, setCategory] = useState('hero');
   const [images, setImages] = useState([]);
@@ -31,23 +48,45 @@ export default function ImageUploader() {
   };
 
   const upload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    const errors = [];
+    const validFiles = [];
+    for (const file of files) {
+      const validationError = validateImageFile(file);
+      if (validationError) errors.push(`${file.name}: ${validationError}`);
+      else validFiles.push(file);
+    }
+
+    if (!validFiles.length) {
+      setMessage(errors[0] || 'No valid files selected');
+      if (fileRef.current) fileRef.current.value = '';
+      return;
+    }
 
     setUploading(true);
-    const formData = new FormData();
-    formData.append('image', file);
-    formData.append('category', category);
-
     try {
-      const res = await api.post('/api/images/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      setMessage(`Uploaded! URL: ${res.data.url}`);
-      loadImages();
+      for (const file of validFiles) {
+        const formData = new FormData();
+        // IMPORTANT: ensure category arrives before file for multer destination()
+        formData.append('category', category);
+        formData.append('image', file);
+        await api.post('/api/images/upload', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+      }
+
+      if (errors.length) {
+        setMessage(`Uploaded ${validFiles.length} image(s). Skipped ${errors.length} invalid file(s).`);
+      } else {
+        setMessage(`Uploaded ${validFiles.length} image(s)!`);
+      }
+
+      await loadImages();
       setTimeout(() => setMessage(''), 5000);
-    } catch {
-      setMessage('Upload failed');
+    } catch (err) {
+      setMessage(err?.response?.data?.error || 'Upload failed');
     } finally {
       setUploading(false);
       if (fileRef.current) fileRef.current.value = '';
@@ -110,9 +149,10 @@ export default function ImageUploader() {
             <input
               ref={fileRef}
               type="file"
-              accept="image/*"
+              accept="image/png,image/jpeg,image/gif,image/webp,image/avif,image/svg+xml"
               className="admin-field__input"
               onChange={upload}
+              multiple
               disabled={uploading}
             />
           </div>
