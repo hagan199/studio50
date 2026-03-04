@@ -1,5 +1,5 @@
 .cta-section {
-  background-color: white;
+  background-color: var(--cta-bg, white);
   padding-top: 80px;
   padding-bottom: 80px;
   text-align: center;
@@ -9,7 +9,7 @@
 }
 
 .hero-heading.black {
-  color: var(--color-black);
+  color: var(--cta-heading, #171717);
   margin-bottom: 10px;
   font-size: var(--font-size-h1);
   letter-spacing: -2px;
@@ -22,7 +22,7 @@
 }
 
 .cta-subtitle {
-  color: var(--color-black);
+  color: var(--cta-text, #171717);
   font-weight: 400;
   max-width: 700px;
   margin: 15px auto 30px;

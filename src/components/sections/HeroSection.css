@@ -1,5 +1,5 @@
 .hero-track {
-  background-color: var(--color-primary-red);
+  background-color: var(--hero-bg, #fb3131);
   display: flex;
   margin-top: 65px;
 }
@@ -33,7 +33,7 @@
 
 .hero-heading {
   font-family: var(--font-family-main);
-  color: var(--color-white);
+  color: var(--hero-heading, #ffffff);
   font-size: var(--font-size-h1);
   text-align: left;
   letter-spacing: -2px;
@@ -43,7 +43,7 @@
 }
 
 .section-paragraph {
-  color: var(--color-gray);
+  color: var(--hero-text, #eeeeee);
   font-size: var(--font-size-body-normal);
   margin-top: 20px;
   margin-bottom: 20px;

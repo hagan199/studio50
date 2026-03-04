@@ -1,5 +1,5 @@
 .scroll-div.gray {
-  background-color: var(--color-gray);
+  background-color: var(--marquee-bg, #eeeeee);
   height: auto;
   padding-top: 60px;
   padding-bottom: 60px;
@@ -11,7 +11,7 @@
 }
 
 .section-heading.dark {
-  color: var(--color-black);
+  color: var(--marquee-heading, #171717);
 }
 
 .section-title.small.dark {
@@ -78,7 +78,7 @@
 }
 
 .section-title.colored {
-  color: var(--color-primary-red);
+  color: var(--marquee-accent, #fb3131);
   font-weight: 600;
   font-size: var(--font-size-body-large);
 }

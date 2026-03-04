@@ -1,6 +1,6 @@
 .about {
   padding: 120px 0;
-  background: var(--color-bg-light);
+  background: var(--about-bg, #1A1A1A);
 }
 
 .about__inner {
@@ -12,7 +12,7 @@
 
 .about__label {
   display: inline-block;
-  color: var(--color-accent);
+  color: var(--about-accent, #D4A843);
   font-size: 0.85rem;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -23,14 +23,14 @@
 .about__title {
   font-size: clamp(2rem, 4vw, 3.5rem);
   font-weight: 800;
-  color: var(--color-text);
+  color: var(--about-heading, #ffffff);
   letter-spacing: -0.02em;
   margin-bottom: 28px;
 }
 
 .about__desc {
   font-size: 1.05rem;
-  color: var(--color-text-secondary);
+  color: var(--about-text, #cccccc);
   line-height: 1.8;
   margin-bottom: 48px;
 }
@@ -49,14 +49,14 @@
   font-family: var(--font-heading);
   font-size: 2.5rem;
   font-weight: 800;
-  color: var(--color-accent);
+  color: var(--about-accent, #D4A843);
   line-height: 1;
   margin-bottom: 4px;
 }
 
 .about__stat-label {
   font-size: 0.85rem;
-  color: var(--color-text-secondary);
+  color: var(--about-text, #cccccc);
 }
 
 .about__image {

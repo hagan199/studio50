@@ -1,5 +1,5 @@
 .footer-section {
-  background-color: var(--color-black);
+  background-color: var(--footer-bg, #171717);
   padding: 60px 0 30px;
 }
 
@@ -29,14 +29,14 @@
 }
 
 .footer-title {
-  color: var(--color-white);
+  color: var(--footer-heading, #ffffff);
   font-size: 1rem;
   font-weight: 600;
   margin-bottom: 10px;
 }
 
 .footer-link {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--footer-link-color, rgba(255, 255, 255, 0.6));
   font-size: var(--font-size-body-small);
   text-decoration: none;
   transition: color 0.2s;
@@ -47,7 +47,7 @@
 }
 
 .footer-link.alt {
-  color: var(--color-primary-red);
+  color: var(--footer-accent, #fb3131);
 }
 
 .footer-link.note {

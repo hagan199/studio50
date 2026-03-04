@@ -1,11 +1,11 @@
 .latest-content {
-  background-color: white;
+  background-color: var(--latest-bg, white);
   padding-top: 60px;
   padding-bottom: 60px;
 }
 
 .latest-content .section-heading.black {
-  color: var(--color-black);
+  color: var(--latest-heading, #171717);
   margin-bottom: 10px;
 }
 
@@ -89,7 +89,7 @@
 }
 
 .tag {
-  background-color: var(--color-primary-red);
+  background-color: var(--latest-tag, #fb3131);
   padding: 4px 12px;
   border-radius: 3px;
   margin-top: 5px;

@@ -87,7 +87,7 @@
 }
 
 .no-w.red {
-  background-color: var(--color-primary-red);
+  background-color: var(--roadmap-badge, #fb3131);
   width: 40px;
   height: 40px;
   border-radius: 50%;

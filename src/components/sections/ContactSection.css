@@ -1,6 +1,6 @@
 .contact {
   padding: 120px 0;
-  background: var(--color-bg);
+  background: var(--contact-bg, #0A0A0A);
 }
 
 .contact__content {
@@ -11,7 +11,7 @@
 
 .contact__label {
   display: inline-block;
-  color: var(--color-accent);
+  color: var(--contact-accent, #D4A843);
   font-size: 0.85rem;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -22,19 +22,19 @@
 .contact__title {
   font-size: clamp(2.5rem, 5vw, 4rem);
   font-weight: 800;
-  color: var(--color-text);
+  color: var(--contact-heading, #ffffff);
   letter-spacing: -0.02em;
   margin-bottom: 24px;
 }
 
 .contact__title em {
   font-style: italic;
-  color: var(--color-accent);
+  color: var(--contact-accent, #D4A843);
 }
 
 .contact__desc {
   font-size: 1.05rem;
-  color: var(--color-text-secondary);
+  color: var(--contact-text, #cccccc);
   line-height: 1.7;
   margin-bottom: 40px;
 }
@@ -82,14 +82,14 @@
 
 .contact__email {
   display: inline-block;
-  color: var(--color-text-secondary);
+  color: var(--contact-text, #cccccc);
   font-size: 1rem;
   margin-bottom: 32px;
   transition: color 0.3s;
 }
 
 .contact__email:hover {
-  color: var(--color-accent);
+  color: var(--contact-accent, #D4A843);
 }
 
 .contact__socials {

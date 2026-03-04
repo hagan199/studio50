@@ -1,6 +1,6 @@
 .services {
   padding: 120px 0;
-  background: var(--color-bg);
+  background: var(--services-bg, #0A0A0A);
 }
 
 .services__header {
@@ -10,7 +10,7 @@
 
 .services__label {
   display: inline-block;
-  color: var(--color-accent);
+  color: var(--services-accent, #D4A843);
   font-size: 0.85rem;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -21,7 +21,7 @@
 .services__title {
   font-size: clamp(2.5rem, 5vw, 4rem);
   font-weight: 800;
-  color: var(--color-text);
+  color: var(--services-heading, #ffffff);
   letter-spacing: -0.02em;
 }
 
@@ -33,7 +33,7 @@
 
 .service-card {
   position: relative;
-  background: var(--color-bg-light);
+  background: var(--services-card-bg, #1A1A1A);
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 20px;
   padding: 40px 32px;
@@ -81,13 +81,13 @@
 .service-card__icon svg {
   width: 26px;
   height: 26px;
-  color: var(--color-text);
+  color: var(--services-heading, #ffffff);
 }
 
 .service-card__title {
   font-size: 1.3rem;
   font-weight: 700;
-  color: var(--color-text);
+  color: var(--services-heading, #ffffff);
   margin-bottom: 12px;
   position: relative;
   z-index: 1;
@@ -95,7 +95,7 @@
 
 .service-card__desc {
   font-size: 0.95rem;
-  color: var(--color-text-secondary);
+  color: var(--services-text, #cccccc);
   line-height: 1.6;
   position: relative;
   z-index: 1;

@@ -126,35 +126,35 @@ h4 {
 }
 
 .button.cta {
-  background-color: var(--color-white);
-  color: var(--color-black);
+  background-color: var(--btn-cta-bg, #ffffff);
+  color: var(--btn-cta-text, #171717);
   text-align: center;
 }
 
 .button.plain {
-  background-color: var(--color-primary-red);
-  color: var(--color-white);
+  background-color: var(--btn-primary-bg, #fb3131);
+  color: var(--btn-primary-text, #ffffff);
   text-align: center;
   transition: color 0.2s, border-color 0.2s, background-color 0.2s;
 }
 
 .button.plain:hover {
-  border-color: var(--color-primary-red);
+  border-color: var(--btn-primary-bg, #fb3131);
   background-color: transparent;
-  color: var(--color-primary-red);
+  color: var(--btn-primary-bg, #fb3131);
 }
 
 .button.black {
-  background-color: var(--color-slate);
-  color: var(--color-white);
+  background-color: var(--btn-dark-bg, #1e1e1e);
+  color: var(--btn-dark-text, #ffffff);
   text-align: center;
   transition: color 0.2s, border-color 0.2s, background-color 0.2s;
 }
 
 .button.black:hover {
-  border-color: var(--color-slate);
+  border-color: var(--btn-dark-bg, #1e1e1e);
   background-color: transparent;
-  color: var(--color-slate);
+  color: var(--btn-dark-bg, #1e1e1e);
 }
 
 /* Responsive */

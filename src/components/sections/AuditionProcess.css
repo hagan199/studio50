@@ -1,16 +1,16 @@
 .scroll-div.white {
-  background-color: white;
+  background-color: var(--audition-bg, white);
   height: auto;
   padding-top: 60px;
   padding-bottom: 60px;
 }
 
 .section-heading.black {
-  color: var(--color-black);
+  color: var(--audition-heading, #171717);
 }
 
 .section-title.black {
-  color: var(--color-black);
+  color: var(--audition-heading, #171717);
 }
 
 .section-grid-w {
@@ -53,7 +53,7 @@
 }
 
 .no-w {
-  background-color: var(--color-primary-red);
+  background-color: var(--audition-badge, #fb3131);
   color: white;
   width: 40px;
   height: 40px;

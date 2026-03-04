@@ -25,11 +25,11 @@
   flex: 1;
   padding: 60px 40px;
   text-align: left;
-  background-color: white;
+  background-color: var(--credibility-bg, white);
 }
 
 .section-child-flex.long .test-text {
-  color: var(--color-black);
+  color: var(--credibility-heading, #171717);
 }
 
 .section-child-flex.long .content-list-item {
@@ -41,7 +41,7 @@
 }
 
 .section-child-flex.long .content-list-item .section-small-title {
-  color: var(--color-black);
+  color: var(--credibility-text, #171717);
 }
 
 .section-child-flex.long .content-list-item img {
