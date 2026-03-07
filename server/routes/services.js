@@ -1,11 +1,9 @@
 import { Router } from 'express';
 import fs from 'fs/promises';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import { authMiddleware } from '../middleware/auth.js';
+import { getDataPath } from '../data/dataDir.js';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const dataPath = path.join(__dirname, '..', 'data', 'services.json');
+const dataPath = getDataPath('services.json');
 
 const router = Router();
 

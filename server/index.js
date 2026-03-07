@@ -12,8 +12,12 @@ import contactRoutes from "./routes/contact.js";
 import themeRoutes from "./routes/theme.js";
 import imagesRoutes from "./routes/images.js";
 import menuRoutes from "./routes/menu.js";
+import { initDataDir } from "./data/dataDir.js";
 
 dotenv.config();
+
+// Initialize persistent data directory (copies defaults on first deploy)
+await initDataDir();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,8 +31,9 @@ console.log("[auth] JWT_SECRET set:", Boolean(process.env.JWT_SECRET));
 app.use(cors());
 app.use(express.json());
 
-// Serve uploaded files
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// Serve uploaded files (use persistent volume in production)
+const uploadsDir = process.env.UPLOADS_DIR || path.join(__dirname, "uploads");
+app.use("/uploads", express.static(uploadsDir));
 
 // API routes
 app.use("/api/auth", authRoutes);

@@ -6,7 +6,8 @@ import { fileURLToPath } from "url";
 import { authMiddleware } from "../middleware/auth.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const uploadsDir = path.join(__dirname, "..", "uploads");
+// In production, UPLOADS_DIR should point to a Railway persistent volume (e.g. /data/uploads)
+const uploadsDir = process.env.UPLOADS_DIR || path.join(__dirname, "..", "uploads");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
