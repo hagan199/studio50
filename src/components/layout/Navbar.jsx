@@ -11,6 +11,15 @@ const fallbackNavLinks = [
   { label: 'Contact Us', href: '#contact' },
 ];
 
+function scrollToHref(href) {
+  if (!href || href === '#' || href === '/') {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    const el = document.querySelector(href);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -50,10 +59,17 @@ export default function Navbar() {
 
   const closeMenu = useCallback(() => setMenuOpen(false), []);
 
+  const handleNavClick = useCallback((e, href) => {
+    e.preventDefault();
+    setMenuOpen(false);
+    document.body.classList.remove('nav-open');
+    requestAnimationFrame(() => scrollToHref(href));
+  }, []);
+
   return (
     <nav className={`navbar${scrolled ? ' scrolled' : ''}`}>
       <div className="nav-container">
-        <a href="#" className="brand-link">
+        <a href="#" className="brand-link" onClick={(e) => handleNavClick(e, '#')}>
           <img
             src={brand?.logoUrl || '/images/hmr-logo-new.avif'}
             alt={brand?.name || 'Hype My Region'}
@@ -67,7 +83,7 @@ export default function Navbar() {
               key={link.label}
               href={link.href}
               className={`nav-link${link.href === '#' || link.href === '/' ? ' active' : ''}`}
-              onClick={closeMenu}
+              onClick={(e) => handleNavClick(e, link.href)}
             >
               <div className="clip">
                 <div className="clip-text-w">
@@ -79,7 +95,7 @@ export default function Navbar() {
               </div>
             </a>
           ))}
-          <a href="#auditions" className="nav-link cta-link" onClick={closeMenu}>
+          <a href="#auditions" className="nav-link cta-link" onClick={(e) => handleNavClick(e, '#auditions')}>
             <div className="clip">
               <div className="clip-text-w">
                 <div className="btn-text">Get Audition Forms</div>

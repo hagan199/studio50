@@ -9,6 +9,7 @@ import Credibility from '../components/sections/Credibility';
 import MarqueeSection from '../components/sections/MarqueeSection';
 import Roadmap from '../components/sections/Roadmap';
 import CTASection from '../components/sections/CTASection';
+import ContactSection from '../components/sections/ContactSection';
 import Footer from '../components/layout/Footer';
 import BackToTop from '../components/ui/BackToTop';
 
@@ -21,6 +22,7 @@ const SECTION_MAP = {
   marquee: MarqueeSection,
   roadmap: Roadmap,
   cta: CTASection,
+  contact: ContactSection,
 };
 
 const DEFAULT_SECTIONS = [
@@ -32,6 +34,7 @@ const DEFAULT_SECTIONS = [
   { id: 'marquee', visible: true, order: 5 },
   { id: 'roadmap', visible: true, order: 6 },
   { id: 'cta', visible: true, order: 7 },
+  { id: 'contact', visible: true, order: 8 },
 ];
 
 export default function HomePage() {

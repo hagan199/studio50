@@ -14,43 +14,48 @@ export default function AuditionProcess() {
   if (!data) return null;
 
   return (
-    <section className="scroll-div white" id="auditions" ref={ref}>
-      <div className="short-container">
-        <h2 className="section-heading black" data-animate="fade-up">{data.heading}</h2>
-        <p className="section-title small black" data-animate="fade-up" data-delay="0.1">
-          {data.subheading}
-        </p>
+    <section className="ap-section" id="auditions" ref={ref}>
+      <div className="ap-glow" aria-hidden="true" />
+
+      <div className="ap-header" data-animate="fade-up">
+        <span className="ap-eyebrow">The Process</span>
+        <h2 className="ap-heading">{data.heading}</h2>
+        <p className="ap-subheading">{data.subheading}</p>
       </div>
-      <div className="section-grid-w _4-1" data-animate="stagger-children" data-stagger="0.15">
+
+      <div className="ap-steps" data-animate="stagger-children" data-stagger="0.15">
         {data.steps.map((step, i) => (
-          <div key={step.id} className="award-small-w">
-            <div className="no-w">
-              <h4 className="section-small-title">{i + 1}</h4>
+          <div key={step.id} className="ap-step">
+            <div className="ap-step-top">
+              <div className="ap-num">{i + 1}</div>
+              {i < data.steps.length - 1 && <div className="ap-connector" aria-hidden="true" />}
             </div>
-            <h3 className="section-title black">{step.title}</h3>
-            <h4 className="section-small-title small black">{step.desc}</h4>
-            {step.linkLabel && step.linkHref && (
-              <a href={step.linkHref} className="button plain">
-                <div className="clip">
-                  <div className="clip-text-w">
-                    <div className="btn-text">{step.linkLabel}</div>
-                  </div>
-                  <div className="clip-text-w bottom">
-                    <div className="btn-text">{step.linkLabel}</div>
-                  </div>
-                </div>
-              </a>
-            )}
+            <div className="ap-card">
+              <h3 className="ap-card-title">{step.title}</h3>
+              <p className="ap-card-desc">{step.desc}</p>
+              {step.linkLabel && step.linkHref && (
+                <a href={step.linkHref} className="ap-card-link">
+                  {step.linkLabel}
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </a>
+              )}
+            </div>
           </div>
         ))}
       </div>
-      <div className="short-container" data-animate="fade-up" data-delay="0.3">
-        <p className="section-title small black">
-          <strong>A. Payment Note: </strong>{data.paymentNote}
-          <br /><br />
-          <strong>B. PWD Clarity: </strong>{data.pwdNote}
-        </p>
-      </div>
+
+      {(data.paymentNote || data.pwdNote) && (
+        <div className="ap-note" data-animate="fade-up" data-delay="0.3">
+          {data.paymentNote && (
+            <p><strong>A. Payment Note: </strong>{data.paymentNote}</p>
+          )}
+          {data.pwdNote && (
+            <p><strong>B. PWD Clarity: </strong>{data.pwdNote}</p>
+          )}
+        </div>
+      )}
     </section>
   );
 }
