@@ -105,6 +105,7 @@
 }
 
 .menu-button {
+  position: relative;
   display: none;
   flex-direction: column;
   gap: 5px;
