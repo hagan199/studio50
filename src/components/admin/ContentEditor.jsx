@@ -129,6 +129,69 @@ export default function ContentEditor() {
         {message}
       </div>
 
+      {/* Page Layout */}
+      <Section title="Page Layout" defaultOpen={true}>
+        <p style={{ fontSize: '0.85rem', color: '#888', marginBottom: '1rem' }}>
+          Toggle section visibility and reorder sections on the homepage.
+        </p>
+        {(content.sections || [])
+          .slice()
+          .sort((a, b) => a.order - b.order)
+          .map((section, idx, sorted) => (
+            <div key={section.id} className="admin-list-row" style={{ alignItems: 'center', gap: '0.5rem' }}>
+              <label className="admin-checkbox" style={{ flex: 1, margin: 0 }}>
+                <input
+                  type="checkbox"
+                  checked={section.visible}
+                  onChange={(e) => {
+                    setContent((prev) => ({
+                      ...prev,
+                      sections: prev.sections.map((s) =>
+                        s.id === section.id ? { ...s, visible: e.target.checked } : s
+                      ),
+                    }));
+                  }}
+                />
+                {section.label}
+              </label>
+              <button
+                className="admin-btn admin-btn--secondary admin-btn--sm"
+                disabled={idx === 0}
+                onClick={() => {
+                  const prevSection = sorted[idx - 1];
+                  setContent((prev) => ({
+                    ...prev,
+                    sections: prev.sections.map((s) => {
+                      if (s.id === section.id) return { ...s, order: prevSection.order };
+                      if (s.id === prevSection.id) return { ...s, order: section.order };
+                      return s;
+                    }),
+                  }));
+                }}
+              >
+                &uarr;
+              </button>
+              <button
+                className="admin-btn admin-btn--secondary admin-btn--sm"
+                disabled={idx === sorted.length - 1}
+                onClick={() => {
+                  const nextSection = sorted[idx + 1];
+                  setContent((prev) => ({
+                    ...prev,
+                    sections: prev.sections.map((s) => {
+                      if (s.id === section.id) return { ...s, order: nextSection.order };
+                      if (s.id === nextSection.id) return { ...s, order: section.order };
+                      return s;
+                    }),
+                  }));
+                }}
+              >
+                &darr;
+              </button>
+            </div>
+          ))}
+      </Section>
+
       {/* Brand Info */}
       <Section title="Brand Info" defaultOpen={true}>
         <div className="admin-field">
