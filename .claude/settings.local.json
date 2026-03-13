@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(npx vite:*)",
-      "Bash(ls C:/laragon/www/studio50/server/*.js)"
+      "Bash(ls C:/laragon/www/studio50/server/*.js)",
+      "Bash(npm run:*)"
     ]
   }
 }

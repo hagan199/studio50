@@ -236,6 +236,102 @@ export default function ThemeEditor() {
               </div>
             </div>
           </div>
+
+          {/* Typography Scale */}
+          <div className="admin-card" style={{ marginTop: '12px' }}>
+            <h3 className="admin-card__title">Typography Scale</h3>
+            <p style={{ fontSize: '0.8rem', color: '#666', marginBottom: '16px' }}>Adjust heading and body font sizes (in rem).</p>
+            {[
+              { key: 'h1', label: 'H1 Size', min: 1.5, max: 6, step: 0.1, def: 4 },
+              { key: 'h2', label: 'H2 Size', min: 1.2, max: 5, step: 0.1, def: 3 },
+              { key: 'h3', label: 'H3 Size', min: 1, max: 4, step: 0.1, def: 2.4 },
+              { key: 'h4', label: 'H4 Size', min: 0.8, max: 3, step: 0.1, def: 2 },
+              { key: 'bodyLarge', label: 'Body Large', min: 0.8, max: 2, step: 0.05, def: 1.25 },
+              { key: 'bodyNormal', label: 'Body Normal', min: 0.7, max: 1.5, step: 0.05, def: 1 },
+            ].map((f) => (
+              <div key={f.key} className="admin-range-row">
+                <span className="admin-range-row__label">{f.label}</span>
+                <input
+                  type="range"
+                  className="admin-range-row__slider"
+                  min={f.min}
+                  max={f.max}
+                  step={f.step}
+                  value={localTheme.typography?.[f.key] || f.def}
+                  onChange={(e) => {
+                    const val = parseFloat(e.target.value);
+                    setLocalTheme((prev) => ({
+                      ...prev,
+                      typography: { ...prev.typography, [f.key]: val },
+                    }));
+                  }}
+                />
+                <span className="admin-range-row__value">{(localTheme.typography?.[f.key] || f.def)}rem</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Spacing & Layout */}
+          <div className="admin-card" style={{ marginTop: '12px' }}>
+            <h3 className="admin-card__title">Spacing & Layout</h3>
+            <p style={{ fontSize: '0.8rem', color: '#666', marginBottom: '16px' }}>Control section padding and container width.</p>
+            {[
+              { key: 'sectionPaddingY', label: 'Section Padding (Y)', min: 20, max: 160, step: 5, def: 80, unit: 'px' },
+              { key: 'containerWidth', label: 'Container Max Width', min: 800, max: 1600, step: 50, def: 1100, unit: 'px' },
+            ].map((f) => (
+              <div key={f.key} className="admin-range-row">
+                <span className="admin-range-row__label">{f.label}</span>
+                <input
+                  type="range"
+                  className="admin-range-row__slider"
+                  min={f.min}
+                  max={f.max}
+                  step={f.step}
+                  value={localTheme.spacing?.[f.key] || f.def}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value, 10);
+                    setLocalTheme((prev) => ({
+                      ...prev,
+                      spacing: { ...prev.spacing, [f.key]: val },
+                    }));
+                  }}
+                />
+                <span className="admin-range-row__value">{localTheme.spacing?.[f.key] || f.def}{f.unit}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Border Radius */}
+          <div className="admin-card" style={{ marginTop: '12px' }}>
+            <h3 className="admin-card__title">Border Radius</h3>
+            <p style={{ fontSize: '0.8rem', color: '#666', marginBottom: '16px' }}>Shape the roundness of buttons, cards, and sections.</p>
+            {[
+              { key: 'button', label: 'Buttons', min: 0, max: 30, step: 1, def: 6 },
+              { key: 'card', label: 'Cards', min: 0, max: 32, step: 1, def: 16 },
+              { key: 'badge', label: 'Badges / Tags', min: 0, max: 30, step: 1, def: 10 },
+              { key: 'image', label: 'Images', min: 0, max: 32, step: 1, def: 16 },
+            ].map((f) => (
+              <div key={f.key} className="admin-range-row">
+                <span className="admin-range-row__label">{f.label}</span>
+                <input
+                  type="range"
+                  className="admin-range-row__slider"
+                  min={f.min}
+                  max={f.max}
+                  step={f.step}
+                  value={localTheme.borderRadius?.[f.key] || f.def}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value, 10);
+                    setLocalTheme((prev) => ({
+                      ...prev,
+                      borderRadius: { ...prev.borderRadius, [f.key]: val },
+                    }));
+                  }}
+                />
+                <span className="admin-range-row__value">{localTheme.borderRadius?.[f.key] || f.def}px</span>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Color Picker Sidebar */}

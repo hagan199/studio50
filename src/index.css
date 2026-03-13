@@ -21,6 +21,12 @@
   --font-size-body-large: 1.25rem;
   --font-size-body-normal: 1rem;
   --font-size-body-small: 0.9rem;
+  --section-padding-y: 80px;
+  --container-max-width: 1100px;
+  --radius-button: 6px;
+  --radius-card: 16px;
+  --radius-badge: 10px;
+  --radius-image: 16px;
 }
 
 *, *::before, *::after {
@@ -138,7 +144,7 @@ h4 {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: var(--radius-button, 6px);
   transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
@@ -195,7 +201,7 @@ h4 {
 /* Container utility */
 .container {
   width: 90%;
-  max-width: 1100px;
+  max-width: var(--container-max-width, 1100px);
   margin-left: auto;
   margin-right: auto;
 }

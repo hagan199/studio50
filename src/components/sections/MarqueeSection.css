@@ -1,8 +1,8 @@
 .scroll-div.gray {
   background-color: var(--marquee-bg, #f5f5f5);
   height: auto;
-  padding-top: 80px;
-  padding-bottom: 80px;
+  padding-top: var(--section-padding-y, 80px);
+  padding-bottom: var(--section-padding-y, 80px);
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -46,7 +46,7 @@
   height: 340px;
   overflow: hidden;
   flex-shrink: 0;
-  border-radius: 16px;
+  border-radius: var(--radius-image, 16px);
   transition: transform 0.4s ease;
 }
 
@@ -93,7 +93,7 @@
   height: 60%;
   background: linear-gradient(transparent, rgba(0, 0, 0, 0.65));
   z-index: 1;
-  border-radius: 0 0 16px 16px;
+  border-radius: 0 0 var(--radius-image, 16px) var(--radius-image, 16px);
 }
 
 .section-title.colored {

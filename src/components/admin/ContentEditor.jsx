@@ -541,6 +541,38 @@ export default function ContentEditor() {
         </Section>
       )}
 
+      {/* Footer */}
+      {content.footer && (
+        <Section title="Footer">
+          <div className="admin-field">
+            <label className="admin-field__label">Email</label>
+            <input className="admin-field__input" value={content.footer.email} onChange={(e) => update('footer', 'email', e.target.value)} />
+          </div>
+          <div className="admin-field">
+            <label className="admin-field__label">Copyright Text</label>
+            <input className="admin-field__input" value={content.footer.copyrightText} onChange={(e) => update('footer', 'copyrightText', e.target.value)} />
+          </div>
+          <div className="admin-field">
+            <label className="admin-field__label">Disclaimer Title</label>
+            <input className="admin-field__input" value={content.footer.disclaimerTitle} onChange={(e) => update('footer', 'disclaimerTitle', e.target.value)} />
+          </div>
+          <div className="admin-field">
+            <label className="admin-field__label">Disclaimer Text</label>
+            <textarea className="admin-field__textarea" rows={4} value={content.footer.disclaimerText} onChange={(e) => update('footer', 'disclaimerText', e.target.value)} />
+          </div>
+          <div className="admin-grid-2">
+            <div className="admin-field">
+              <label className="admin-field__label">Privacy Policy URL</label>
+              <input className="admin-field__input" value={content.footer.privacyPolicyUrl} onChange={(e) => update('footer', 'privacyPolicyUrl', e.target.value)} />
+            </div>
+            <div className="admin-field">
+              <label className="admin-field__label">Terms & Conditions URL</label>
+              <input className="admin-field__input" value={content.footer.termsUrl} onChange={(e) => update('footer', 'termsUrl', e.target.value)} />
+            </div>
+          </div>
+        </Section>
+      )}
+
       {/* Sticky save bar */}
       <div className="admin-save-bar">
         <span className="admin-save-bar__hint">

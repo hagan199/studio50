@@ -12,6 +12,7 @@ import contactRoutes from "./routes/contact.js";
 import themeRoutes from "./routes/theme.js";
 import imagesRoutes from "./routes/images.js";
 import menuRoutes from "./routes/menu.js";
+import seoRoutes from "./routes/seo.js";
 import { initDataDir } from "./data/dataDir.js";
 
 dotenv.config();
@@ -43,6 +44,7 @@ app.use("/api/contact", contactRoutes);
 app.use("/api/theme", themeRoutes);
 app.use("/api/images", imagesRoutes);
 app.use("/api/menu", menuRoutes);
+app.use("/api/seo", seoRoutes);
 
 // Serve React build in production
 const distDir = path.join(__dirname, "..", "dist");

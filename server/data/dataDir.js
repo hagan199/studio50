@@ -18,7 +18,7 @@ const defaultDir = __dirname;
 export async function initDataDir() {
   await fs.mkdir(dataDir, { recursive: true });
 
-  const defaults = ["content.json", "services.json", "contact.json", "menu.json", "theme.json"];
+  const defaults = ["content.json", "services.json", "contact.json", "menu.json", "theme.json", "seo.json"];
 
   for (const file of defaults) {
     const target = path.join(dataDir, file);

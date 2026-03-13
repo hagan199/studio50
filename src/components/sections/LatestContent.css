@@ -1,7 +1,7 @@
 .latest-content {
   background-color: var(--latest-bg, white);
-  padding-top: 80px;
-  padding-bottom: 80px;
+  padding-top: var(--section-padding-y, 80px);
+  padding-bottom: var(--section-padding-y, 80px);
 }
 
 .latest-content .section-heading.black {
@@ -14,9 +14,9 @@
   grid-template-columns: 1fr 1fr;
   gap: 8px;
   width: 90%;
-  max-width: 1100px;
+  max-width: var(--container-max-width, 1100px);
   margin: 40px auto 0;
-  border-radius: 16px;
+  border-radius: var(--radius-card, 16px);
   overflow: hidden;
 }
 
@@ -93,7 +93,7 @@
 .tag {
   background-color: var(--latest-tag, #fb3131);
   padding: 5px 14px;
-  border-radius: 20px;
+  border-radius: var(--radius-badge, 20px);
   margin-top: 6px;
 }
 

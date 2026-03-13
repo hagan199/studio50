@@ -103,6 +103,27 @@ export function ThemeProvider({ children }) {
       root.style.setProperty('--font-heading', themeData.fonts.heading);
       root.style.setProperty('--font-body', themeData.fonts.body);
     }
+    if (themeData.typography) {
+      const t = themeData.typography;
+      if (t.h1) root.style.setProperty('--font-size-h1', t.h1 + 'rem');
+      if (t.h2) root.style.setProperty('--font-size-h2', t.h2 + 'rem');
+      if (t.h3) root.style.setProperty('--font-size-h3', t.h3 + 'rem');
+      if (t.h4) root.style.setProperty('--font-size-h4', t.h4 + 'rem');
+      if (t.bodyLarge) root.style.setProperty('--font-size-body-large', t.bodyLarge + 'rem');
+      if (t.bodyNormal) root.style.setProperty('--font-size-body-normal', t.bodyNormal + 'rem');
+    }
+    if (themeData.spacing) {
+      const s = themeData.spacing;
+      if (s.sectionPaddingY) root.style.setProperty('--section-padding-y', s.sectionPaddingY + 'px');
+      if (s.containerWidth) root.style.setProperty('--container-max-width', s.containerWidth + 'px');
+    }
+    if (themeData.borderRadius) {
+      const br = themeData.borderRadius;
+      if (br.button != null) root.style.setProperty('--radius-button', br.button + 'px');
+      if (br.card != null) root.style.setProperty('--radius-card', br.card + 'px');
+      if (br.badge != null) root.style.setProperty('--radius-badge', br.badge + 'px');
+      if (br.image != null) root.style.setProperty('--radius-image', br.image + 'px');
+    }
   };
 
   useEffect(() => {
