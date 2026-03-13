@@ -1,6 +1,6 @@
 .footer-section {
   background-color: var(--footer-bg, #171717);
-  padding: 60px 0 30px;
+  padding: 72px 0 36px;
 }
 
 .footer-w {
@@ -20,6 +20,11 @@
 .footer-logo-img {
   width: 100px;
   filter: brightness(0) invert(1);
+  transition: opacity 0.2s;
+}
+
+.footer-logo-img:hover {
+  opacity: 0.8;
 }
 
 .footer-content-w {
@@ -39,15 +44,23 @@
   color: var(--footer-link-color, rgba(255, 255, 255, 0.6));
   font-size: var(--font-size-body-small);
   text-decoration: none;
-  transition: color 0.2s;
+  transition: color 0.25s, transform 0.25s;
+  display: inline-block;
 }
 
 .footer-link:hover {
   color: white;
+  transform: translateX(3px);
 }
 
 .footer-link.alt {
   color: var(--footer-accent, #fb3131);
+}
+
+.footer-link.alt:hover {
+  color: var(--footer-accent, #fb3131);
+  opacity: 0.8;
+  transform: translateX(3px);
 }
 
 .footer-link.note {
@@ -55,44 +68,58 @@
   font-size: 0.8rem;
 }
 
+.footer-link.note:hover {
+  color: rgba(255, 255, 255, 0.7);
+  transform: none;
+}
+
 .footer-disclaimer {
   color: rgba(255, 255, 255, 0.5);
   font-size: var(--font-size-body-small);
   font-weight: 400;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .social-w {
   display: flex;
-  gap: 12px;
-  margin-top: 10px;
+  gap: 10px;
+  margin-top: 12px;
 }
 
 .social-link-block {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  transition: opacity 0.2s;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  transition: background 0.25s, transform 0.25s;
 }
 
 .social-link-block:hover {
-  opacity: 0.7;
+  background: rgba(255, 255, 255, 0.14);
+  transform: translateY(-3px);
 }
 
 .social-img {
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
   filter: brightness(0) invert(1);
+}
+
+.social-link-block svg {
+  width: 18px;
+  height: 18px;
 }
 
 .footer-note-w {
   grid-column: 1 / -1;
   display: flex;
-  gap: 20px;
-  padding-top: 30px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  gap: 24px;
+  padding-top: 32px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin-top: 8px;
 }
 
 @media screen and (max-width: 991px) {
@@ -104,10 +131,15 @@
 @media screen and (max-width: 767px) {
   .footer-w {
     grid-template-columns: 1fr;
+    gap: 32px;
   }
 
   .footer-note-w {
     flex-direction: column;
     gap: 10px;
+  }
+
+  .footer-section {
+    padding: 56px 0 32px;
   }
 }

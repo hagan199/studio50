@@ -45,7 +45,24 @@ export default function HeroSection() {
     return () => ctx.revert();
   }, [content]);
 
-  if (!content) return null;
+  if (!content) {
+    return (
+      <section className="hero-track">
+        <div className="hero-img-w">
+          <div className="skeleton-block dark" style={{ width: '100%', height: '100%', position: 'absolute', inset: 0, borderRadius: 0 }} />
+        </div>
+        <div className="hero-sticky">
+          <div className="skeleton-block dark" style={{ width: '80%', height: '3.5rem', marginBottom: 20 }} />
+          <div className="skeleton-block dark" style={{ width: '60%', height: '1rem', marginBottom: 10 }} />
+          <div className="skeleton-block dark" style={{ width: '50%', height: '1rem', marginBottom: 30 }} />
+          <div style={{ display: 'flex', gap: 10 }}>
+            <div className="skeleton-block dark" style={{ width: 160, height: 48 }} />
+            <div className="skeleton-block dark" style={{ width: 160, height: 48 }} />
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   const { hero, brand } = content;
 
@@ -57,6 +74,7 @@ export default function HeroSection() {
           alt={brand.name}
           className="hero-bg-image"
         />
+        <div className="hero-img-overlay" />
       </div>
       <div className="hero-sticky">
         <h1 className="hero-heading">
@@ -76,7 +94,7 @@ export default function HeroSection() {
               </div>
             </div>
           </a>
-          <a href="#programs" className="button cta">
+          <a href="#programs" className="button outline">
             <div className="clip">
               <div className="clip-text-w">
                 <div className="btn-text">View Program Structure</div>
@@ -86,7 +104,7 @@ export default function HeroSection() {
               </div>
             </div>
           </a>
-          <a href="#awards" className="button cta">
+          <a href="#awards" className="button outline">
             <div className="clip">
               <div className="clip-text-w">
                 <div className="btn-text">Partner With Us</div>

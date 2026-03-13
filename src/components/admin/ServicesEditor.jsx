@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '../../utils/api';
 
 const ICON_OPTIONS = ['camera', 'palette', 'video', 'share', 'globe', 'broadcast'];
@@ -54,7 +54,8 @@ export default function ServicesEditor() {
     });
   };
 
-  const save = async () => {
+  const save = useCallback(async () => {
+    if (!data || saving) return;
     setSaving(true);
     try {
       await api.put('/api/services', data);
@@ -65,9 +66,29 @@ export default function ServicesEditor() {
     } finally {
       setSaving(false);
     }
-  };
+  }, [data, saving]);
 
-  if (!data) return <div className="admin-loading">Loading...</div>;
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        save();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [save]);
+
+  if (!data) {
+    return (
+      <div className="admin-loading">
+        <div className="admin-loading__bar" />
+        <div className="admin-loading__bar" />
+        <div className="admin-loading__bar" />
+        <div className="admin-loading__bar" />
+      </div>
+    );
+  }
 
   return (
     <div className="admin-editor">
@@ -81,7 +102,11 @@ export default function ServicesEditor() {
         </div>
       </div>
 
-      {message && <div className="admin-alert admin-alert--success">{message}</div>}
+      {message && (
+        <div className={`admin-alert ${message.includes('Failed') ? 'admin-alert--error' : 'admin-alert--success'}`}>
+          {message}
+        </div>
+      )}
 
       <div className="admin-field">
         <label className="admin-field__label">Section Title</label>
@@ -89,12 +114,12 @@ export default function ServicesEditor() {
       </div>
 
       {data.items.map((service, i) => (
-        <div key={service.id} className="admin-card admin-card--service">
+        <div key={service.id} className="admin-card">
           <div className="admin-card__header">
             <h3 className="admin-card__title">#{service.order} {service.title}</h3>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <button className="admin-btn admin-btn--sm" onClick={() => moveService(i, -1)} title="Move up">↑</button>
-              <button className="admin-btn admin-btn--sm" onClick={() => moveService(i, 1)} title="Move down">↓</button>
+            <div style={{ display: 'flex', gap: '6px' }}>
+              <button className="admin-btn admin-btn--sm" onClick={() => moveService(i, -1)} title="Move up" disabled={i === 0}>↑</button>
+              <button className="admin-btn admin-btn--sm" onClick={() => moveService(i, 1)} title="Move down" disabled={i === data.items.length - 1}>↓</button>
               <button className="admin-btn admin-btn--sm admin-btn--danger" onClick={() => removeService(i)} title="Remove">✕</button>
             </div>
           </div>

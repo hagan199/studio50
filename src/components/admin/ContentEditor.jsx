@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '../../utils/api';
 import ImageField from './ImageField';
 
@@ -14,6 +14,17 @@ function Section({ title, count, defaultOpen = false, children }) {
         <svg className="admin-section__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
       {open && <div className="admin-section__body">{children}</div>}
+    </div>
+  );
+}
+
+function LoadingSkeleton() {
+  return (
+    <div className="admin-loading">
+      <div className="admin-loading__bar" />
+      <div className="admin-loading__bar" />
+      <div className="admin-loading__bar" />
+      <div className="admin-loading__bar" />
     </div>
   );
 }
@@ -78,7 +89,8 @@ export default function ContentEditor() {
     });
   };
 
-  const save = async () => {
+  const save = useCallback(async () => {
+    if (!content || saving) return;
     setSaving(true);
     try {
       await api.put('/api/content', content);
@@ -89,9 +101,21 @@ export default function ContentEditor() {
     } finally {
       setSaving(false);
     }
-  };
+  }, [content, saving]);
 
-  if (!content) return <div className="admin-loading">Loading...</div>;
+  // Ctrl+S keyboard shortcut
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        save();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [save]);
+
+  if (!content) return <LoadingSkeleton />;
 
   return (
     <div className="admin-editor">
@@ -132,13 +156,15 @@ export default function ContentEditor() {
           <label className="admin-field__label">Subheadline</label>
           <textarea className="admin-field__textarea" rows={3} value={content.hero.subheadline} onChange={(e) => update('hero', 'subheadline', e.target.value)} />
         </div>
-        <div className="admin-field">
-          <label className="admin-field__label">CTA Button Text</label>
-          <input className="admin-field__input" value={content.hero.ctaText} onChange={(e) => update('hero', 'ctaText', e.target.value)} />
-        </div>
-        <div className="admin-field">
-          <label className="admin-field__label">CTA Link</label>
-          <input className="admin-field__input" value={content.hero.ctaLink} onChange={(e) => update('hero', 'ctaLink', e.target.value)} />
+        <div className="admin-grid-2">
+          <div className="admin-field">
+            <label className="admin-field__label">CTA Button Text</label>
+            <input className="admin-field__input" value={content.hero.ctaText} onChange={(e) => update('hero', 'ctaText', e.target.value)} />
+          </div>
+          <div className="admin-field">
+            <label className="admin-field__label">CTA Link</label>
+            <input className="admin-field__input" value={content.hero.ctaLink} onChange={(e) => update('hero', 'ctaLink', e.target.value)} />
+          </div>
         </div>
         <ImageField label="Background Image" value={content.hero.backgroundImageUrl} onChange={(url) => update('hero', 'backgroundImageUrl', url)} category="hero" />
         <ImageField label="Gallery Images" value={content.hero.galleryImages || []} onChange={(urls) => update('hero', 'galleryImages', urls)} category="hero" multiple />
@@ -165,13 +191,15 @@ export default function ContentEditor() {
       {/* Audition Process */}
       {content.auditionProcess && (
         <Section title="Audition Process" count={content.auditionProcess.steps.length}>
-          <div className="admin-field">
-            <label className="admin-field__label">Heading</label>
-            <input className="admin-field__input" value={content.auditionProcess.heading} onChange={(e) => update('auditionProcess', 'heading', e.target.value)} />
-          </div>
-          <div className="admin-field">
-            <label className="admin-field__label">Subheading</label>
-            <input className="admin-field__input" value={content.auditionProcess.subheading} onChange={(e) => update('auditionProcess', 'subheading', e.target.value)} />
+          <div className="admin-grid-2">
+            <div className="admin-field">
+              <label className="admin-field__label">Heading</label>
+              <input className="admin-field__input" value={content.auditionProcess.heading} onChange={(e) => update('auditionProcess', 'heading', e.target.value)} />
+            </div>
+            <div className="admin-field">
+              <label className="admin-field__label">Subheading</label>
+              <input className="admin-field__input" value={content.auditionProcess.subheading} onChange={(e) => update('auditionProcess', 'subheading', e.target.value)} />
+            </div>
           </div>
           <div className="admin-field">
             <label className="admin-field__label">Payment Note</label>
@@ -185,20 +213,22 @@ export default function ContentEditor() {
           {content.auditionProcess.steps.map((step, i) => (
             <div key={step.id} className="admin-item-card">
               <div className="admin-item-card__header">
-                <strong>Step {i + 1}</strong>
-                <button className="admin-btn admin-btn--danger" onClick={() => removeArrayObj('auditionProcess', 'steps', i)}>Remove</button>
+                <strong className="admin-item-card__title">Step {i + 1}</strong>
+                <button className="admin-btn admin-btn--danger admin-btn--sm" onClick={() => removeArrayObj('auditionProcess', 'steps', i)}>Remove</button>
               </div>
-              <div className="admin-field">
-                <label className="admin-field__label">Title</label>
-                <input className="admin-field__input" value={step.title} onChange={(e) => updateArrayObj('auditionProcess', 'steps', i, 'title', e.target.value)} />
+              <div className="admin-grid-2">
+                <div className="admin-field">
+                  <label className="admin-field__label">Title</label>
+                  <input className="admin-field__input" value={step.title} onChange={(e) => updateArrayObj('auditionProcess', 'steps', i, 'title', e.target.value)} />
+                </div>
+                <div className="admin-field">
+                  <label className="admin-field__label">Link Label</label>
+                  <input className="admin-field__input" value={step.linkLabel} onChange={(e) => updateArrayObj('auditionProcess', 'steps', i, 'linkLabel', e.target.value)} />
+                </div>
               </div>
               <div className="admin-field">
                 <label className="admin-field__label">Description</label>
                 <textarea className="admin-field__textarea" rows={3} value={step.desc} onChange={(e) => updateArrayObj('auditionProcess', 'steps', i, 'desc', e.target.value)} />
-              </div>
-              <div className="admin-field">
-                <label className="admin-field__label">Link Label</label>
-                <input className="admin-field__input" value={step.linkLabel} onChange={(e) => updateArrayObj('auditionProcess', 'steps', i, 'linkLabel', e.target.value)} />
               </div>
               <div className="admin-field">
                 <label className="admin-field__label">Link URL</label>
@@ -225,7 +255,7 @@ export default function ContentEditor() {
           {content.whyHMR.whyItems.map((item, i) => (
             <div key={i} className="admin-list-row">
               <input className="admin-field__input" value={item} onChange={(e) => updateListItem('whyHMR', 'whyItems', i, e.target.value)} />
-              <button className="admin-btn admin-btn--danger" onClick={() => removeListItem('whyHMR', 'whyItems', i)}>X</button>
+              <button className="admin-btn admin-btn--danger admin-btn--sm" onClick={() => removeListItem('whyHMR', 'whyItems', i)}>X</button>
             </div>
           ))}
           <button className="admin-btn admin-btn--secondary" onClick={() => addListItem('whyHMR', 'whyItems', '')}>+ Add Item</button>
@@ -242,7 +272,7 @@ export default function ContentEditor() {
           {content.whyHMR.whatItems.map((item, i) => (
             <div key={i} className="admin-list-row">
               <input className="admin-field__input" value={item} onChange={(e) => updateListItem('whyHMR', 'whatItems', i, e.target.value)} />
-              <button className="admin-btn admin-btn--danger" onClick={() => removeListItem('whyHMR', 'whatItems', i)}>X</button>
+              <button className="admin-btn admin-btn--danger admin-btn--sm" onClick={() => removeListItem('whyHMR', 'whatItems', i)}>X</button>
             </div>
           ))}
           <button className="admin-btn admin-btn--secondary" onClick={() => addListItem('whyHMR', 'whatItems', '')}>+ Add Item</button>
@@ -259,49 +289,53 @@ export default function ContentEditor() {
           {content.latestContent.items.map((item, i) => (
             <div key={item.id} className="admin-item-card">
               <div className="admin-item-card__header">
-                <strong>Item {i + 1}</strong>
-                <button className="admin-btn admin-btn--danger" onClick={() => removeArrayObj('latestContent', 'items', i)}>Remove</button>
+                <strong className="admin-item-card__title">Item {i + 1}</strong>
+                <button className="admin-btn admin-btn--danger admin-btn--sm" onClick={() => removeArrayObj('latestContent', 'items', i)}>Remove</button>
               </div>
-              <div className="admin-field">
-                <label className="admin-field__label">Type</label>
-                <select className="admin-field__input" value={item.type} onChange={(e) => updateArrayObj('latestContent', 'items', i, 'type', e.target.value)}>
-                  <option value="video">Video</option>
-                  <option value="image">Image</option>
-                </select>
+              <div className="admin-grid-2">
+                <div className="admin-field">
+                  <label className="admin-field__label">Type</label>
+                  <select className="admin-field__input" value={item.type} onChange={(e) => updateArrayObj('latestContent', 'items', i, 'type', e.target.value)}>
+                    <option value="video">Video</option>
+                    <option value="image">Image</option>
+                  </select>
+                </div>
+                <div className="admin-field">
+                  <label className="admin-field__label">Tag</label>
+                  <input className="admin-field__input" value={item.tag} onChange={(e) => updateArrayObj('latestContent', 'items', i, 'tag', e.target.value)} />
+                </div>
               </div>
-              <div className="admin-field">
-                <label className="admin-field__label">Title</label>
-                <input className="admin-field__input" value={item.title} onChange={(e) => updateArrayObj('latestContent', 'items', i, 'title', e.target.value)} />
-              </div>
-              <div className="admin-field">
-                <label className="admin-field__label">Subtitle</label>
-                <input className="admin-field__input" value={item.subtitle} onChange={(e) => updateArrayObj('latestContent', 'items', i, 'subtitle', e.target.value)} />
-              </div>
-              <div className="admin-field">
-                <label className="admin-field__label">Tag</label>
-                <input className="admin-field__input" value={item.tag} onChange={(e) => updateArrayObj('latestContent', 'items', i, 'tag', e.target.value)} />
+              <div className="admin-grid-2">
+                <div className="admin-field">
+                  <label className="admin-field__label">Title</label>
+                  <input className="admin-field__input" value={item.title} onChange={(e) => updateArrayObj('latestContent', 'items', i, 'title', e.target.value)} />
+                </div>
+                <div className="admin-field">
+                  <label className="admin-field__label">Subtitle</label>
+                  <input className="admin-field__input" value={item.subtitle} onChange={(e) => updateArrayObj('latestContent', 'items', i, 'subtitle', e.target.value)} />
+                </div>
               </div>
               {item.type === 'video' ? (
                 <>
                   <ImageField label="Poster Image" value={item.poster || ''} onChange={(url) => updateArrayObj('latestContent', 'items', i, 'poster', url)} category="content" />
-                  <div className="admin-field">
-                    <label className="admin-field__label">Video MP4 URL</label>
-                    <input className="admin-field__input" value={item.videoMp4 || ''} onChange={(e) => updateArrayObj('latestContent', 'items', i, 'videoMp4', e.target.value)} />
-                  </div>
-                  <div className="admin-field">
-                    <label className="admin-field__label">Video WebM URL</label>
-                    <input className="admin-field__input" value={item.videoWebm || ''} onChange={(e) => updateArrayObj('latestContent', 'items', i, 'videoWebm', e.target.value)} />
+                  <div className="admin-grid-2">
+                    <div className="admin-field">
+                      <label className="admin-field__label">Video MP4 URL</label>
+                      <input className="admin-field__input" value={item.videoMp4 || ''} onChange={(e) => updateArrayObj('latestContent', 'items', i, 'videoMp4', e.target.value)} />
+                    </div>
+                    <div className="admin-field">
+                      <label className="admin-field__label">Video WebM URL</label>
+                      <input className="admin-field__input" value={item.videoWebm || ''} onChange={(e) => updateArrayObj('latestContent', 'items', i, 'videoWebm', e.target.value)} />
+                    </div>
                   </div>
                 </>
               ) : (
                 <ImageField label="Image" value={item.imageUrl || ''} onChange={(url) => updateArrayObj('latestContent', 'items', i, 'imageUrl', url)} category="content" />
               )}
-              <div className="admin-field">
-                <label className="admin-field__label">
-                  <input type="checkbox" checked={item.wide || false} onChange={(e) => updateArrayObj('latestContent', 'items', i, 'wide', e.target.checked)} />
-                  {' '}Wide layout
-                </label>
-              </div>
+              <label className="admin-checkbox">
+                <input type="checkbox" checked={item.wide || false} onChange={(e) => updateArrayObj('latestContent', 'items', i, 'wide', e.target.checked)} />
+                Wide layout (spans full width)
+              </label>
             </div>
           ))}
           <button className="admin-btn admin-btn--secondary" onClick={() => addArrayObj('latestContent', 'items', { type: 'image', title: '', subtitle: '', tag: '', imageUrl: '', wide: false })}>+ Add Item</button>
@@ -327,8 +361,8 @@ export default function ContentEditor() {
           {content.marquee.categories.map((cat, i) => (
             <div key={cat.id} className="admin-item-card">
               <div className="admin-item-card__header">
-                <strong>{cat.label || `Category ${i + 1}`}</strong>
-                <button className="admin-btn admin-btn--danger" onClick={() => removeArrayObj('marquee', 'categories', i)}>X</button>
+                <strong className="admin-item-card__title">{cat.label || `Category ${i + 1}`}</strong>
+                <button className="admin-btn admin-btn--danger admin-btn--sm" onClick={() => removeArrayObj('marquee', 'categories', i)}>X</button>
               </div>
               <div className="admin-field">
                 <label className="admin-field__label">Label</label>
@@ -350,7 +384,7 @@ export default function ContentEditor() {
           </div>
           <div className="admin-field">
             <label className="admin-field__label">Subheading</label>
-            <textarea className="admin-field__textarea" rows={3} value={content.roadmap.subheading} onChange={(e) => update('roadmap', 'subheading', e.target.value)} />
+            <textarea className="admin-field__textarea" rows={3} value={content.roadmap.subheading} onChange={(e) => update('roadmap', 'subheadline', e.target.value)} />
           </div>
           <div className="admin-field">
             <label className="admin-field__label">Quote</label>
@@ -360,8 +394,8 @@ export default function ContentEditor() {
           {content.roadmap.stages.map((stage, i) => (
             <div key={stage.id} className="admin-item-card">
               <div className="admin-item-card__header">
-                <strong>Stage {i + 1}</strong>
-                <button className="admin-btn admin-btn--danger" onClick={() => removeArrayObj('roadmap', 'stages', i)}>Remove</button>
+                <strong className="admin-item-card__title">Stage {i + 1}</strong>
+                <button className="admin-btn admin-btn--danger admin-btn--sm" onClick={() => removeArrayObj('roadmap', 'stages', i)}>Remove</button>
               </div>
               <div className="admin-field">
                 <label className="admin-field__label">Title</label>
@@ -389,27 +423,31 @@ export default function ContentEditor() {
             <label className="admin-field__label">Footer Text</label>
             <textarea className="admin-field__textarea" rows={2} value={content.credibility.footerText} onChange={(e) => update('credibility', 'footerText', e.target.value)} />
           </div>
-          <div className="admin-field">
-            <label className="admin-field__label">CTA Button Text</label>
-            <input className="admin-field__input" value={content.credibility.ctaText} onChange={(e) => update('credibility', 'ctaText', e.target.value)} />
+          <div className="admin-grid-2">
+            <div className="admin-field">
+              <label className="admin-field__label">CTA Button Text</label>
+              <input className="admin-field__input" value={content.credibility.ctaText} onChange={(e) => update('credibility', 'ctaText', e.target.value)} />
+            </div>
+            <div className="admin-field">
+              <label className="admin-field__label">CTA Link</label>
+              <input className="admin-field__input" value={content.credibility.ctaLink} onChange={(e) => update('credibility', 'ctaLink', e.target.value)} />
+            </div>
           </div>
-          <div className="admin-field">
-            <label className="admin-field__label">CTA Link</label>
-            <input className="admin-field__input" value={content.credibility.ctaLink} onChange={(e) => update('credibility', 'ctaLink', e.target.value)} />
-          </div>
-          <div className="admin-field">
-            <label className="admin-field__label">Secondary CTA Text</label>
-            <input className="admin-field__input" value={content.credibility.secondaryCtaText} onChange={(e) => update('credibility', 'secondaryCtaText', e.target.value)} />
-          </div>
-          <div className="admin-field">
-            <label className="admin-field__label">Secondary CTA Link</label>
-            <input className="admin-field__input" value={content.credibility.secondaryCtaLink} onChange={(e) => update('credibility', 'secondaryCtaLink', e.target.value)} />
+          <div className="admin-grid-2">
+            <div className="admin-field">
+              <label className="admin-field__label">Secondary CTA Text</label>
+              <input className="admin-field__input" value={content.credibility.secondaryCtaText} onChange={(e) => update('credibility', 'secondaryCtaText', e.target.value)} />
+            </div>
+            <div className="admin-field">
+              <label className="admin-field__label">Secondary CTA Link</label>
+              <input className="admin-field__input" value={content.credibility.secondaryCtaLink} onChange={(e) => update('credibility', 'secondaryCtaLink', e.target.value)} />
+            </div>
           </div>
           <h4 className="admin-item-card__heading">Credibility Items</h4>
           {content.credibility.items.map((item, i) => (
             <div key={i} className="admin-list-row">
               <input className="admin-field__input" value={item} onChange={(e) => updateListItem('credibility', 'items', i, e.target.value)} />
-              <button className="admin-btn admin-btn--danger" onClick={() => removeListItem('credibility', 'items', i)}>X</button>
+              <button className="admin-btn admin-btn--danger admin-btn--sm" onClick={() => removeListItem('credibility', 'items', i)}>X</button>
             </div>
           ))}
           <button className="admin-btn admin-btn--secondary" onClick={() => addListItem('credibility', 'items', '')}>+ Add Item</button>
@@ -427,20 +465,25 @@ export default function ContentEditor() {
             <label className="admin-field__label">Subtitle</label>
             <textarea className="admin-field__textarea" rows={3} value={content.cta.subtitle} onChange={(e) => update('cta', 'subtitle', e.target.value)} />
           </div>
-          <div className="admin-field">
-            <label className="admin-field__label">Button Text</label>
-            <input className="admin-field__input" value={content.cta.buttonText} onChange={(e) => update('cta', 'buttonText', e.target.value)} />
-          </div>
-          <div className="admin-field">
-            <label className="admin-field__label">Button Link</label>
-            <input className="admin-field__input" value={content.cta.buttonLink} onChange={(e) => update('cta', 'buttonLink', e.target.value)} />
+          <div className="admin-grid-2">
+            <div className="admin-field">
+              <label className="admin-field__label">Button Text</label>
+              <input className="admin-field__input" value={content.cta.buttonText} onChange={(e) => update('cta', 'buttonText', e.target.value)} />
+            </div>
+            <div className="admin-field">
+              <label className="admin-field__label">Button Link</label>
+              <input className="admin-field__input" value={content.cta.buttonLink} onChange={(e) => update('cta', 'buttonLink', e.target.value)} />
+            </div>
           </div>
         </Section>
       )}
 
       {/* Sticky save bar */}
       <div className="admin-save-bar">
-        <span className="admin-save-bar__hint">Unsaved changes will be lost if you leave this page</span>
+        <span className="admin-save-bar__hint">
+          Unsaved changes will be lost if you leave
+          <span className="admin-save-bar__kbd"><kbd>Ctrl</kbd>+<kbd>S</kbd></span>
+        </span>
         <button className="admin-btn admin-btn--primary" onClick={save} disabled={saving}>
           {saving ? (
             <>

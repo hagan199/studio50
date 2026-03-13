@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx vite:*)",
+      "Bash(ls C:/laragon/www/studio50/server/*.js)"
+    ]
+  }
+}

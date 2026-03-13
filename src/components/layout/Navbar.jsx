@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '../../utils/api';
 import './Navbar.css';
 
@@ -19,7 +19,7 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -42,6 +42,14 @@ export default function Navbar() {
       .catch(() => {});
   }, []);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    document.body.classList.toggle('nav-open', menuOpen);
+    return () => document.body.classList.remove('nav-open');
+  }, [menuOpen]);
+
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
+
   return (
     <nav className={`navbar${scrolled ? ' scrolled' : ''}`}>
       <div className="nav-container">
@@ -52,13 +60,14 @@ export default function Navbar() {
             className="brand-img"
           />
         </a>
+        <div className={`nav-overlay${menuOpen ? ' visible' : ''}`} onClick={closeMenu} />
         <div className={`nav-menu${menuOpen ? ' open' : ''}`}>
           {navLinks.map((link) => (
             <a
               key={link.label}
               href={link.href}
               className={`nav-link${link.href === '#' || link.href === '/' ? ' active' : ''}`}
-              onClick={() => setMenuOpen(false)}
+              onClick={closeMenu}
             >
               <div className="clip">
                 <div className="clip-text-w">
@@ -70,7 +79,7 @@ export default function Navbar() {
               </div>
             </a>
           ))}
-          <a href="#auditions" className="nav-link cta-link" onClick={() => setMenuOpen(false)}>
+          <a href="#auditions" className="nav-link cta-link" onClick={closeMenu}>
             <div className="clip">
               <div className="clip-text-w">
                 <div className="btn-text">Get Audition Forms</div>

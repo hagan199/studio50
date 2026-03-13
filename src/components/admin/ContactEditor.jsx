@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '../../utils/api';
 
 export default function ContactEditor() {
@@ -36,7 +36,8 @@ export default function ContactEditor() {
     }));
   };
 
-  const save = async () => {
+  const save = useCallback(async () => {
+    if (!contact || saving) return;
     setSaving(true);
     try {
       await api.put('/api/contact', contact);
@@ -47,9 +48,29 @@ export default function ContactEditor() {
     } finally {
       setSaving(false);
     }
-  };
+  }, [contact, saving]);
 
-  if (!contact) return <div className="admin-loading">Loading...</div>;
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        save();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [save]);
+
+  if (!contact) {
+    return (
+      <div className="admin-loading">
+        <div className="admin-loading__bar" />
+        <div className="admin-loading__bar" />
+        <div className="admin-loading__bar" />
+        <div className="admin-loading__bar" />
+      </div>
+    );
+  }
 
   return (
     <div className="admin-editor">
@@ -60,7 +81,11 @@ export default function ContactEditor() {
         </button>
       </div>
 
-      {message && <div className="admin-alert admin-alert--success">{message}</div>}
+      {message && (
+        <div className={`admin-alert ${message.includes('Failed') ? 'admin-alert--error' : 'admin-alert--success'}`}>
+          {message}
+        </div>
+      )}
 
       <div className="admin-card">
         <h3 className="admin-card__title">Contact Details</h3>
@@ -96,23 +121,29 @@ export default function ContactEditor() {
           <button className="admin-btn admin-btn--secondary" onClick={addSocial}>+ Add Link</button>
         </div>
 
-        {contact.socialLinks.map((link, i) => (
-          <div key={i} className="admin-social-row">
-            <select className="admin-field__input" value={link.platform} onChange={(e) => {
-              updateSocial(i, 'platform', e.target.value);
-              updateSocial(i, 'icon', e.target.value);
-            }}>
-              <option value="linkedin">LinkedIn</option>
-              <option value="facebook">Facebook</option>
-              <option value="instagram">Instagram</option>
-              <option value="youtube">YouTube</option>
-              <option value="twitter">Twitter/X</option>
-              <option value="tiktok">TikTok</option>
-            </select>
-            <input className="admin-field__input" placeholder="URL" value={link.url} onChange={(e) => updateSocial(i, 'url', e.target.value)} />
-            <button className="admin-btn admin-btn--sm admin-btn--danger" onClick={() => removeSocial(i)}>✕</button>
+        {contact.socialLinks.length === 0 ? (
+          <div className="admin-empty-state">
+            <div className="admin-empty-state__text">No social links added yet.</div>
           </div>
-        ))}
+        ) : (
+          contact.socialLinks.map((link, i) => (
+            <div key={i} className="admin-social-row">
+              <select className="admin-field__input" value={link.platform} onChange={(e) => {
+                updateSocial(i, 'platform', e.target.value);
+                updateSocial(i, 'icon', e.target.value);
+              }}>
+                <option value="linkedin">LinkedIn</option>
+                <option value="facebook">Facebook</option>
+                <option value="instagram">Instagram</option>
+                <option value="youtube">YouTube</option>
+                <option value="twitter">Twitter/X</option>
+                <option value="tiktok">TikTok</option>
+              </select>
+              <input className="admin-field__input" placeholder="URL" value={link.url} onChange={(e) => updateSocial(i, 'url', e.target.value)} />
+              <button className="admin-btn admin-btn--sm admin-btn--danger" onClick={() => removeSocial(i)}>✕</button>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

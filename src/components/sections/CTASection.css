@@ -1,7 +1,7 @@
 .cta-section {
   background-color: var(--cta-bg, white);
-  padding-top: 80px;
-  padding-bottom: 80px;
+  padding-top: 100px;
+  padding-bottom: 100px;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -14,7 +14,7 @@
   font-size: var(--font-size-h1);
   letter-spacing: -2px;
   text-transform: capitalize;
-  line-height: 1.2;
+  line-height: 1.1;
 }
 
 .hero-heading.center {
@@ -22,8 +22,16 @@
 }
 
 .cta-subtitle {
-  color: var(--cta-text, #171717);
+  color: var(--cta-text, #555);
   font-weight: 400;
   max-width: 700px;
-  margin: 15px auto 30px;
+  margin: 16px auto 36px;
+  line-height: 1.6;
+}
+
+@media screen and (max-width: 767px) {
+  .cta-section {
+    padding-top: 72px;
+    padding-bottom: 72px;
+  }
 }

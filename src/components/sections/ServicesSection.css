@@ -1,5 +1,5 @@
 .services {
-  padding: 120px 0;
+  padding: 100px 0;
   background: var(--services-bg, #0A0A0A);
 }
 
@@ -68,7 +68,8 @@
 .service-card__icon {
   width: 56px;
   height: 56px;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  background: linear-gradient(135deg, rgba(212, 168, 67, 0.15), rgba(212, 168, 67, 0.05));
+  border: 1px solid rgba(212, 168, 67, 0.2);
   border-radius: 16px;
   display: flex;
   align-items: center;
@@ -76,6 +77,12 @@
   margin-bottom: 24px;
   position: relative;
   z-index: 1;
+  transition: background 0.35s, border-color 0.35s;
+}
+
+.service-card:hover .service-card__icon {
+  background: linear-gradient(135deg, rgba(212, 168, 67, 0.25), rgba(212, 168, 67, 0.1));
+  border-color: rgba(212, 168, 67, 0.35);
 }
 
 .service-card__icon svg {

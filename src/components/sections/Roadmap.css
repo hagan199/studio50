@@ -105,17 +105,18 @@
 .stage-desc {
   color: rgba(255, 255, 255, 0.7);
   font-size: var(--font-size-body-small);
-  height: 0;
+  line-height: 1.5;
+  max-height: 0;
   opacity: 0;
   overflow: hidden;
-  transition: height 0.3s ease, opacity 0.3s ease;
+  transition: max-height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s ease, margin-top 0.3s ease;
   margin-top: 0;
 }
 
 .stage-desc.show {
-  height: auto;
+  max-height: 200px;
   opacity: 1;
-  margin-top: 10px;
+  margin-top: 12px;
 }
 
 .note-box {

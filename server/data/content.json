@@ -1,4 +1,14 @@
 {
+  "sections": [
+    { "id": "hero", "label": "Hero Section", "visible": true, "order": 0 },
+    { "id": "auditionProcess", "label": "Audition Process", "visible": true, "order": 1 },
+    { "id": "whyHMR", "label": "Why HMR", "visible": true, "order": 2 },
+    { "id": "latestContent", "label": "Latest Content", "visible": true, "order": 3 },
+    { "id": "credibility", "label": "Credibility", "visible": true, "order": 4 },
+    { "id": "marquee", "label": "What HMR Seeks", "visible": true, "order": 5 },
+    { "id": "roadmap", "label": "Roadmap", "visible": true, "order": 6 },
+    { "id": "cta", "label": "CTA Section", "visible": true, "order": 7 }
+  ],
   "brand": {
     "name": "Studio",
     "shortName": "HMR",
@@ -202,5 +212,13 @@
     "subtitle": "Have a talent or an idea in mind that would place your region above others? Hype My Region is here to bring it to life.",
     "buttonText": "Start your journey today",
     "buttonLink": "#auditions"
+  },
+  "footer": {
+    "email": "info@hypemyregion.com",
+    "copyrightText": "\u00a9 2026 Hype My Region. All rights reserved.",
+    "disclaimerTitle": "Legal & Disclaimer",
+    "disclaimerText": "Registration for auditions does not constitute a purchase of any prize or guarantee of advancement. All outcomes are determined through merit-based judging.",
+    "privacyPolicyUrl": "#",
+    "termsUrl": "#"
   }
 }

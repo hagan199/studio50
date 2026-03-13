@@ -3,7 +3,12 @@ import api from '../../utils/api';
 import useScrollAnimation from '../../hooks/useScrollAnimation';
 import './WhyHMR.css';
 
-const checkIcon = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAABVUlEQVR4nN2UwU7DMAyGo6HtWVAFq//lQZhghVdijOv2BGg8EoOxKwiOg8OaVCoyDaysSZpFXCCS1ahNP9t/bAvxr1eZJL0CuFDAXAMLBbyzmf28GAzO+UwUXANnmmilgdJrRI8aOA2POssONHDdCkbDJqUQnZDIY+ClyWbcLkssHMbSdGiXJkl6QZrjpyngRQOzWhZL68VztcTA837/yGQ//XpfEGUNB4rodk/4ay7lMf+7kfJQET3Xvt3Y9H/4DbiubGHLYL1zaGb0dcrCT+sZonWbg6kNoALgTgcauPdI8BQgS70f7poZVPPGKUUeELn3knlw+fQOhZsMRmJ3lVJ2uUlcFbNpk2ULXzknLE9FV0OpkMgrBydWeM3JZN+O1lv4pRf+KZUQHQ1cRcDHQeP6O5M0HdruxAJetsrizEbKLg8uLjuubQW8sZk9vxvxmSj4n1kfTh/YRUvQ3PYAAAAASUVORK5CYII=";
+const CheckIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="check-icon-svg">
+    <circle cx="10" cy="10" r="10" fill="currentColor" opacity="0.15" />
+    <path d="M6 10l3 3 5-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
 
 export default function WhyHMR() {
   const [data, setData] = useState(null);
@@ -27,7 +32,7 @@ export default function WhyHMR() {
           <ul className="content-list-w" data-animate="stagger-children" data-stagger="0.08" data-delay="0.2">
             {data.whyItems.map((item) => (
               <li key={item} className="content-list-item">
-                <img src={checkIcon} alt="Check" />
+                <CheckIcon />
                 <h5 className="section-small-title">{item}</h5>
               </li>
             ))}
@@ -42,7 +47,7 @@ export default function WhyHMR() {
           <ul className="content-list-w" data-animate="stagger-children" data-stagger="0.08" data-delay="0.2">
             {data.whatItems.map((item) => (
               <li key={item} className="content-list-item">
-                <img src={checkIcon} alt="Check" />
+                <CheckIcon />
                 <h5 className="section-small-title">{item}</h5>
               </li>
             ))}
