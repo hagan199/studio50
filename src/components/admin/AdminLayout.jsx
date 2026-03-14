@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, NavLink, Outlet, useLocation } from 'react-router-dom';
+import PreviewPane from './PreviewPane';
 import './Admin.css';
 
 const navItems = [
@@ -45,6 +46,7 @@ const pageTitles = {
 
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -118,11 +120,19 @@ export default function AdminLayout() {
             <h2 className="admin-topbar__title">{currentTitle}</h2>
             <span className="admin-topbar__breadcrumb">Dashboard / {currentTitle}</span>
           </div>
+          <button className="admin-topbar__preview-btn" onClick={() => setPreviewOpen(true)}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            Preview
+          </button>
         </header>
         <div className="admin-main__content">
           <Outlet />
         </div>
       </main>
+      {previewOpen && <PreviewPane onClose={() => setPreviewOpen(false)} />}
     </div>
   );
 }
