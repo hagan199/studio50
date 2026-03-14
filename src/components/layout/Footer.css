@@ -32,7 +32,7 @@
 /* ---- Main grid ---- */
 .footer__grid {
   display: grid;
-  grid-template-columns: 1.3fr 1fr 1fr 1.2fr;
+  grid-template-columns: 1.4fr 1fr 1.2fr;
   gap: 48px;
   padding-bottom: 48px;
 }
