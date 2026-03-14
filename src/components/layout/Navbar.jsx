@@ -163,27 +163,16 @@ export default function Navbar() {
               className={`nav-link${isActive(link.href) ? ' active' : ''}`}
               onClick={(e) => handleNavClick(e, link.href)}
             >
-              <div className="clip">
-                <div className="clip-text-w">
-                  <div className="btn-text">{link.label}</div>
-                </div>
-                <div className="clip-text-w bottom">
-                  <div className="btn-text">{link.label}</div>
-                </div>
-              </div>
+              {link.label}
             </a>
           ))}
-          <a href="#auditions" className="nav-link cta-link" onClick={(e) => handleNavClick(e, '#auditions')}>
-            <div className="clip">
-              <div className="clip-text-w">
-                <div className="btn-text">Get Audition Forms</div>
-              </div>
-              <div className="clip-text-w bottom">
-                <div className="btn-text">Get Audition Forms</div>
-              </div>
-            </div>
+          <a href="#auditions" className="nav-link cta-link mobile-only" onClick={(e) => handleNavClick(e, '#auditions')}>
+            Get Audition Forms
           </a>
         </div>
+        <a href="#auditions" className="nav-cta desktop-only" onClick={(e) => handleNavClick(e, '#auditions')}>
+          Get Audition Forms
+        </a>
         <button
           className={`menu-button${menuOpen ? ' active' : ''}`}
           onClick={() => setMenuOpen(!menuOpen)}

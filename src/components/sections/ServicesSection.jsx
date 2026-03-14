@@ -40,35 +40,37 @@ export default function ServicesSection() {
   useEffect(() => {
     if (!services || !cardsRef.current) return;
 
-    // Title animation
-    gsap.from(titleRef.current, {
-      y: 60,
-      opacity: 0,
-      duration: 1,
-      ease: 'power3.out',
-      scrollTrigger: {
-        trigger: titleRef.current,
-        start: 'top 85%',
-      },
-    });
+    const ctx = gsap.context(() => {
+      // Title animation
+      gsap.from(titleRef.current, {
+        y: 60,
+        opacity: 0,
+        duration: 1,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: titleRef.current,
+          start: 'top 90%',
+          toggleActions: 'play none none none',
+        },
+      });
 
-    // Staggered card reveal
-    const cards = cardsRef.current.querySelectorAll('.service-card');
-    gsap.from(cards, {
-      y: 50,
-      opacity: 0,
-      stagger: 0.12,
-      duration: 0.8,
-      ease: 'power2.out',
-      scrollTrigger: {
-        trigger: cardsRef.current,
-        start: 'top 80%',
-      },
-    });
+      // Staggered card reveal
+      const cards = cardsRef.current.querySelectorAll('.service-card');
+      gsap.from(cards, {
+        y: 50,
+        opacity: 0,
+        stagger: 0.12,
+        duration: 0.8,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: cardsRef.current,
+          start: 'top 90%',
+          toggleActions: 'play none none none',
+        },
+      });
+    }, sectionRef);
 
-    return () => {
-      ScrollTrigger.getAll().forEach((st) => st.kill());
-    };
+    return () => ctx.revert();
   }, [services]);
 
   const handleCardHover = (e, enter) => {

@@ -1,13 +1,14 @@
 {
   "sections": [
     { "id": "hero", "label": "Hero Section", "visible": true, "order": 0 },
-    { "id": "auditionProcess", "label": "Audition Process", "visible": true, "order": 1 },
-    { "id": "whyHMR", "label": "Why HMR", "visible": true, "order": 2 },
-    { "id": "latestContent", "label": "Latest Content", "visible": true, "order": 3 },
-    { "id": "credibility", "label": "Credibility", "visible": true, "order": 4 },
-    { "id": "marquee", "label": "What HMR Seeks", "visible": true, "order": 5 },
-    { "id": "roadmap", "label": "Roadmap", "visible": true, "order": 6 },
-    { "id": "cta", "label": "CTA Section", "visible": true, "order": 7 }
+    { "id": "services", "label": "Services", "visible": true, "order": 1 },
+    { "id": "auditionProcess", "label": "Audition Process", "visible": true, "order": 2 },
+    { "id": "whyHMR", "label": "Why HMR", "visible": true, "order": 3 },
+    { "id": "latestContent", "label": "Latest Content", "visible": true, "order": 4 },
+    { "id": "credibility", "label": "Credibility", "visible": true, "order": 5 },
+    { "id": "marquee", "label": "What HMR Seeks", "visible": true, "order": 6 },
+    { "id": "roadmap", "label": "Roadmap", "visible": true, "order": 7 },
+    { "id": "cta", "label": "CTA Section", "visible": true, "order": 8 }
   ],
   "brand": {
     "name": "Studio",

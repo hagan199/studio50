@@ -3,7 +3,9 @@
     "allow": [
       "Bash(npx vite:*)",
       "Bash(ls C:/laragon/www/studio50/server/*.js)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(cat vite.config.* 2>/dev/null || cat package.json | grep -A5 '\"scripts\"')",
+      "Bash(ls -la \"C:/laragon/www/studio50/public/images/hmr-logo-new.avif\" 2>/dev/null || ls -la \"C:/laragon/www/studio50/public/images/\"*logo* 2>/dev/null)"
     ]
   }
 }

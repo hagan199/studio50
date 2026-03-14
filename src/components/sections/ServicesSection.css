@@ -40,6 +40,7 @@
   overflow: hidden;
   transition: box-shadow 0.35s;
   will-change: transform;
+  opacity: 1;
 }
 
 .service-card:hover {
