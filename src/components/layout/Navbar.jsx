@@ -11,11 +11,43 @@ const fallbackNavLinks = [
   { label: 'Contact Us', href: '#contact' },
 ];
 
+function findElement(href) {
+  if (!href || href === '#' || href === '/') return null;
+
+  // 1. Direct match by ID
+  const id = href.replace(/^#/, '');
+  const direct = document.getElementById(id);
+  if (direct) return direct;
+
+  // 2. Try querySelector (handles complex selectors)
+  try {
+    const qsel = document.querySelector(href);
+    if (qsel) return qsel;
+  } catch { /* invalid selector, continue */ }
+
+  // 3. Fuzzy match — strip non-alphanumeric and search all IDs
+  const clean = id.replace(/[^a-z0-9]/gi, '').toLowerCase();
+  if (clean) {
+    const all = document.querySelectorAll('[id]');
+    for (const el of all) {
+      const elClean = el.id.replace(/[^a-z0-9]/gi, '').toLowerCase();
+      if (elClean === clean) return el;
+    }
+    // 4. Partial / contains match
+    for (const el of all) {
+      const elClean = el.id.replace(/[^a-z0-9]/gi, '').toLowerCase();
+      if (elClean.includes(clean) || clean.includes(elClean)) return el;
+    }
+  }
+
+  return null;
+}
+
 function scrollToHref(href) {
   if (!href || href === '#' || href === '/') {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } else {
-    const el = document.querySelector(href);
+    const el = findElement(href);
     if (el) {
       const navHeight = document.querySelector('.navbar')?.offsetHeight || 65;
       const top = el.getBoundingClientRect().top + window.scrollY - navHeight - 10;
@@ -67,21 +99,26 @@ export default function Navbar() {
       .filter((l) => l.href.startsWith('#') && l.href.length > 1)
       .map((l) => l.href);
 
+    // Map each href to the element it resolves to
+    const hrefToEl = new Map();
+    sectionHrefs.forEach((href) => {
+      const el = findElement(href);
+      if (el) hrefToEl.set(el, href);
+    });
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setActiveHref(`#${entry.target.id}`);
+            const href = hrefToEl.get(entry.target);
+            if (href) setActiveHref(href);
           }
         });
       },
       { threshold: 0.25, rootMargin: '-70px 0px -45% 0px' }
     );
 
-    sectionHrefs.forEach((href) => {
-      const el = document.querySelector(href);
-      if (el) observer.observe(el);
-    });
+    hrefToEl.forEach((_, el) => observer.observe(el));
 
     return () => observer.disconnect();
   }, [navLinks]);

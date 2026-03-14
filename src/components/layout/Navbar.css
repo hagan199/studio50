@@ -65,8 +65,8 @@
   color: var(--navbar-link-color, #0d0d0dcc);
   margin-left: 15px;
   margin-right: 15px;
-  padding-top: 20px;
-  padding-bottom: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   text-decoration: none;
   display: block;
   position: relative;
@@ -76,7 +76,7 @@
 .nav-link::after {
   content: '';
   position: absolute;
-  bottom: 14px;
+  bottom: 6px;
   left: 15px;
   right: 15px;
   height: 2px;

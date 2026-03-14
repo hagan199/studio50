@@ -43,14 +43,15 @@ const SECTION_MAP = {
 
 const DEFAULT_SECTIONS = [
   { id: 'hero', visible: true, order: 0 },
-  { id: 'auditionProcess', visible: true, order: 1 },
-  { id: 'whyHMR', visible: true, order: 2 },
-  { id: 'latestContent', visible: true, order: 3 },
-  { id: 'credibility', visible: true, order: 4 },
-  { id: 'marquee', visible: true, order: 5 },
-  { id: 'roadmap', visible: true, order: 6 },
-  { id: 'cta', visible: true, order: 7 },
-  { id: 'contact', visible: true, order: 8 },
+  { id: 'services', visible: true, order: 1 },
+  { id: 'auditionProcess', visible: true, order: 2 },
+  { id: 'whyHMR', visible: true, order: 3 },
+  { id: 'latestContent', visible: true, order: 4 },
+  { id: 'credibility', visible: true, order: 5 },
+  { id: 'marquee', visible: true, order: 6 },
+  { id: 'roadmap', visible: true, order: 7 },
+  { id: 'cta', visible: true, order: 8 },
+  { id: 'contact', visible: true, order: 9 },
 ];
 
 export default function HomePage() {

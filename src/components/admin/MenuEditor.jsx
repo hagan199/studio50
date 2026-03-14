@@ -4,13 +4,40 @@ import useAdminSave from '../../hooks/useAdminSave';
 import AdminToast from './AdminToast';
 import AdminSaveBar from './AdminSaveBar';
 
+/* Fixed page sections that always exist */
+const STATIC_ANCHORS = [
+  { value: '#', label: 'Home (top of page)' },
+  { value: '#about', label: 'About Us' },
+  { value: '#services', label: 'Services (all)' },
+  { value: '#auditions', label: 'Auditions' },
+  { value: '#programs', label: 'Programs' },
+  { value: '#awards', label: 'Awards & Marquee' },
+  { value: '#contact', label: 'Contact' },
+];
+
+function toAnchorId(title) {
+  return title?.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9]/g, '') || '';
+}
+
 export default function MenuEditor() {
   const [data, setData] = useState(null);
   const [dirty, setDirty] = useState(false);
+  const [anchors, setAnchors] = useState(STATIC_ANCHORS);
   const initialLoad = useRef(true);
 
   useEffect(() => {
     api.get('/api/menu').then((res) => setData(res.data)).catch(() => {});
+
+    /* Build dynamic anchors from services */
+    api.get('/api/services').then((res) => {
+      const serviceAnchors = (res.data?.items || [])
+        .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+        .map((svc) => ({
+          value: `#${toAnchorId(svc.title)}`,
+          label: `${svc.title} (service)`,
+        }));
+      setAnchors([...STATIC_ANCHORS, ...serviceAnchors]);
+    }).catch(() => {});
   }, []);
 
   // Dirty tracking — skip the very first render / initial data load
@@ -104,7 +131,7 @@ export default function MenuEditor() {
       <div className="admin-card">
         <h3 className="admin-card__title">Navigation Links</h3>
         <p style={{ color: '#666', fontSize: '0.85rem', marginBottom: '16px' }}>
-          Edit labels and anchors/URLs (e.g. <code style={{ color: '#999', background: 'rgba(255,255,255,0.06)', padding: '2px 6px', borderRadius: 4 }}>#about</code>).
+          Set the label and pick which section each link scrolls to.
         </p>
 
         {items.length === 0 ? (
@@ -112,27 +139,51 @@ export default function MenuEditor() {
             <div className="admin-empty-state__text">No menu items yet. Click &quot;+ Add Link&quot; to get started.</div>
           </div>
         ) : (
-          items.map((item, i) => (
-            <div key={item.id || i} className="admin-social-row">
-              <input
-                className="admin-field__input"
-                placeholder="Label"
-                value={item.label || ''}
-                onChange={(e) => updateItem(i, 'label', e.target.value)}
-              />
-              <input
-                className="admin-field__input"
-                placeholder="Href (e.g. #about)"
-                value={item.href || ''}
-                onChange={(e) => updateItem(i, 'href', e.target.value)}
-              />
-              <div style={{ display: 'flex', gap: '6px' }}>
-                <button className="admin-btn admin-btn--sm" onClick={() => moveItem(i, -1)} title="Move up" disabled={i === 0}>↑</button>
-                <button className="admin-btn admin-btn--sm" onClick={() => moveItem(i, 1)} title="Move down" disabled={i === items.length - 1}>↓</button>
-                <button className="admin-btn admin-btn--sm admin-btn--danger" onClick={() => removeItem(i)} title="Remove">✕</button>
+          items.map((item, i) => {
+            const hrefInList = anchors.some((a) => a.value === item.href);
+            return (
+              <div key={item.id || i} className="admin-social-row">
+                <input
+                  className="admin-field__input"
+                  placeholder="Label"
+                  value={item.label || ''}
+                  onChange={(e) => updateItem(i, 'label', e.target.value)}
+                />
+                <select
+                  className="admin-field__input"
+                  value={hrefInList ? item.href : '__custom__'}
+                  onChange={(e) => {
+                    if (e.target.value !== '__custom__') {
+                      updateItem(i, 'href', e.target.value);
+                    }
+                  }}
+                >
+                  {anchors.map((a) => (
+                    <option key={a.value} value={a.value}>
+                      {a.label} ({a.value})
+                    </option>
+                  ))}
+                  {!hrefInList && (
+                    <option value="__custom__">Custom: {item.href}</option>
+                  )}
+                </select>
+                {!hrefInList && (
+                  <input
+                    className="admin-field__input"
+                    placeholder="Custom href"
+                    value={item.href || ''}
+                    onChange={(e) => updateItem(i, 'href', e.target.value)}
+                    style={{ maxWidth: 160 }}
+                  />
+                )}
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  <button className="admin-btn admin-btn--sm" onClick={() => moveItem(i, -1)} title="Move up" disabled={i === 0}>&#8593;</button>
+                  <button className="admin-btn admin-btn--sm" onClick={() => moveItem(i, 1)} title="Move down" disabled={i === items.length - 1}>&#8595;</button>
+                  <button className="admin-btn admin-btn--sm admin-btn--danger" onClick={() => removeItem(i)} title="Remove">&#10005;</button>
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
 
