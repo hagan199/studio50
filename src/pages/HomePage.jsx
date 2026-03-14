@@ -97,7 +97,6 @@ export default function HomePage() {
         }
         return <Component key={s.id} />;
       })}
-      <Footer />
       <BackToTop />
     </>
   );
