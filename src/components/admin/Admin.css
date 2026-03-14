@@ -1647,3 +1647,82 @@ select.admin-field__input option {
     grid-template-columns: 1fr;
   }
 }
+
+/* ==================== Contact Editor ==================== */
+
+.contact-social-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.contact-social-row__icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+  color: #888;
+}
+
+.contact-social-row__icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Contact preview */
+.contact-preview {
+  background: #0a0a0a;
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+}
+
+.contact-preview__row {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.contact-preview__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #ccc;
+  font-size: 0.88rem;
+}
+
+.contact-preview__item svg {
+  color: var(--color-accent, #d4a843);
+  opacity: 0.7;
+}
+
+.contact-preview__socials {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.contact-preview__social {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #888;
+}
+
+.contact-preview__social svg {
+  width: 18px;
+  height: 18px;
+}
