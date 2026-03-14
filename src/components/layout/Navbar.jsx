@@ -16,7 +16,11 @@ function scrollToHref(href) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } else {
     const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    if (el) {
+      const navHeight = document.querySelector('.navbar')?.offsetHeight || 65;
+      const top = el.getBoundingClientRect().top + window.scrollY - navHeight - 10;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
   }
 }
 

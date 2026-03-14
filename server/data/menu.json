@@ -13,27 +13,27 @@
       "order": 2
     },
     {
-      "id": "menu-programs",
-      "label": "aLL & Zonal Activities",
-      "href": "#programs",
+      "id": "menu-graphic",
+      "label": "Graphic Design",
+      "href": "#graphicdesign",
       "order": 3
     },
     {
-      "id": "menu-awards",
-      "label": "Awards & Partners",
-      "href": "#awards",
+      "id": "menu-photo",
+      "label": "Photography",
+      "href": "#photography",
       "order": 4
     },
     {
-      "id": "menu-auditions",
-      "label": "Auditions",
-      "href": "#auditions",
+      "id": "menu-video",
+      "label": "Videography",
+      "href": "#videography",
       "order": 5
     },
     {
-      "id": "menu-contact",
-      "label": "Contact Us",
-      "href": "#contact",
+      "id": "menu-live",
+      "label": "Live Productions",
+      "href": "#liveproductions",
       "order": 6
     }
   ]
