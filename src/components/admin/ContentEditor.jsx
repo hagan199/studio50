@@ -1,6 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import api from '../../utils/api';
 import ImageField from './ImageField';
+import useAdminSave from '../../hooks/useAdminSave';
+import AdminToast from './AdminToast';
+import AdminSaveBar from './AdminSaveBar';
 
 function Section({ title, count, defaultOpen = false, children }) {
   const [open, setOpen] = useState(defaultOpen);
@@ -31,12 +34,23 @@ function LoadingSkeleton() {
 
 export default function ContentEditor() {
   const [content, setContent] = useState(null);
-  const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState('');
+  const [dirty, setDirty] = useState(false);
+  const initialLoad = useRef(true);
 
   useEffect(() => {
     api.get('/api/content').then((res) => setContent(res.data)).catch(() => {});
   }, []);
+
+  // Dirty tracking — skip the very first render / initial data load
+  useEffect(() => {
+    if (initialLoad.current) { initialLoad.current = false; return; }
+    setDirty(true);
+  }, [content]);
+
+  const { saving, toast, save } = useAdminSave(async () => {
+    await api.put('/api/content', content);
+    setDirty(false);
+  });
 
   const update = (section, field, value) => {
     setContent((prev) => ({
@@ -89,45 +103,11 @@ export default function ContentEditor() {
     });
   };
 
-  const save = useCallback(async () => {
-    if (!content || saving) return;
-    setSaving(true);
-    try {
-      await api.put('/api/content', content);
-      setMessage('Content saved successfully!');
-      setTimeout(() => setMessage(''), 3000);
-    } catch {
-      setMessage('Failed to save');
-    } finally {
-      setSaving(false);
-    }
-  }, [content, saving]);
-
-  // Ctrl+S keyboard shortcut
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-        e.preventDefault();
-        save();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [save]);
-
   if (!content) return <LoadingSkeleton />;
 
   return (
     <div className="admin-editor">
-      {/* Toast notification */}
-      <div className={`admin-toast ${message ? 'admin-toast--visible' : ''} ${message && message.includes('Failed') ? 'admin-toast--error' : 'admin-toast--success'}`}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          {message && message.includes('Failed')
-            ? <><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></>
-            : <><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></>}
-        </svg>
-        {message}
-      </div>
+      <AdminToast toast={toast} />
 
       {/* Page Layout */}
       <Section title="Page Layout" defaultOpen={true}>
@@ -138,7 +118,7 @@ export default function ContentEditor() {
           .slice()
           .sort((a, b) => a.order - b.order)
           .map((section, idx, sorted) => (
-            <div key={section.id} className="admin-list-row" style={{ alignItems: 'center', gap: '0.5rem' }}>
+            <div key={section.id} className="admin-list-row">
               <label className="admin-checkbox" style={{ flex: 1, margin: 0 }}>
                 <input
                   type="checkbox"
@@ -447,7 +427,7 @@ export default function ContentEditor() {
           </div>
           <div className="admin-field">
             <label className="admin-field__label">Subheading</label>
-            <textarea className="admin-field__textarea" rows={3} value={content.roadmap.subheading} onChange={(e) => update('roadmap', 'subheadline', e.target.value)} />
+            <textarea className="admin-field__textarea" rows={3} value={content.roadmap.subheading} onChange={(e) => update('roadmap', 'subheading', e.target.value)} />
           </div>
           <div className="admin-field">
             <label className="admin-field__label">Quote</label>
@@ -573,26 +553,7 @@ export default function ContentEditor() {
         </Section>
       )}
 
-      {/* Sticky save bar */}
-      <div className="admin-save-bar">
-        <span className="admin-save-bar__hint">
-          Unsaved changes will be lost if you leave
-          <span className="admin-save-bar__kbd"><kbd>Ctrl</kbd>+<kbd>S</kbd></span>
-        </span>
-        <button className="admin-btn admin-btn--primary" onClick={save} disabled={saving}>
-          {saving ? (
-            <>
-              <svg className="admin-spinner" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10" opacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10" /></svg>
-              Saving...
-            </>
-          ) : (
-            <>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-              Save Changes
-            </>
-          )}
-        </button>
-      </div>
+      <AdminSaveBar saving={saving} onSave={save} dirty={dirty} />
     </div>
   );
 }

@@ -1,14 +1,23 @@
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import api from '../../utils/api';
+import useAdminSave from '../../hooks/useAdminSave';
+import AdminToast from './AdminToast';
+import AdminSaveBar from './AdminSaveBar';
 
 export default function MenuEditor() {
   const [data, setData] = useState(null);
-  const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState('');
+  const [dirty, setDirty] = useState(false);
+  const initialLoad = useRef(true);
 
   useEffect(() => {
     api.get('/api/menu').then((res) => setData(res.data)).catch(() => {});
   }, []);
+
+  // Dirty tracking — skip the very first render / initial data load
+  useEffect(() => {
+    if (initialLoad.current) { initialLoad.current = false; return; }
+    setDirty(true);
+  }, [data]);
 
   const items = useMemo(() => {
     if (!data?.items) return [];
@@ -57,41 +66,20 @@ export default function MenuEditor() {
     });
   };
 
-  const save = useCallback(async () => {
-    if (!data || saving) return;
-    setSaving(true);
-    try {
-      const normalized = {
-        ...(data || {}),
-        items: items.map((item, i) => ({
-          id: item.id || `menu-${i + 1}`,
-          label: item.label ?? '',
-          href: item.href ?? '',
-          order: i + 1,
-        })),
-      };
-
-      await api.put('/api/menu', normalized);
-      setData(normalized);
-      setMessage('Menu saved!');
-      setTimeout(() => setMessage(''), 3000);
-    } catch {
-      setMessage('Failed to save');
-    } finally {
-      setSaving(false);
-    }
-  }, [data, items, saving]);
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-        e.preventDefault();
-        save();
-      }
+  const { saving, toast, save } = useAdminSave(async () => {
+    const normalized = {
+      ...(data || {}),
+      items: items.map((item, i) => ({
+        id: item.id || `menu-${i + 1}`,
+        label: item.label ?? '',
+        href: item.href ?? '',
+        order: i + 1,
+      })),
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [save]);
+    await api.put('/api/menu', normalized);
+    setData(normalized);
+    setDirty(false);
+  });
 
   if (!data) {
     return (
@@ -106,21 +94,12 @@ export default function MenuEditor() {
 
   return (
     <div className="admin-editor">
+      <AdminToast toast={toast} />
+
       <div className="admin-editor__header">
         <h2>Menu</h2>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <button className="admin-btn admin-btn--secondary" onClick={addItem}>+ Add Link</button>
-          <button className="admin-btn admin-btn--primary" onClick={save} disabled={saving}>
-            {saving ? 'Saving...' : 'Save Menu'}
-          </button>
-        </div>
+        <button className="admin-btn admin-btn--secondary" onClick={addItem}>+ Add Link</button>
       </div>
-
-      {message && (
-        <div className={`admin-alert ${message.includes('Failed') ? 'admin-alert--error' : 'admin-alert--success'}`}>
-          {message}
-        </div>
-      )}
 
       <div className="admin-card">
         <h3 className="admin-card__title">Navigation Links</h3>
@@ -130,7 +109,7 @@ export default function MenuEditor() {
 
         {items.length === 0 ? (
           <div className="admin-empty-state">
-            <div className="admin-empty-state__text">No menu items yet. Click "+ Add Link" to get started.</div>
+            <div className="admin-empty-state__text">No menu items yet. Click &quot;+ Add Link&quot; to get started.</div>
           </div>
         ) : (
           items.map((item, i) => (
@@ -156,6 +135,8 @@ export default function MenuEditor() {
           ))
         )}
       </div>
+
+      <AdminSaveBar saving={saving} onSave={save} dirty={dirty} />
     </div>
   );
 }

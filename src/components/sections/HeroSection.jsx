@@ -1,15 +1,51 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import gsap from 'gsap';
 import api from '../../utils/api';
 import './HeroSection.css';
 
+const DEFAULT_SLIDES = [
+  '/images/frican-students-walking-outdoors.avif',
+  '/images/band-playing-together.avif',
+  '/images/audition-homepage-img.avif',
+  '/images/performing-arts.avif',
+];
+
 export default function HeroSection() {
   const [content, setContent] = useState(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
   const sectionRef = useRef(null);
+  const intervalRef = useRef(null);
 
   useEffect(() => {
     api.get('/api/content').then((res) => setContent(res.data)).catch(() => {});
   }, []);
+
+  const slides = content?.hero?.galleryImages?.length
+    ? content.hero.galleryImages
+    : content?.hero?.backgroundImageUrl
+      ? [content.hero.backgroundImageUrl, ...DEFAULT_SLIDES.filter(s => s !== content.hero.backgroundImageUrl)]
+      : DEFAULT_SLIDES;
+
+  const goToSlide = useCallback((index) => {
+    setCurrentSlide(index);
+  }, []);
+
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  }, [slides.length]);
+
+  // Auto-advance slides
+  useEffect(() => {
+    if (!content) return;
+    intervalRef.current = setInterval(nextSlide, 5000);
+    return () => clearInterval(intervalRef.current);
+  }, [content, nextSlide]);
+
+  // Pause on hover
+  const handleMouseEnter = () => clearInterval(intervalRef.current);
+  const handleMouseLeave = () => {
+    intervalRef.current = setInterval(nextSlide, 5000);
+  };
 
   useEffect(() => {
     if (!content || !sectionRef.current) return;
@@ -17,8 +53,8 @@ export default function HeroSection() {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-      tl.from('.hero-bg-image', {
-        scale: 1.15,
+      tl.from('.hero-slider', {
+        scale: 1.05,
         opacity: 0,
         duration: 1.6,
         ease: 'power2.out',
@@ -68,13 +104,33 @@ export default function HeroSection() {
 
   return (
     <section className="hero-track" ref={sectionRef}>
-      <div className="hero-img-w" id="img-culture">
-        <img
-          src={hero.backgroundImageUrl || '/images/frican-students-walking-outdoors.avif'}
-          alt={brand.name}
-          className="hero-bg-image"
-        />
+      <div
+        className="hero-img-w"
+        id="img-culture"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <div className="hero-slider">
+          {slides.map((src, i) => (
+            <img
+              key={src}
+              src={src}
+              alt={`${brand.name} slide ${i + 1}`}
+              className={`hero-slide-image ${i === currentSlide ? 'active' : ''}`}
+            />
+          ))}
+        </div>
         <div className="hero-img-overlay" />
+        <div className="hero-slide-dots">
+          {slides.map((_, i) => (
+            <button
+              key={i}
+              className={`hero-dot ${i === currentSlide ? 'active' : ''}`}
+              onClick={() => goToSlide(i)}
+              aria-label={`Go to slide ${i + 1}`}
+            />
+          ))}
+        </div>
       </div>
       <div className="hero-sticky">
         <h1 className="hero-heading">

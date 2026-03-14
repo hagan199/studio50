@@ -92,7 +92,9 @@ export default function ServicesSection() {
     <section className="services" id="services" ref={sectionRef}>
       <div className="container">
         <div className="services__header" ref={titleRef}>
-          <span className="services__label">What we Do</span>
+          {services.sectionLabel && (
+            <span className="services__label">{services.sectionLabel}</span>
+          )}
           <h2 className="services__title">{services.sectionTitle}</h2>
         </div>
 
@@ -102,6 +104,7 @@ export default function ServicesSection() {
             .map((service) => (
               <div
                 key={service.id}
+                id={service.title?.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9]/g, '')}
                 className="service-card"
                 onMouseEnter={(e) => handleCardHover(e, true)}
                 onMouseLeave={(e) => handleCardHover(e, false)}

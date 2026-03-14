@@ -25,9 +25,16 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [brand, setBrand] = useState(null);
   const [navLinks, setNavLinks] = useState(fallbackNavLinks);
+  const [activeHref, setActiveHref] = useState('#');
 
+  // Scroll position + progress bar
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = total > 0 ? (window.scrollY / total) * 100 : 0;
+      document.documentElement.style.setProperty('--scroll-progress', `${pct}%`);
+    };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -45,11 +52,35 @@ export default function Navbar() {
           .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
           .map((item) => ({ label: item.label, href: item.href }))
           .filter((item) => item.label && item.href);
-
         if (items.length) setNavLinks(items);
       })
       .catch(() => {});
   }, []);
+
+  // Active section tracking via IntersectionObserver
+  useEffect(() => {
+    const sectionHrefs = navLinks
+      .filter((l) => l.href.startsWith('#') && l.href.length > 1)
+      .map((l) => l.href);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveHref(`#${entry.target.id}`);
+          }
+        });
+      },
+      { threshold: 0.25, rootMargin: '-70px 0px -45% 0px' }
+    );
+
+    sectionHrefs.forEach((href) => {
+      const el = document.querySelector(href);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [navLinks]);
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
@@ -66,8 +97,14 @@ export default function Navbar() {
     requestAnimationFrame(() => scrollToHref(href));
   }, []);
 
+  const isActive = (href) => {
+    if (href === '#' || href === '/') return activeHref === '#';
+    return activeHref === href;
+  };
+
   return (
     <nav className={`navbar${scrolled ? ' scrolled' : ''}`}>
+      <div className="nav-progress" aria-hidden="true" />
       <div className="nav-container">
         <a href="#" className="brand-link" onClick={(e) => handleNavClick(e, '#')}>
           <img
@@ -82,7 +119,7 @@ export default function Navbar() {
             <a
               key={link.label}
               href={link.href}
-              className={`nav-link${link.href === '#' || link.href === '/' ? ' active' : ''}`}
+              className={`nav-link${isActive(link.href) ? ' active' : ''}`}
               onClick={(e) => handleNavClick(e, link.href)}
             >
               <div className="clip">

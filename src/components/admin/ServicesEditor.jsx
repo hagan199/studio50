@@ -1,16 +1,25 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import api from '../../utils/api';
+import useAdminSave from '../../hooks/useAdminSave';
+import AdminToast from './AdminToast';
+import AdminSaveBar from './AdminSaveBar';
 
 const ICON_OPTIONS = ['camera', 'palette', 'video', 'share', 'globe', 'broadcast'];
 
 export default function ServicesEditor() {
   const [data, setData] = useState(null);
-  const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState('');
+  const [dirty, setDirty] = useState(false);
+  const initialLoad = useRef(true);
 
   useEffect(() => {
     api.get('/api/services').then((res) => setData(res.data)).catch(() => {});
   }, []);
+
+  // Dirty tracking — skip the very first render / initial data load
+  useEffect(() => {
+    if (initialLoad.current) { initialLoad.current = false; return; }
+    setDirty(true);
+  }, [data]);
 
   const updateItem = (index, field, value) => {
     setData((prev) => {
@@ -54,30 +63,10 @@ export default function ServicesEditor() {
     });
   };
 
-  const save = useCallback(async () => {
-    if (!data || saving) return;
-    setSaving(true);
-    try {
-      await api.put('/api/services', data);
-      setMessage('Services saved!');
-      setTimeout(() => setMessage(''), 3000);
-    } catch {
-      setMessage('Failed to save');
-    } finally {
-      setSaving(false);
-    }
-  }, [data, saving]);
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-        e.preventDefault();
-        save();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [save]);
+  const { saving, toast, save } = useAdminSave(async () => {
+    await api.put('/api/services', data);
+    setDirty(false);
+  });
 
   if (!data) {
     return (
@@ -92,25 +81,32 @@ export default function ServicesEditor() {
 
   return (
     <div className="admin-editor">
+      <AdminToast toast={toast} />
+
       <div className="admin-editor__header">
         <h2>Services Editor</h2>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <button className="admin-btn admin-btn--secondary" onClick={addService}>+ Add Service</button>
-          <button className="admin-btn admin-btn--primary" onClick={save} disabled={saving}>
-            {saving ? 'Saving...' : 'Save Changes'}
-          </button>
-        </div>
+        <button className="admin-btn admin-btn--secondary" onClick={addService}>+ Add Service</button>
       </div>
 
-      {message && (
-        <div className={`admin-alert ${message.includes('Failed') ? 'admin-alert--error' : 'admin-alert--success'}`}>
-          {message}
+      <div className="admin-grid-2">
+        <div className="admin-field">
+          <label className="admin-field__label">Eyebrow Label <span style={{ opacity: 0.5, fontWeight: 400 }}>(small text above title)</span></label>
+          <input
+            className="admin-field__input"
+            value={data.sectionLabel ?? 'What We Do'}
+            onChange={(e) => setData((prev) => ({ ...prev, sectionLabel: e.target.value }))}
+            placeholder="e.g. What We Do"
+          />
         </div>
-      )}
-
-      <div className="admin-field">
-        <label className="admin-field__label">Section Title</label>
-        <input className="admin-field__input" value={data.sectionTitle} onChange={(e) => setData((prev) => ({ ...prev, sectionTitle: e.target.value }))} />
+        <div className="admin-field">
+          <label className="admin-field__label">Section Title</label>
+          <input
+            className="admin-field__input"
+            value={data.sectionTitle}
+            onChange={(e) => setData((prev) => ({ ...prev, sectionTitle: e.target.value }))}
+            placeholder="e.g. Our Services"
+          />
+        </div>
       </div>
 
       {data.items.map((service, i) => (
@@ -126,7 +122,16 @@ export default function ServicesEditor() {
 
           <div className="admin-grid-2">
             <div className="admin-field">
-              <label className="admin-field__label">Title</label>
+              <label className="admin-field__label">
+                Title
+                {service.title && (
+                  <span style={{ opacity: 0.45, fontWeight: 400, marginLeft: 8 }}>
+                    → link: <code style={{ background: 'rgba(0,0,0,0.08)', borderRadius: 4, padding: '1px 5px' }}>
+                      #{service.title.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9]/g, '')}
+                    </code>
+                  </span>
+                )}
+              </label>
               <input className="admin-field__input" value={service.title} onChange={(e) => updateItem(i, 'title', e.target.value)} />
             </div>
             <div className="admin-field">
@@ -145,6 +150,8 @@ export default function ServicesEditor() {
           </div>
         </div>
       ))}
+
+      <AdminSaveBar saving={saving} onSave={save} dirty={dirty} />
     </div>
   );
 }

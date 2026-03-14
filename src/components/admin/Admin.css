@@ -1381,3 +1381,14 @@ select.admin-field__input option {
     grid-template-columns: 1fr;
   }
 }
+
+/* ==================== Save Bar Dirty State ==================== */
+.admin-save-bar--dirty .admin-save-bar__hint::before {
+  background: #f59e0b;
+  animation: admin-pulse 1.5s ease-in-out infinite;
+}
+
+.admin-save-bar:not(.admin-save-bar--dirty) .admin-save-bar__hint::before {
+  background: #22c55e;
+  animation: none;
+}

@@ -1,14 +1,23 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import api from '../../utils/api';
+import useAdminSave from '../../hooks/useAdminSave';
+import AdminToast from './AdminToast';
+import AdminSaveBar from './AdminSaveBar';
 
 export default function ContactEditor() {
   const [contact, setContact] = useState(null);
-  const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState('');
+  const [dirty, setDirty] = useState(false);
+  const initialLoad = useRef(true);
 
   useEffect(() => {
     api.get('/api/contact').then((res) => setContact(res.data)).catch(() => {});
   }, []);
+
+  // Dirty tracking — skip the very first render / initial data load
+  useEffect(() => {
+    if (initialLoad.current) { initialLoad.current = false; return; }
+    setDirty(true);
+  }, [contact]);
 
   const update = (field, value) => {
     setContact((prev) => ({ ...prev, [field]: value }));
@@ -36,30 +45,10 @@ export default function ContactEditor() {
     }));
   };
 
-  const save = useCallback(async () => {
-    if (!contact || saving) return;
-    setSaving(true);
-    try {
-      await api.put('/api/contact', contact);
-      setMessage('Contact info saved!');
-      setTimeout(() => setMessage(''), 3000);
-    } catch {
-      setMessage('Failed to save');
-    } finally {
-      setSaving(false);
-    }
-  }, [contact, saving]);
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-        e.preventDefault();
-        save();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [save]);
+  const { saving, toast, save } = useAdminSave(async () => {
+    await api.put('/api/contact', contact);
+    setDirty(false);
+  });
 
   if (!contact) {
     return (
@@ -74,18 +63,11 @@ export default function ContactEditor() {
 
   return (
     <div className="admin-editor">
+      <AdminToast toast={toast} />
+
       <div className="admin-editor__header">
         <h2>Contact Editor</h2>
-        <button className="admin-btn admin-btn--primary" onClick={save} disabled={saving}>
-          {saving ? 'Saving...' : 'Save Changes'}
-        </button>
       </div>
-
-      {message && (
-        <div className={`admin-alert ${message.includes('Failed') ? 'admin-alert--error' : 'admin-alert--success'}`}>
-          {message}
-        </div>
-      )}
 
       <div className="admin-card">
         <h3 className="admin-card__title">Contact Details</h3>
@@ -145,6 +127,8 @@ export default function ContactEditor() {
           ))
         )}
       </div>
+
+      <AdminSaveBar saving={saving} onSave={save} dirty={dirty} />
     </div>
   );
 }

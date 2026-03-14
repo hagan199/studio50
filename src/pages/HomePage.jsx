@@ -8,6 +8,7 @@ import LatestContent from '../components/sections/LatestContent';
 import Credibility from '../components/sections/Credibility';
 import MarqueeSection from '../components/sections/MarqueeSection';
 import Roadmap from '../components/sections/Roadmap';
+import ServicesSection from '../components/sections/ServicesSection';
 import CTASection from '../components/sections/CTASection';
 import ContactSection from '../components/sections/ContactSection';
 import Footer from '../components/layout/Footer';
@@ -23,6 +24,7 @@ const SECTION_MAP = {
   roadmap: Roadmap,
   cta: CTASection,
   contact: ContactSection,
+  services: ServicesSection,
 };
 
 const DEFAULT_SECTIONS = [
