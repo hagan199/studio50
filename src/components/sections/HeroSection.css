@@ -50,14 +50,20 @@
   z-index: 1;
 }
 
-/* ── Content ── */
-.hero__content {
+/* ── Inner container — matches navbar width ── */
+.hero__inner {
   position: relative;
   z-index: 2;
   width: 90%;
-  max-width: 800px;
-  margin-left: 8%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
   padding: 120px 0 80px;
+}
+
+/* ── Content ── */
+.hero__content {
+  max-width: 800px;
 }
 
 /* Label chip */
@@ -165,12 +171,11 @@
   transform: translateY(-3px);
 }
 
-/* ── Slide navigation (bottom-right) ── */
+/* ── Slide navigation (bottom-right, aligned with nav CTA) ── */
 .hero-slide-nav {
   position: absolute;
-  bottom: 40px;
-  right: 8%;
-  z-index: 3;
+  bottom: 0;
+  right: 0;
   display: flex;
   align-items: center;
   gap: 16px;
@@ -252,18 +257,12 @@
     min-height: 85vh;
   }
 
-  .hero__content {
-    margin-left: 5%;
+  .hero__inner {
     padding: 100px 0 100px;
   }
 
   .hero-heading {
     font-size: clamp(2.2rem, 5vw, 3.2rem);
-  }
-
-  .hero-slide-nav {
-    right: 5%;
-    bottom: 30px;
   }
 
 }
@@ -275,8 +274,7 @@
     align-items: flex-end;
   }
 
-  .hero__content {
-    margin-left: 0;
+  .hero__inner {
     width: 100%;
     padding: 0 24px 120px;
   }
@@ -305,8 +303,8 @@
   }
 
   .hero-slide-nav {
-    bottom: 24px;
-    right: 24px;
+    bottom: 0;
+    right: 0;
   }
 
 }

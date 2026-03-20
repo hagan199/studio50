@@ -135,26 +135,27 @@ export default function HeroSection() {
         <div className="hero__overlay" />
       </div>
 
-      {/* Content */}
-      <div className="hero__content">
-        <span className="hero-label">{brand.shortName || 'Studio 50'}</span>
-        <h1 className="hero-heading">{hero.headline}</h1>
-        <div className="hero-divider" />
-        <p className="section-paragraph">{hero.subheadline}</p>
+      {/* Content + Slide nav in aligned container */}
+      <div className="hero__inner">
+        <div className="hero__content">
+          <span className="hero-label">{brand.shortName || 'Studio 50'}</span>
+          <h1 className="hero-heading">{hero.headline}</h1>
+          <div className="hero-divider" />
+          <p className="section-paragraph">{hero.subheadline}</p>
 
-        <div className="hero-buttons">
-          <a href={hero.ctaLink || '#auditions'} className="button hero-btn primary">
-            <span>{hero.ctaText || 'Apply to Audition'}</span>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </a>
-          <a href="#services" className="button hero-btn secondary">
-            <span>Our Services</span>
-          </a>
+          <div className="hero-buttons">
+            <a href={hero.ctaLink || '#auditions'} className="button hero-btn primary">
+              <span>{hero.ctaText || 'Apply to Audition'}</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+            <a href="#services" className="button hero-btn secondary">
+              <span>Our Services</span>
+            </a>
+          </div>
         </div>
-      </div>
 
-      {/* Slide navigation */}
-      <div className="hero-slide-nav">
+        {/* Slide navigation */}
+        <div className="hero-slide-nav">
         <div className="hero-slide-counter">
           <span className="hero-slide-current">{String(currentSlide + 1).padStart(2, '0')}</span>
           <span className="hero-slide-sep">/</span>
@@ -170,6 +171,7 @@ export default function HeroSection() {
             />
           ))}
         </div>
+      </div>
       </div>
 
     </section>
