@@ -39,7 +39,6 @@
 }
 
 .brand-link {
-  width: 120px;
   display: block;
   flex-shrink: 0;
   transition: opacity 0.25s ease, transform 0.25s ease;
@@ -51,10 +50,11 @@
 }
 
 .brand-img {
-  width: 100%;
   height: auto;
   max-height: 56px;
+  max-width: 120px;
   object-fit: contain;
+  display: block;
 }
 
 /* Nav menu — centered between logo and CTA */
