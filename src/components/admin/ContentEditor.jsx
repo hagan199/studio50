@@ -38,7 +38,16 @@ export default function ContentEditor() {
   const initialLoad = useRef(true);
 
   useEffect(() => {
-    api.get('/api/content').then((res) => setContent(res.data)).catch(() => {});
+    api.get('/api/content')
+      .then((res) => setContent({
+        ...res.data,
+        navigation: {
+          ctaText: 'Get Audition Forms',
+          ctaLink: '#auditions',
+          ...(res.data.navigation || {}),
+        },
+      }))
+      .catch(() => {});
   }, []);
 
   // Dirty tracking — skip the very first render / initial data load
@@ -187,6 +196,20 @@ export default function ContentEditor() {
           <input className="admin-field__input" value={content.brand.tagline} onChange={(e) => update('brand', 'tagline', e.target.value)} />
         </div>
         <ImageField label="Logo" value={content.brand.logoUrl} onChange={(url) => update('brand', 'logoUrl', url)} category="logo" />
+      </Section>
+
+      {/* Navigation */}
+      <Section title="Navigation">
+        <div className="admin-grid-2">
+          <div className="admin-field">
+            <label className="admin-field__label">CTA Button Text</label>
+            <input className="admin-field__input" value={content.navigation.ctaText} onChange={(e) => update('navigation', 'ctaText', e.target.value)} />
+          </div>
+          <div className="admin-field">
+            <label className="admin-field__label">CTA Link</label>
+            <input className="admin-field__input" value={content.navigation.ctaLink} onChange={(e) => update('navigation', 'ctaLink', e.target.value)} />
+          </div>
+        </div>
       </Section>
 
       {/* Hero Section */}

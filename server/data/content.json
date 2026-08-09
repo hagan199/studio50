@@ -16,6 +16,10 @@
     "tagline": "All",
     "logoUrl": "/images/hmr-logo-new.avif"
   },
+  "navigation": {
+    "ctaText": "Get Audition Forms",
+    "ctaLink": "#auditions"
+  },
   "hero": {
     "headline": "Discovering Talent. Activating Regions. Empowering Youth.",
     "subheadline": "Hype My Region (HMR) is a merit-based national talent development platform implemented under the governance of JMP4AFRICA.",

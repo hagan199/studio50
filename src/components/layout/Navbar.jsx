@@ -60,6 +60,10 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [brand, setBrand] = useState(null);
+  const [navigation, setNavigation] = useState({
+    ctaText: 'Get Audition Forms',
+    ctaLink: '#auditions',
+  });
   const [navLinks, setNavLinks] = useState(fallbackNavLinks);
   const [activeHref, setActiveHref] = useState('#');
 
@@ -76,7 +80,15 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    api.get('/api/content').then((res) => setBrand(res.data.brand)).catch(() => {});
+    api.get('/api/content')
+      .then((res) => {
+        setBrand(res.data.brand);
+        setNavigation((prev) => ({
+          ...prev,
+          ...(res.data.navigation || {}),
+        }));
+      })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -166,12 +178,12 @@ export default function Navbar() {
               {link.label}
             </a>
           ))}
-          <a href="#auditions" className="nav-link cta-link mobile-only" onClick={(e) => handleNavClick(e, '#auditions')}>
-            Get Audition Forms
+          <a href={navigation.ctaLink} className="nav-link cta-link mobile-only" onClick={(e) => handleNavClick(e, navigation.ctaLink)}>
+            {navigation.ctaText}
           </a>
         </div>
-        <a href="#auditions" className="nav-cta desktop-only" onClick={(e) => handleNavClick(e, '#auditions')}>
-          Get Audition Forms
+        <a href={navigation.ctaLink} className="nav-cta desktop-only" onClick={(e) => handleNavClick(e, navigation.ctaLink)}>
+          {navigation.ctaText}
         </a>
         <button
           className={`menu-button${menuOpen ? ' active' : ''}`}
