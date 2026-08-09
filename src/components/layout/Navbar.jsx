@@ -61,7 +61,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [brand, setBrand] = useState(null);
   const [navigation, setNavigation] = useState({
-    ctaText: 'Get Audition Forms',
+    ctaText: 'get in tough',
     ctaLink: '#auditions',
   });
   const [navLinks, setNavLinks] = useState(fallbackNavLinks);
