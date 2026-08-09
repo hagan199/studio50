@@ -45,7 +45,10 @@
 }
 
 .footer__logo-link {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  width: 120px;
+  min-height: 60px;
   transition: opacity 0.25s;
 }
 

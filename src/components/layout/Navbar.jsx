@@ -60,6 +60,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [brand, setBrand] = useState(null);
+  const [contentLoaded, setContentLoaded] = useState(false);
   const [navigation, setNavigation] = useState({
     ctaText: 'get in tough',
     ctaLink: '#auditions',
@@ -88,7 +89,8 @@ export default function Navbar() {
           ...(res.data.navigation || {}),
         }));
       })
-      .catch(() => {});
+      .catch(() => setBrand({ name: 'Hype My Region', logoUrl: '/images/hmr-logo-new.avif' }))
+      .finally(() => setContentLoaded(true));
   }, []);
 
   useEffect(() => {
@@ -159,12 +161,14 @@ export default function Navbar() {
     <nav className={`navbar${scrolled ? ' scrolled' : ''}`}>
       <div className="nav-progress" aria-hidden="true" />
       <div className="nav-container">
-        <a href="#" className="brand-link" onClick={(e) => handleNavClick(e, '#')}>
-          <img
-            src={brand?.logoUrl || '/images/hmr-logo-new.avif'}
-            alt={brand?.name || 'Hype My Region'}
-            className="brand-img"
-          />
+        <a href="#" className="brand-link" onClick={(e) => handleNavClick(e, '#')} aria-label={brand?.name || 'Home'}>
+          {contentLoaded && (
+            <img
+              src={brand?.logoUrl || '/images/hmr-logo-new.avif'}
+              alt={brand?.name || 'Hype My Region'}
+              className="brand-img"
+            />
+          )}
         </a>
         <div className={`nav-overlay${menuOpen ? ' visible' : ''}`} onClick={closeMenu} />
         <div className={`nav-menu${menuOpen ? ' open' : ''}`}>

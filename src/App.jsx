@@ -5,11 +5,15 @@ import AdminLogin from './components/admin/AdminLogin';
 import AdminPage from './pages/AdminPage';
 import api from './utils/api';
 
+const SITE_TITLE = 'studio50';
+
 function useSeoMeta() {
   useEffect(() => {
+    document.title = SITE_TITLE;
+
     api.get('/api/seo').then((res) => {
       const s = res.data;
-      if (s.pageTitle) document.title = s.pageTitle;
+      document.title = SITE_TITLE;
 
       const setMeta = (name, content) => {
         if (!content) return;
@@ -27,7 +31,7 @@ function useSeoMeta() {
       setMeta('description', s.metaDescription);
       setMeta('keywords', s.keywords);
       setMeta('theme-color', s.themeColor);
-      setOg('og:title', s.ogTitle);
+      setOg('og:title', SITE_TITLE);
       setOg('og:description', s.ogDescription);
       setOg('og:image', s.ogImage);
       setOg('og:type', 'website');

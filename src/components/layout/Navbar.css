@@ -39,7 +39,10 @@
 }
 
 .brand-link {
-  display: block;
+  display: flex;
+  align-items: center;
+  width: 120px;
+  min-height: 56px;
   flex-shrink: 0;
   transition: opacity 0.25s ease, transform 0.25s ease;
 }

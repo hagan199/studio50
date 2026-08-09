@@ -47,6 +47,7 @@ export default function Footer() {
   const [brand, setBrand] = useState(null);
   const [footerData, setFooterData] = useState(null);
   const [socialLinks, setSocialLinks] = useState([]);
+  const [contentLoaded, setContentLoaded] = useState(false);
 
   useEffect(() => {
     api.get('/api/menu').then((res) => {
@@ -63,7 +64,8 @@ export default function Footer() {
     api.get('/api/content').then((res) => {
       setBrand(res.data.brand);
       if (res.data.footer) setFooterData(res.data.footer);
-    }).catch(() => {});
+    }).catch(() => setBrand({ name: 'Studio 50', logoUrl: '/images/hmr-logo-new.avif' }))
+      .finally(() => setContentLoaded(true));
   }, []);
 
   useEffect(() => {
@@ -86,11 +88,13 @@ export default function Footer() {
           {/* Brand */}
           <div className="footer__brand-col">
             <a href="#" className="footer__logo-link">
-              <img
-                src={brand?.logoUrl || '/images/hmr-logo-new.avif'}
-                alt={brand?.name || 'Studio 50'}
-                className="footer__logo"
-              />
+              {contentLoaded && (
+                <img
+                  src={brand?.logoUrl || '/images/hmr-logo-new.avif'}
+                  alt={brand?.name || 'Studio 50'}
+                  className="footer__logo"
+                />
+              )}
             </a>
             <p className="footer__tagline">
               {brand?.tagline || 'Making magic with every project.'}

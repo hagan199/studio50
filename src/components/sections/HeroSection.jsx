@@ -20,11 +20,12 @@ export default function HeroSection() {
     api.get('/api/content').then((res) => setContent(res.data)).catch(() => {});
   }, []);
 
-  const slides = content?.hero?.galleryImages?.length
+  const cmsSlides = content?.hero?.galleryImages?.length
     ? content.hero.galleryImages
     : content?.hero?.backgroundImageUrl
-      ? [content.hero.backgroundImageUrl, ...DEFAULT_SLIDES.filter(s => s !== content.hero.backgroundImageUrl)]
-      : DEFAULT_SLIDES;
+      ? [content.hero.backgroundImageUrl]
+      : [];
+  const slides = cmsSlides.filter(Boolean).length ? cmsSlides.filter(Boolean) : DEFAULT_SLIDES;
 
   const goToSlide = useCallback((index) => {
     setCurrentSlide(index);
@@ -33,6 +34,10 @@ export default function HeroSection() {
   const nextSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
   }, [slides.length]);
+
+  useEffect(() => {
+    if (currentSlide >= slides.length) setCurrentSlide(0);
+  }, [currentSlide, slides.length]);
 
   useEffect(() => {
     if (!content) return;
