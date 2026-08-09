@@ -112,7 +112,7 @@
   border-radius: 6px;
   text-decoration: none;
   font-size: var(--font-size-link, 0.8rem);
-  text-transform: uppercase;
+  text-transform: none;
   font-weight: 600;
   letter-spacing: 0.5px;
   white-space: nowrap;
@@ -130,6 +130,7 @@
 /* Mobile CTA inside nav-menu (hidden on desktop) */
 .nav-link.cta-link.mobile-only {
   display: none;
+  text-transform: none;
 }
 
 .nav-overlay {
