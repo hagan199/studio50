@@ -12,6 +12,7 @@ const DEFAULT_SLIDES = [
 
 export default function HeroSection() {
   const [content, setContent] = useState(null);
+  const [firstSlideReady, setFirstSlideReady] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const sectionRef = useRef(null);
   const intervalRef = useRef(null);
@@ -39,11 +40,35 @@ export default function HeroSection() {
     if (currentSlide >= slides.length) setCurrentSlide(0);
   }, [currentSlide, slides.length]);
 
+  // Decode the first slide before revealing the hero, so the skeleton (not a
+  // half-loaded or previously cached image) is what shows while it downloads.
+  const firstSlide = slides[0];
   useEffect(() => {
-    if (!content) return;
+    if (!firstSlide) return;
+    let cancelled = false;
+    const reveal = () => {
+      if (!cancelled) setFirstSlideReady(true);
+    };
+
+    const img = new Image();
+    img.src = firstSlide;
+    if (img.decode) {
+      img.decode().then(reveal).catch(reveal);
+    } else {
+      img.onload = reveal;
+      img.onerror = reveal;
+    }
+
+    return () => {
+      cancelled = true;
+    };
+  }, [firstSlide]);
+
+  useEffect(() => {
+    if (!content || !firstSlideReady) return;
     intervalRef.current = setInterval(nextSlide, 5000);
     return () => clearInterval(intervalRef.current);
-  }, [content, nextSlide]);
+  }, [content, firstSlideReady, nextSlide]);
 
   const handleMouseEnter = () => clearInterval(intervalRef.current);
   const handleMouseLeave = () => {
@@ -51,7 +76,7 @@ export default function HeroSection() {
   };
 
   useEffect(() => {
-    if (!content || !sectionRef.current) return;
+    if (!content || !firstSlideReady || !sectionRef.current) return;
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
@@ -91,9 +116,9 @@ export default function HeroSection() {
     }, sectionRef);
 
     return () => ctx.revert();
-  }, [content]);
+  }, [content, firstSlideReady]);
 
-  if (!content) {
+  if (!content || !firstSlideReady) {
     return (
       <section className="hero">
         <div className="hero__bg">

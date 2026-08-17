@@ -36,6 +36,14 @@ app.use(express.json());
 const uploadsDir = process.env.UPLOADS_DIR || path.join(__dirname, "uploads");
 app.use("/uploads", express.static(uploadsDir));
 
+// CMS data must never be served from the browser cache, otherwise a stale
+// response paints the previous image/logo before the current one loads.
+app.use("/api", (req, res, next) => {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate");
+  res.set("Pragma", "no-cache");
+  next();
+});
+
 // API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/content", contentRoutes);
