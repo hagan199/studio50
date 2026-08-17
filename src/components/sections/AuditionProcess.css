@@ -3,6 +3,15 @@
    ============================================================ */
 
 .ap-section {
+  /* Every ink colour is derived from the themed text/heading colour, so the
+     section stays readable whether the CMS sets a dark or a light background. */
+  --ap-ink: var(--audition-text, var(--audition-heading, #ffffff));
+  --ap-muted: color-mix(in srgb, var(--ap-ink) 68%, transparent);
+  --ap-surface: color-mix(in srgb, var(--ap-ink) 5%, transparent);
+  --ap-surface-hover: color-mix(in srgb, var(--ap-ink) 9%, transparent);
+  --ap-border: color-mix(in srgb, var(--ap-ink) 14%, transparent);
+  --ap-gap: clamp(12px, 2vw, 24px);
+
   background-color: var(--audition-bg, #0d0d0d);
   padding: clamp(70px, 10vw, 120px) 0;
   position: relative;
@@ -60,7 +69,7 @@
 }
 
 .ap-subheading {
-  color: rgba(255, 255, 255, 0.58);
+  color: var(--ap-muted);
   font-size: clamp(0.95rem, 1.5vw, 1.1rem);
   line-height: 1.75;
   margin: 0 auto;
@@ -72,7 +81,8 @@
   position: relative;
   z-index: 1;
   display: flex;
-  align-items: flex-start;
+  align-items: stretch;
+  gap: var(--ap-gap);
   width: 90%;
   max-width: 1100px;
   margin: 0 auto clamp(40px, 6vw, 64px);
@@ -125,12 +135,16 @@
     0 14px 40px rgba(251, 49, 49, 0.45);
 }
 
-/* Horizontal connector line — fills remaining space to the right */
+/* Horizontal connector — runs from this circle's centre to the next one's,
+   so the rail stays unbroken instead of stopping short of the last step. */
 .ap-connector {
-  flex: 1;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(100% + var(--ap-gap));
   height: 2px;
+  transform: translateY(-50%);
   background: linear-gradient(90deg, rgba(251, 49, 49, 0.6), rgba(251, 49, 49, 0.15));
-  position: relative;
   z-index: 1;
 }
 
@@ -138,9 +152,12 @@
 
 .ap-card {
   width: 100%;
-  padding: clamp(14px, 2vw, 20px) clamp(14px, 2vw, 22px);
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(16px, 2vw, 22px) clamp(14px, 2vw, 22px);
+  background: var(--ap-surface);
+  border: 1px solid var(--ap-border);
   border-radius: 16px;
   transition:
     background 0.35s ease,
@@ -150,10 +167,10 @@
 }
 
 .ap-step:hover .ap-card {
-  background: rgba(255, 255, 255, 0.07);
+  background: var(--ap-surface-hover);
   border-color: rgba(251, 49, 49, 0.28);
   transform: translateY(-6px);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 60px color-mix(in srgb, var(--ap-ink) 18%, transparent);
 }
 
 .ap-card-title {
@@ -165,7 +182,7 @@
 }
 
 .ap-card-desc {
-  color: rgba(255, 255, 255, 0.52);
+  color: var(--ap-muted);
   font-size: 0.875rem;
   line-height: 1.65;
   margin-bottom: 12px;
@@ -178,6 +195,8 @@
 .ap-card-link {
   display: inline-flex;
   align-items: center;
+  align-self: center;
+  margin-top: auto; /* pin the link to the bottom so cards line up */
   gap: 5px;
   color: var(--audition-badge, #fb3131);
   font-size: 0.72rem;
@@ -202,8 +221,8 @@
   max-width: 1100px;
   margin: 0 auto;
   padding: clamp(20px, 3vw, 30px) clamp(24px, 4vw, 40px);
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--ap-surface);
+  border: 1px solid var(--ap-border);
   border-left: 3px solid var(--audition-badge, #fb3131);
   border-radius: 0 14px 14px 0;
   display: flex;
@@ -212,14 +231,14 @@
 }
 
 .ap-note p {
-  color: rgba(255, 255, 255, 0.52);
+  color: var(--ap-muted);
   font-size: 0.875rem;
   line-height: 1.7;
   margin: 0;
 }
 
 .ap-note strong {
-  color: rgba(255, 255, 255, 0.78);
+  color: var(--audition-heading, #ffffff);
 }
 
 /* ============================================================
@@ -229,15 +248,15 @@
 /* Tablet: switch to vertical timeline */
 @media screen and (max-width: 991px) {
   .ap-steps {
+    --ap-gap: 20px;
     flex-direction: column;
-    gap: 20px;
     align-items: stretch;
     padding-left: 8px;
   }
 
   .ap-step {
     flex-direction: row;
-    align-items: flex-start;
+    align-items: stretch;
     text-align: left;
     gap: 18px;
   }
@@ -246,22 +265,29 @@
   .ap-step-top {
     flex-direction: column;
     align-items: center;
-    width: auto;
+    width: 46px;
     margin-bottom: 0;
     flex-shrink: 0;
   }
 
+  /* Vertical rail: from under this circle down into the next step's gap */
   .ap-connector {
+    top: 52px;
+    bottom: calc(-1 * var(--ap-gap) - 6px);
+    left: 50%;
     width: 2px;
-    height: 100%;
-    min-height: 40px;
-    flex: 1;
+    height: auto;
+    transform: translateX(-50%);
     background: linear-gradient(180deg, rgba(251, 49, 49, 0.5), rgba(251, 49, 49, 0.1));
   }
 
   .ap-card {
     flex: 1;
     margin-bottom: 0;
+  }
+
+  .ap-card-link {
+    align-self: flex-start;
   }
 }
 

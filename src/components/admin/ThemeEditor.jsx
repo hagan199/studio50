@@ -30,7 +30,7 @@ const SECTIONS = [
   },
   {
     key: 'audition', label: 'Audition Process', desc: 'Numbered step cards',
-    fields: { background: 'Background', heading: 'Heading', badge: 'Badge / Number' },
+    fields: { background: 'Background', heading: 'Heading', text: 'Text', badge: 'Badge / Number' },
   },
   {
     key: 'latestContent', label: 'Latest Content', desc: 'Video grid section',

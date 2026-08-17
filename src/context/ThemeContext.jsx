@@ -43,6 +43,7 @@ const VAR_MAP = {
   audition: {
     background: '--audition-bg',
     heading: '--audition-heading',
+    text: '--audition-text',
     badge: '--audition-badge',
   },
   latestContent: {
