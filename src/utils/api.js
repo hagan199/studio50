@@ -18,6 +18,13 @@ api.interceptors.response.use(
   (err) => {
     if (err.response?.status === 401) {
       localStorage.removeItem('studio50_token');
+
+      // The admin guard only checks the token at mount, so an expired session
+      // otherwise leaves the editor looking usable while every save fails.
+      const path = typeof window !== 'undefined' ? window.location.pathname : '';
+      if (path.startsWith('/admin') && !path.startsWith('/admin/login')) {
+        window.location.replace('/admin/login?expired=1');
+      }
     }
     return Promise.reject(err);
   }

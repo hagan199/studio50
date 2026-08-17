@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, NavLink, Outlet, useLocation } from 'react-router-dom';
 import PreviewPane from './PreviewPane';
+import api from '../../utils/api';
 import './Admin.css';
 
 const navItems = [
@@ -52,7 +53,13 @@ export default function AdminLayout() {
 
   useEffect(() => {
     const token = localStorage.getItem('studio50_token');
-    if (!token) navigate('/admin/login');
+    if (!token) {
+      navigate('/admin/login');
+      return;
+    }
+    // A stored token can still be expired; check before the editor looks ready.
+    // A 401 here is handled by the api interceptor, which sends us to login.
+    api.get('/api/auth/verify').catch(() => {});
   }, [navigate]);
 
   const logout = () => {

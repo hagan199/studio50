@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import { authMiddleware } from '../middleware/auth.js';
 
 dotenv.config();
 
@@ -11,6 +12,11 @@ router.get('/status', (req, res) => {
     hasAdminPassword: Boolean(process.env.ADMIN_PASSWORD),
     hasJwtSecret: Boolean(process.env.JWT_SECRET),
   });
+});
+
+// Lets the admin UI find out at load time that a stored token has expired.
+router.get('/verify', authMiddleware, (req, res) => {
+  res.json({ ok: true });
 });
 
 router.post('/login', (req, res) => {

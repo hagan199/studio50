@@ -5,7 +5,11 @@ import './Admin.css';
 
 export default function AdminLogin() {
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState(
+    typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('expired')
+      ? 'Your session expired. Sign in again to keep editing.'
+      : ''
+  );
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
