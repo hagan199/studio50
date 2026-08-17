@@ -34,7 +34,21 @@ app.use(express.json());
 
 // Serve uploaded files (use persistent volume in production)
 const uploadsDir = process.env.UPLOADS_DIR || path.join(__dirname, "uploads");
-app.use("/uploads", express.static(uploadsDir));
+app.use(
+  "/uploads",
+  express.static(uploadsDir, {
+    // Upload filenames are timestamp-prefixed and never reused, so they can be
+    // cached hard — a changed image always means a changed URL.
+    maxAge: "1y",
+    immutable: true,
+    setHeaders: (res) => {
+      res.set("X-Content-Type-Options", "nosniff");
+      // Uploaded SVGs are same-origin documents; sandbox them so a malicious
+      // file cannot run script if opened directly.
+      res.set("Content-Security-Policy", "sandbox; default-src 'none'");
+    },
+  }),
+);
 
 // CMS data must never be served from the browser cache, otherwise a stale
 // response paints the previous image/logo before the current one loads.

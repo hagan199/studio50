@@ -1,28 +1,20 @@
 import { useState, useEffect, useRef } from 'react';
 import api from '../../utils/api';
-
-const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // keep in sync with server (10MB)
-const ALLOWED_IMAGE_MIMES = new Set([
-  'image/jpeg',
-  'image/png',
-  'image/gif',
-  'image/webp',
-  'image/avif',
-  'image/svg+xml',
-]);
-
-function validateImageFile(file) {
-  if (!file) return 'No file selected';
-  if (file.size > MAX_IMAGE_BYTES) return 'File too large (max 10MB)';
-  if (!ALLOWED_IMAGE_MIMES.has(file.type)) return 'Unsupported file type (JPG, PNG, GIF, WEBP, AVIF, SVG only)';
-  return null;
-}
+import {
+  IMAGE_ACCEPT,
+  uploadErrorMessage,
+  uploadImage,
+  validateImageFile,
+} from '../../utils/imageUpload';
 
 export default function ImageUploader() {
   const [category, setCategory] = useState('hero');
   const [images, setImages] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(null); // { done, total, percent }
   const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+  const [pendingDelete, setPendingDelete] = useState('');
   const [content, setContent] = useState(null);
   const fileRef = useRef(null);
 
@@ -47,48 +39,55 @@ export default function ImageUploader() {
     }
   };
 
+  const flash = (text) => {
+    setMessage(text);
+    setTimeout(() => setMessage(''), 5000);
+  };
+
+  // An image still referenced by the site should not be deleted silently.
+  const isInUse = (url) => (content ? JSON.stringify(content).includes(url) : false);
+
   const upload = async (e) => {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
 
-    const errors = [];
-    const validFiles = [];
+    const rejected = [];
+    const accepted = [];
     for (const file of files) {
       const validationError = validateImageFile(file);
-      if (validationError) errors.push(`${file.name}: ${validationError}`);
-      else validFiles.push(file);
+      if (validationError) rejected.push(`${file.name}: ${validationError}`);
+      else accepted.push(file);
     }
 
-    if (!validFiles.length) {
-      setMessage(errors[0] || 'No valid files selected');
+    if (!accepted.length) {
+      setError(rejected[0] || 'No valid files selected');
       if (fileRef.current) fileRef.current.value = '';
       return;
     }
 
+    setError('');
     setUploading(true);
+    let uploaded = 0;
     try {
-      for (const file of validFiles) {
-        const formData = new FormData();
-        // IMPORTANT: ensure category arrives before file for multer destination()
-        formData.append('category', category);
-        formData.append('image', file);
-        await api.post('/api/images/upload', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
+      for (let i = 0; i < accepted.length; i += 1) {
+        setProgress({ done: i, total: accepted.length, percent: 0 });
+        await uploadImage(accepted[i], category, (percent) => {
+          setProgress({ done: i, total: accepted.length, percent });
         });
+        uploaded += 1;
       }
 
-      if (errors.length) {
-        setMessage(`Uploaded ${validFiles.length} image(s). Skipped ${errors.length} invalid file(s).`);
-      } else {
-        setMessage(`Uploaded ${validFiles.length} image(s)!`);
-      }
-
-      await loadImages();
-      setTimeout(() => setMessage(''), 5000);
+      flash(rejected.length
+        ? `Uploaded ${uploaded} image(s). Skipped ${rejected.length} invalid file(s).`
+        : `Uploaded ${uploaded} image(s)!`);
+      if (rejected.length) setError(rejected[0]);
     } catch (err) {
-      setMessage(err?.response?.data?.error || 'Upload failed');
+      setError(uploadErrorMessage(err));
+      if (uploaded) flash(`Uploaded ${uploaded} image(s) before the error.`);
     } finally {
+      await loadImages();
       setUploading(false);
+      setProgress(null);
       if (fileRef.current) fileRef.current.value = '';
     }
   };
@@ -96,17 +95,16 @@ export default function ImageUploader() {
   const setAsImage = async (url, target) => {
     if (!content) return;
     const updated = { ...content };
-    if (target === 'hero') updated.hero.backgroundImageUrl = url;
-    else if (target === 'about') updated.about.imageUrl = url;
-    else if (target === 'logo') updated.brand.logoUrl = url;
+    if (target === 'hero') updated.hero = { ...updated.hero, backgroundImageUrl: url };
+    else if (target === 'about') updated.about = { ...updated.about, imageUrl: url };
+    else if (target === 'logo') updated.brand = { ...updated.brand, logoUrl: url };
 
     try {
       await api.put('/api/content', updated);
       setContent(updated);
-      setMessage(`Set as ${target} image!`);
-      setTimeout(() => setMessage(''), 3000);
-    } catch {
-      setMessage('Failed to update');
+      flash(`Set as ${target} image!`);
+    } catch (err) {
+      setError(uploadErrorMessage(err));
     }
   };
 
@@ -116,14 +114,20 @@ export default function ImageUploader() {
     const cat = parts[parts.length - 2];
 
     try {
-      await api.delete(`/api/images/${cat}/${filename}`);
+      await api.delete(`/api/images/${cat}/${encodeURIComponent(filename)}`);
+      setPendingDelete('');
       loadImages();
-      setMessage('Image deleted');
-      setTimeout(() => setMessage(''), 3000);
-    } catch {
-      setMessage('Failed to delete');
+      flash('Image deleted');
+    } catch (err) {
+      setError(uploadErrorMessage(err));
     }
   };
+
+  const progressLabel = progress
+    ? progress.total > 1
+      ? `Uploading ${progress.done + 1} of ${progress.total} — ${progress.percent}%`
+      : `Uploading ${progress.percent}%`
+    : 'Uploading...';
 
   return (
     <div className="admin-editor">
@@ -132,13 +136,14 @@ export default function ImageUploader() {
       </div>
 
       {message && <div className="admin-alert admin-alert--success">{message}</div>}
+      {error && <div className="admin-alert admin-alert--error">{error}</div>}
 
       <div className="admin-card">
         <h3 className="admin-card__title">Upload Image</h3>
         <div className="admin-grid-2">
           <div className="admin-field">
             <label className="admin-field__label">Category</label>
-            <select className="admin-field__input" value={category} onChange={(e) => setCategory(e.target.value)}>
+            <select className="admin-field__input" value={category} onChange={(e) => setCategory(e.target.value)} disabled={uploading}>
               {categories.map((cat) => (
                 <option key={cat.value} value={cat.value}>{cat.label}</option>
               ))}
@@ -149,15 +154,25 @@ export default function ImageUploader() {
             <input
               ref={fileRef}
               type="file"
-              accept="image/png,image/jpeg,image/gif,image/webp,image/avif,image/svg+xml"
+              accept={IMAGE_ACCEPT}
               className="admin-field__input"
               onChange={upload}
               multiple
               disabled={uploading}
             />
+            <span className="admin-image-field__hint">
+              Up to 10MB each. Large photos are resized to 2400px and re-encoded as WEBP before upload.
+            </span>
           </div>
         </div>
-        {uploading && <p style={{ color: 'var(--color-accent)' }}>Uploading...</p>}
+        {uploading && (
+          <>
+            <p style={{ color: 'var(--color-accent)' }}>{progressLabel}</p>
+            <div className="admin-upload-progress" role="progressbar" aria-valuenow={progress?.percent ?? 0} aria-valuemin={0} aria-valuemax={100}>
+              <div className="admin-upload-progress__bar" style={{ width: `${progress?.percent ?? 0}%` }} />
+            </div>
+          </>
+        )}
       </div>
 
       <div className="admin-card">
@@ -170,12 +185,24 @@ export default function ImageUploader() {
               <div key={url} className="admin-image-card">
                 <img src={url} alt="" loading="lazy" />
                 <div className="admin-image-card__actions">
-                  <button className="admin-btn admin-btn--sm" onClick={() => setAsImage(url, 'hero')}>Set as Hero</button>
-                  <button className="admin-btn admin-btn--sm" onClick={() => setAsImage(url, 'about')}>Set as About</button>
-                  <button className="admin-btn admin-btn--sm" onClick={() => setAsImage(url, 'logo')}>Set as Logo</button>
-                  <button className="admin-btn admin-btn--sm admin-btn--danger" onClick={() => deleteImage(url)}>Delete</button>
+                  <button type="button" className="admin-btn admin-btn--sm" onClick={() => setAsImage(url, 'hero')}>Set as Hero</button>
+                  <button type="button" className="admin-btn admin-btn--sm" onClick={() => setAsImage(url, 'about')}>Set as About</button>
+                  <button type="button" className="admin-btn admin-btn--sm" onClick={() => setAsImage(url, 'logo')}>Set as Logo</button>
+                  {pendingDelete === url ? (
+                    <>
+                      <button type="button" className="admin-btn admin-btn--sm admin-btn--danger" onClick={() => deleteImage(url)}>
+                        {isInUse(url) ? 'In use — delete anyway' : 'Confirm delete'}
+                      </button>
+                      <button type="button" className="admin-btn admin-btn--sm" onClick={() => setPendingDelete('')}>Cancel</button>
+                    </>
+                  ) : (
+                    <button type="button" className="admin-btn admin-btn--sm admin-btn--danger" onClick={() => setPendingDelete(url)}>Delete</button>
+                  )}
                 </div>
-                <div className="admin-image-card__url">{url}</div>
+                <div className="admin-image-card__url">
+                  {url}
+                  {isInUse(url) && <span className="admin-image-card__badge">in use</span>}
+                </div>
               </div>
             ))}
           </div>

@@ -9,15 +9,45 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // In production, UPLOADS_DIR should point to a Railway persistent volume (e.g. /data/uploads)
 const uploadsDir = process.env.UPLOADS_DIR || path.join(__dirname, "..", "uploads");
 
+// Category and filename both end up in a filesystem path, so neither may
+// contain separators or traversal segments.
+function safeCategory(value) {
+  const cleaned = String(value || "general")
+    .toLowerCase()
+    .replace(/[^a-z0-9-_]/g, "");
+  return cleaned || "general";
+}
+
+function safeFilename(originalname) {
+  const base = path.basename(String(originalname || "image"));
+  const ext = path.extname(base).toLowerCase();
+  const stem = base
+    .slice(0, base.length - ext.length)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60);
+  return `${Date.now()}-${stem || "image"}${ext}`;
+}
+
+// Resolved path must stay inside uploadsDir.
+function resolveInsideUploads(...segments) {
+  const target = path.resolve(uploadsDir, ...segments);
+  const root = path.resolve(uploadsDir);
+  if (target !== root && !target.startsWith(root + path.sep)) return null;
+  return target;
+}
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const category = req.body.category || "general";
-    const dir = path.join(uploadsDir, category);
-    fs.mkdir(dir, { recursive: true }).then(() => cb(null, dir));
+    const dir = resolveInsideUploads(safeCategory(req.body.category));
+    if (!dir) return cb(new Error("Invalid category"));
+    fs.mkdir(dir, { recursive: true })
+      .then(() => cb(null, dir))
+      .catch(cb);
   },
   filename: (req, file, cb) => {
-    const uniqueName = `${Date.now()}-${file.originalname}`;
-    cb(null, uniqueName);
+    cb(null, safeFilename(file.originalname));
   },
 });
 
@@ -86,12 +116,15 @@ router.post("/upload", authMiddleware, (req, res) => {
 });
 
 router.get("/:category", async (req, res) => {
+  const category = safeCategory(req.params.category);
+  const dir = resolveInsideUploads(category);
+  if (!dir) return res.json([]);
+
   try {
-    const dir = path.join(uploadsDir, req.params.category);
-    const files = await fs.readdir(dir);
-    const urls = files
-      .filter((f) => f !== ".gitkeep")
-      .map((f) => `/uploads/${req.params.category}/${f}`);
+    const entries = await fs.readdir(dir, { withFileTypes: true });
+    const urls = entries
+      .filter((e) => e.isFile() && e.name !== ".gitkeep")
+      .map((e) => `/uploads/${category}/${encodeURIComponent(e.name)}`);
     res.json(urls);
   } catch {
     res.json([]);
@@ -99,12 +132,13 @@ router.get("/:category", async (req, res) => {
 });
 
 router.delete("/:category/:filename", authMiddleware, async (req, res) => {
+  const filePath = resolveInsideUploads(
+    safeCategory(req.params.category),
+    path.basename(req.params.filename),
+  );
+  if (!filePath) return res.status(400).json({ error: "Invalid path" });
+
   try {
-    const filePath = path.join(
-      uploadsDir,
-      req.params.category,
-      req.params.filename,
-    );
     await fs.unlink(filePath);
     res.json({ success: true });
   } catch {

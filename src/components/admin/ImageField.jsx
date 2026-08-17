@@ -1,76 +1,69 @@
 import { useState, useRef } from 'react';
-import api from '../../utils/api';
-
-const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // keep in sync with server (10MB)
-const ALLOWED_IMAGE_MIMES = new Set([
-  'image/jpeg',
-  'image/png',
-  'image/gif',
-  'image/webp',
-  'image/avif',
-  'image/svg+xml',
-]);
-
-function validateImageFile(file) {
-  if (!file) return 'No file selected';
-  if (file.size > MAX_IMAGE_BYTES) return 'File too large (max 10MB)';
-  if (!ALLOWED_IMAGE_MIMES.has(file.type)) return 'Unsupported file type (JPG, PNG, GIF, WEBP, AVIF, SVG only)';
-  return null;
-}
+import {
+  IMAGE_ACCEPT,
+  formatBytes,
+  uploadErrorMessage,
+  uploadImage,
+  validateImageFile,
+} from '../../utils/imageUpload';
 
 // Single image: value = string, onChange(string)
 // Multiple images: multiple=true, value = [string], onChange([string])
 export default function ImageField({ label, value, onChange, category = 'general', multiple = false }) {
   const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(null); // { done, total, percent, name }
+  const [error, setError] = useState('');
   const [dragOver, setDragOver] = useState(false);
   const fileRef = useRef(null);
 
-  const uploadFile = async (file) => {
-    const formData = new FormData();
-    formData.append('category', category);
-    // NOTE: multer storage.destination may read req.body.category while streaming.
-    // Ensure category field arrives BEFORE the file.
-    formData.append('image', file);
-    const res = await api.post('/api/images/upload', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-    return res.data.url;
-  };
-
   const handleUpload = async (files) => {
     if (!files || files.length === 0) return;
+
+    const rejected = [];
+    const accepted = [];
+    for (const file of files) {
+      const validationError = validateImageFile(file);
+      if (validationError) rejected.push(`${file.name}: ${validationError}`);
+      else accepted.push(file);
+    }
+
+    const queue = multiple ? accepted : accepted.slice(0, 1);
+    if (!queue.length) {
+      setError(rejected[0] || 'No valid image selected');
+      if (fileRef.current) fileRef.current.value = '';
+      return;
+    }
+
+    setError('');
     setUploading(true);
+
+    const uploaded = [];
     try {
-      if (multiple) {
-        const urls = [];
-        const errors = [];
-        for (const file of files) {
-          const validationError = validateImageFile(file);
-          if (validationError) {
-            errors.push(`${file.name}: ${validationError}`);
-            continue;
-          }
-          urls.push(await uploadFile(file));
-        }
+      for (let i = 0; i < queue.length; i += 1) {
+        const file = queue[i];
+        setProgress({ done: i, total: queue.length, percent: 0, name: file.name });
+        const url = await uploadImage(file, category, (percent) => {
+          setProgress({ done: i, total: queue.length, percent, name: file.name });
+        });
+        uploaded.push(url);
+      }
 
-        if (errors.length) {
-          alert(errors.slice(0, 5).join('\n') + (errors.length > 5 ? `\n...and ${errors.length - 5} more` : ''));
-        }
+      if (multiple) onChange([...(value || []), ...uploaded]);
+      else onChange(uploaded[0]);
 
-        onChange([...(value || []), ...urls]);
-      } else {
-        const validationError = validateImageFile(files[0]);
-        if (validationError) {
-          alert(validationError);
-          return;
-        }
-        const url = await uploadFile(files[0]);
-        onChange(url);
+      if (rejected.length) {
+        setError(`Skipped ${rejected.length} file(s) — ${rejected[0]}`);
       }
     } catch (err) {
-      alert(err?.response?.data?.error || 'Upload failed');
+      setError(uploadErrorMessage(err));
+      // Keep whatever already made it to the server rather than losing it.
+      if (uploaded.length) {
+        if (multiple) onChange([...(value || []), ...uploaded]);
+        else onChange(uploaded[0]);
+      }
     } finally {
       setUploading(false);
+      setProgress(null);
       if (fileRef.current) fileRef.current.value = '';
     }
   };
@@ -82,19 +75,29 @@ export default function ImageField({ label, value, onChange, category = 'general
   const onDrop = (e) => {
     e.preventDefault();
     setDragOver(false);
-    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
-    if (files.length > 0) handleUpload(files);
+    handleUpload(Array.from(e.dataTransfer.files));
   };
 
   const removeImage = (index) => {
-    if (multiple) {
-      onChange(value.filter((_, i) => i !== index));
-    } else {
-      onChange('');
-    }
+    setError('');
+    if (multiple) onChange(value.filter((_, i) => i !== index));
+    else onChange('');
+  };
+
+  const moveImage = (index, direction) => {
+    const next = [...(value || [])];
+    const target = index + direction;
+    if (target < 0 || target >= next.length) return;
+    [next[index], next[target]] = [next[target], next[index]];
+    onChange(next);
   };
 
   const images = multiple ? (value || []) : (value ? [value] : []);
+  const progressLabel = progress
+    ? progress.total > 1
+      ? `Uploading ${progress.done + 1} of ${progress.total} — ${progress.percent}%`
+      : `Uploading ${progress.percent}%`
+    : 'Uploading...';
 
   return (
     <div className="admin-field">
@@ -105,10 +108,33 @@ export default function ImageField({ label, value, onChange, category = 'general
         <div className={`admin-image-field__gallery${multiple ? ' admin-image-field__gallery--multi' : ''}`}>
           {images.map((url, i) => (
             <div key={`${url}-${i}`} className="admin-image-field__thumb">
-              <img src={url} alt={`${label} ${i + 1}`} />
+              <img src={url} alt={`${label} ${i + 1}`} loading="lazy" />
               <div className="admin-image-field__thumb-actions">
+                {multiple && (
+                  <>
+                    <button
+                      type="button"
+                      className="admin-btn admin-btn--sm"
+                      onClick={() => moveImage(i, -1)}
+                      disabled={uploading || i === 0}
+                      aria-label={`Move ${label} ${i + 1} earlier`}
+                    >
+                      ←
+                    </button>
+                    <button
+                      type="button"
+                      className="admin-btn admin-btn--sm"
+                      onClick={() => moveImage(i, 1)}
+                      disabled={uploading || i === images.length - 1}
+                      aria-label={`Move ${label} ${i + 1} later`}
+                    >
+                      →
+                    </button>
+                  </>
+                )}
                 {!multiple && (
                   <button
+                    type="button"
                     className="admin-btn admin-btn--sm"
                     onClick={() => fileRef.current?.click()}
                     disabled={uploading}
@@ -117,8 +143,10 @@ export default function ImageField({ label, value, onChange, category = 'general
                   </button>
                 )}
                 <button
+                  type="button"
                   className="admin-btn admin-btn--sm admin-btn--danger"
                   onClick={() => removeImage(i)}
+                  disabled={uploading}
                 >
                   Remove
                 </button>
@@ -136,8 +164,8 @@ export default function ImageField({ label, value, onChange, category = 'general
           onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
           onDragLeave={() => setDragOver(false)}
           onDrop={onDrop}
-          onClick={() => fileRef.current?.click()}
-          style={{ cursor: 'pointer' }}
+          onClick={() => !uploading && fileRef.current?.click()}
+          style={{ cursor: uploading ? 'progress' : 'pointer' }}
         >
           <div className="admin-image-field__empty">
             <div className="admin-image-field__icon">
@@ -149,19 +177,32 @@ export default function ImageField({ label, value, onChange, category = 'general
             </div>
             <span>
               {uploading
-                ? 'Uploading...'
+                ? progressLabel
                 : multiple
                   ? 'Click or drag images here (multiple allowed)'
                   : 'Click or drag image here'}
             </span>
+            {!uploading && (
+              <span className="admin-image-field__hint">
+                JPG, PNG, GIF, WEBP, AVIF or SVG — up to {formatBytes(10 * 1024 * 1024)}. Large photos are resized automatically.
+              </span>
+            )}
           </div>
         </div>
       )}
 
+      {uploading && (
+        <div className="admin-upload-progress" role="progressbar" aria-valuenow={progress?.percent ?? 0} aria-valuemin={0} aria-valuemax={100}>
+          <div className="admin-upload-progress__bar" style={{ width: `${progress?.percent ?? 0}%` }} />
+        </div>
+      )}
+
+      {error && <div className="admin-alert admin-alert--error">{error}</div>}
+
       <input
         ref={fileRef}
         type="file"
-        accept="image/png,image/jpeg,image/gif,image/webp,image/avif,image/svg+xml"
+        accept={IMAGE_ACCEPT}
         multiple={multiple}
         style={{ display: 'none' }}
         onChange={onFileChange}

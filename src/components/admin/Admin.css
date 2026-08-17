@@ -1045,8 +1045,41 @@ select.admin-field__input option {
   font-size: 0.82rem;
 }
 
+.admin-image-field__hint {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.72rem;
+  opacity: 0.6;
+}
+
 .admin-image-field__icon {
   opacity: 0.4;
+}
+
+/* Upload progress */
+.admin-upload-progress {
+  height: 4px;
+  margin-top: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.admin-upload-progress__bar {
+  height: 100%;
+  background: var(--color-accent, #d4a843);
+  transition: width 0.2s ease;
+}
+
+.admin-image-card__badge {
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 20px;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: rgba(212, 168, 67, 0.18);
+  color: var(--color-accent, #d4a843);
 }
 
 /* Image gallery / thumbnails */
