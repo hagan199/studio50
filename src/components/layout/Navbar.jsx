@@ -62,7 +62,7 @@ export default function Navbar() {
   const [brand, setBrand] = useState(null);
   const [contentLoaded, setContentLoaded] = useState(false);
   const [navigation, setNavigation] = useState({
-    ctaText: 'get in tough',
+    ctaText: 'Get in Touch',
     ctaLink: '#auditions',
   });
   const [navLinks, setNavLinks] = useState(fallbackNavLinks);

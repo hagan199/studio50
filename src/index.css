@@ -333,3 +333,52 @@ h4 {
     --font-size-h4: 1.5rem;
   }
 }
+
+/* ── Keyboard focus ───────────────────────── */
+/* Nothing on the public site showed a focus ring, leaving keyboard users
+   with no idea where they were. */
+:focus-visible {
+  outline: 3px solid var(--color-primary-red, #fb3131);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+a:focus:not(:focus-visible),
+button:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ── Skip link ────────────────────────────── */
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -60px;
+  z-index: 2000;
+  padding: 12px 20px;
+  border-radius: 0 0 10px 10px;
+  background: var(--color-primary-red, #fb3131);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* ── Reduced motion ───────────────────────── */
+/* Backstop for CSS-driven motion; JS animations opt out via utils/motion.js. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

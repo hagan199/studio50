@@ -75,7 +75,9 @@ export default function HomePage() {
 
   return (
     <>
+      <a className="skip-link" href="#main">Skip to content</a>
       <Navbar />
+      <main id="main">
       {visibleSections.map((s) => {
         const Component = SECTION_MAP[s.id];
         if (!Component) return null;
@@ -99,6 +101,8 @@ export default function HomePage() {
         }
         return <Component key={s.id} />;
       })}
+      </main>
+      <Footer />
       <BackToTop />
     </>
   );

@@ -42,7 +42,7 @@ export default function ContentEditor() {
       .then((res) => setContent({
         ...res.data,
         navigation: {
-          ctaText: 'get in tough',
+          ctaText: 'Get in Touch',
           ctaLink: '#auditions',
           ...(res.data.navigation || {}),
         },

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import gsap from 'gsap';
 import api from '../../utils/api';
+import { prefersReducedMotion } from '../../utils/motion';
 import './HeroSection.css';
 
 const DEFAULT_SLIDES = [
@@ -66,12 +67,15 @@ export default function HeroSection() {
 
   useEffect(() => {
     if (!content || !firstSlideReady) return;
+    // Auto-advancing carousels are motion the visitor never asked for.
+    if (prefersReducedMotion()) return;
     intervalRef.current = setInterval(nextSlide, 5000);
     return () => clearInterval(intervalRef.current);
   }, [content, firstSlideReady, nextSlide]);
 
   const handleMouseEnter = () => clearInterval(intervalRef.current);
   const handleMouseLeave = () => {
+    if (prefersReducedMotion()) return;
     intervalRef.current = setInterval(nextSlide, 5000);
   };
 
@@ -150,18 +154,30 @@ export default function HeroSection() {
     >
       {/* Full-screen background slider */}
       <div className="hero__bg">
-        {slides.map((src, i) => (
-          <div
-            key={src}
-            className={`hero__slide ${i === currentSlide ? 'active' : ''}`}
-          >
-            <img
-              src={src}
-              alt={`${brand.name} slide ${i + 1}`}
-              className="hero__slide-img"
-            />
-          </div>
-        ))}
+        {slides.map((src, i) => {
+          // Only the visible slide and its neighbours are worth downloading;
+          // mounting all of them pulls megabytes nobody has scrolled to yet.
+          const distance = Math.min(
+            Math.abs(i - currentSlide),
+            slides.length - Math.abs(i - currentSlide)
+          );
+          if (distance > 1) return <div key={src} className="hero__slide" />;
+
+          return (
+            <div
+              key={src}
+              className={`hero__slide ${i === currentSlide ? 'active' : ''}`}
+            >
+              <img
+                src={src}
+                alt={`${brand.name} slide ${i + 1}`}
+                className="hero__slide-img"
+                fetchPriority={i === 0 ? 'high' : 'low'}
+                decoding="async"
+              />
+            </div>
+          );
+        })}
         <div className="hero__overlay" />
       </div>
 

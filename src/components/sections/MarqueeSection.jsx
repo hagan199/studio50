@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import api from '../../utils/api';
 import useScrollAnimation from '../../hooks/useScrollAnimation';
+import { prefersReducedMotion } from '../../utils/motion';
 import './MarqueeSection.css';
 
 export default function MarqueeSection() {
@@ -15,6 +16,11 @@ export default function MarqueeSection() {
   useEffect(() => {
     const el = marqueeRef.current;
     if (!el || !data) return;
+    // Endless horizontal motion is exactly what reduced-motion users opt out of.
+    if (prefersReducedMotion()) {
+      el.style.transform = 'translateX(0)';
+      return;
+    }
     let animId;
     let pos = 0;
     const speed = 0.5;

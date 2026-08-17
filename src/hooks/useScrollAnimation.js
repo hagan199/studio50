@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { prefersReducedMotion } from '../utils/motion';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -25,6 +26,17 @@ export default function useScrollAnimation(deps = []) {
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
+
+    // Reveal animations start elements at opacity 0, so when motion is reduced
+    // they must be skipped entirely rather than played faster.
+    if (prefersReducedMotion()) {
+      el.querySelectorAll('[data-count-to]').forEach((target) => {
+        const end = parseFloat(target.getAttribute('data-count-to'));
+        const suffix = target.getAttribute('data-count-suffix') || '';
+        if (!Number.isNaN(end)) target.textContent = `${Math.round(end)}${suffix}`;
+      });
+      return;
+    }
 
     const ctx = gsap.context(() => {
       // Individual element animations
