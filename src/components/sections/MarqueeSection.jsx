@@ -42,7 +42,9 @@ export default function MarqueeSection() {
     ));
 
   return (
-    <section className="scroll-div gray" id="awards" ref={animRef}>
+    <section className="scroll-div gray" id="services" ref={animRef}>
+      {/* Keeps older #awards links working now that this is the services block */}
+      <span id="awards" aria-hidden="true" />
       <div className="short-container">
         <h2 className="section-heading dark" data-animate="fade-up">{data.heading}</h2>
         <p className="section-title small dark" data-animate="fade-up" data-delay="0.1">
