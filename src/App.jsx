@@ -7,11 +7,28 @@ import api from './utils/api';
 
 const SITE_TITLE = 'studio50';
 
+// Icons that ship with the repo. If SEO still points at one of these while the
+// CMS has a real brand logo, the logo wins — otherwise the tab keeps showing
+// the old default mark nobody ever changed.
+const PLACEHOLDER_ICONS = new Set(['/images/favicon.png', '/images/webclip.png']);
+
+const pickIcon = (seoValue, brandLogo) => {
+  if (seoValue && !(brandLogo && PLACEHOLDER_ICONS.has(seoValue))) return seoValue;
+  return brandLogo || seoValue;
+};
+
 function useSeoMeta() {
   useEffect(() => {
     document.title = SITE_TITLE;
 
-    api.get('/api/seo').then((res) => {
+    // The tab icon should track the brand logo unless SEO overrides it, so a
+    // logo change in the CMS doesn't leave a stale favicon behind.
+    const brandLogo = api
+      .get('/api/content')
+      .then((res) => res.data?.brand?.logoUrl || '')
+      .catch(() => '');
+
+    api.get('/api/seo').then(async (res) => {
       const s = res.data;
       document.title = SITE_TITLE;
 
@@ -36,14 +53,20 @@ function useSeoMeta() {
       setOg('og:image', s.ogImage);
       setOg('og:type', 'website');
 
-      if (s.favicon) {
-        let link = document.querySelector('link[rel="icon"]');
-        if (link) link.href = s.favicon;
-      }
-      if (s.appleTouchIcon) {
-        let link = document.querySelector('link[rel="apple-touch-icon"]');
-        if (link) link.href = s.appleTouchIcon;
-      }
+      const setIcon = (rel, href) => {
+        if (!href) return;
+        let link = document.querySelector(`link[rel="${rel}"]`);
+        if (!link) {
+          link = document.createElement('link');
+          link.rel = rel;
+          document.head.appendChild(link);
+        }
+        link.href = href;
+      };
+
+      const logo = await brandLogo;
+      setIcon('icon', pickIcon(s.favicon, logo));
+      setIcon('apple-touch-icon', pickIcon(s.appleTouchIcon || s.favicon, logo));
     }).catch(() => {});
   }, []);
 }

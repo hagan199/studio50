@@ -113,13 +113,16 @@ export default function SeoEditor() {
       {/* Browser & Icons */}
       <div className="admin-card" style={{ marginTop: '12px' }}>
         <h3 className="admin-card__title">Browser & Icons</h3>
+        <p className="admin-image-field__hint" style={{ marginBottom: '10px' }}>
+          Leave both empty to reuse the brand logo from Content → Brand as the tab icon.
+        </p>
         <div className="admin-grid-2">
           <div className="admin-field">
-            <label className="admin-field__label">Favicon URL</label>
+            <ImageField label="Favicon (square, 512x512 recommended)" value={seo.favicon || ''} onChange={(url) => update('favicon', url)} category="seo" />
             <input className="admin-field__input" value={seo.favicon || ''} onChange={(e) => update('favicon', e.target.value)} placeholder="/images/favicon.png" />
           </div>
           <div className="admin-field">
-            <label className="admin-field__label">Apple Touch Icon URL</label>
+            <ImageField label="Apple Touch Icon (180x180)" value={seo.appleTouchIcon || ''} onChange={(url) => update('appleTouchIcon', url)} category="seo" />
             <input className="admin-field__input" value={seo.appleTouchIcon || ''} onChange={(e) => update('appleTouchIcon', e.target.value)} placeholder="/images/webclip.png" />
           </div>
         </div>
