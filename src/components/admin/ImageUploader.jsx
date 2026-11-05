@@ -23,6 +23,7 @@ export default function ImageUploader() {
     { value: 'services', label: 'Services' },
     { value: 'logo', label: 'Logo' },
     { value: 'about', label: 'About' },
+    { value: 'graduation', label: 'Graduation' },
   ];
 
   useEffect(() => {

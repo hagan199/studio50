@@ -13,6 +13,7 @@ const STATIC_ANCHORS = [
   { value: '#programs', label: 'Programs' },
   { value: '#awards', label: 'Awards & Marquee' },
   { value: '#contact', label: 'Contact' },
+  { value: '/graduation', label: 'Graduation page' },
 ];
 
 function toAnchorId(title) {
@@ -131,7 +132,7 @@ export default function MenuEditor() {
       <div className="admin-card">
         <h3 className="admin-card__title">Navigation Links</h3>
         <p style={{ color: '#666', fontSize: '0.85rem', marginBottom: '16px' }}>
-          Set the label and pick which section each link scrolls to.
+          Set the label and pick which section each link scrolls to, or which page it opens.
         </p>
 
         {items.length === 0 ? (

@@ -1,0 +1,351 @@
+{
+  "sections": [
+    {
+      "id": "hero",
+      "label": "Hero",
+      "visible": true,
+      "order": 0
+    },
+    {
+      "id": "gallery",
+      "label": "Graduation Gallery",
+      "visible": true,
+      "order": 1
+    },
+    {
+      "id": "packages",
+      "label": "Packages",
+      "visible": true,
+      "order": 2
+    },
+    {
+      "id": "reels",
+      "label": "Latest Reels",
+      "visible": true,
+      "order": 3
+    },
+    {
+      "id": "photos",
+      "label": "Latest Photos",
+      "visible": true,
+      "order": 4
+    },
+    {
+      "id": "contact",
+      "label": "Contact",
+      "visible": true,
+      "order": 5
+    }
+  ],
+  "hero": {
+    "label": "Graduation Season",
+    "headline": "Your milestone, beautifully told.",
+    "subheadline": "Graduation photography and films that capture the pride, the joy and every moment worth remembering — on campus, at the ceremony and beyond.",
+    "ctaText": "View Packages",
+    "ctaLink": "#graduation-packages",
+    "secondaryCtaText": "Watch Reels",
+    "secondaryCtaLink": "#graduation-reels",
+    "slideSeconds": 8,
+    "videos": [
+      {
+        "id": "hero-vid-1",
+        "url": "/media/5400721_Coll_wavebreak_People_1920x1080_mp4.mp4",
+        "posterUrl": "/images/frican-students-walking-outdoors.avif"
+      },
+      {
+        "id": "hero-vid-2",
+        "url": "/media/hmr-audition-promo-video_mp4.mp4",
+        "posterUrl": "/images/audition-homepage-img.avif"
+      }
+    ]
+  },
+  "gallery": {
+    "label": "Portfolio",
+    "heading": "Graduation Gallery",
+    "description": "Portraits, ceremonies, campus moments and creative shoots from recent graduations.",
+    "collections": [
+      {
+        "id": "portraits",
+        "name": "Portraits"
+      },
+      {
+        "id": "ceremony",
+        "name": "Ceremony"
+      },
+      {
+        "id": "groups",
+        "name": "Individual & Group"
+      },
+      {
+        "id": "campus",
+        "name": "Campus Moments"
+      },
+      {
+        "id": "creative",
+        "name": "Creative Shoots"
+      }
+    ],
+    "items": [
+      {
+        "id": "gal-1",
+        "url": "/images/frican-students-walking-outdoors.avif",
+        "title": "Cap & gown portrait",
+        "caption": "",
+        "collectionId": "portraits"
+      },
+      {
+        "id": "gal-2",
+        "url": "/images/Fashionable-Group-of-Friends-with-Stylish-Clothes-at-Music-Festival1.jpg.webp",
+        "title": "Class of the year",
+        "caption": "",
+        "collectionId": "ceremony"
+      },
+      {
+        "id": "gal-3",
+        "url": "/images/2148761764.avif",
+        "title": "Proud moment",
+        "caption": "",
+        "collectionId": "groups"
+      },
+      {
+        "id": "gal-4",
+        "url": "/images/47184.avif",
+        "title": "Walking the stage",
+        "caption": "",
+        "collectionId": "campus"
+      },
+      {
+        "id": "gal-5",
+        "url": "/images/2617.avif",
+        "title": "Friends forever",
+        "caption": "",
+        "collectionId": "creative"
+      },
+      {
+        "id": "gal-6",
+        "url": "/images/1163-1.avif",
+        "title": "Campus golden hour",
+        "caption": "",
+        "collectionId": "portraits"
+      },
+      {
+        "id": "gal-7",
+        "url": "/images/2150627964.avif",
+        "title": "Family celebration",
+        "caption": "",
+        "collectionId": "ceremony"
+      },
+      {
+        "id": "gal-8",
+        "url": "/images/2149145024.avif",
+        "title": "Creative studio shoot",
+        "caption": "",
+        "collectionId": "groups"
+      },
+      {
+        "id": "gal-9",
+        "url": "/images/audition-homepage-img.avif",
+        "title": "The big day",
+        "caption": "",
+        "collectionId": "campus"
+      },
+      {
+        "id": "gal-10",
+        "url": "/images/1.avif",
+        "title": "After the ceremony",
+        "caption": "",
+        "collectionId": "creative"
+      }
+    ]
+  },
+  "packages": {
+    "label": "Pricing",
+    "heading": "Graduation Packages",
+    "description": "Choose the coverage that suits your day. Every package includes professional editing and an online gallery.",
+    "currency": "GH₵",
+    "items": [
+      {
+        "id": "pkg-1",
+        "name": "Essential",
+        "badge": "",
+        "price": "800",
+        "priceNote": "per graduate",
+        "photos": "15",
+        "duration": "1 hour",
+        "description": "A focused portrait session for the graduate.",
+        "inclusions": [
+          "1 location on campus",
+          "Cap & gown portraits",
+          "Online download gallery"
+        ],
+        "benefits": [],
+        "featured": false,
+        "ctaText": "Book Essential",
+        "ctaLink": "#contact"
+      },
+      {
+        "id": "pkg-2",
+        "name": "Signature",
+        "badge": "Most popular",
+        "price": "1,500",
+        "priceNote": "per graduate",
+        "photos": "40",
+        "duration": "2 hours",
+        "description": "Portraits plus ceremony coverage with family and friends.",
+        "inclusions": [
+          "Up to 2 locations",
+          "Ceremony & family photos",
+          "Group shots with friends",
+          "Online download gallery"
+        ],
+        "benefits": [
+          "1-minute highlight reel",
+          "5 priority edits within 48 hours"
+        ],
+        "featured": true,
+        "ctaText": "Book Signature",
+        "ctaLink": "#contact"
+      },
+      {
+        "id": "pkg-3",
+        "name": "Premium",
+        "badge": "",
+        "price": "2,800",
+        "priceNote": "per graduate",
+        "photos": "80",
+        "duration": "Half day (4 hours)",
+        "description": "Full-day storytelling in photos and film.",
+        "inclusions": [
+          "Unlimited campus locations",
+          "Ceremony, family & group coverage",
+          "Creative styled shoot",
+          "Online download gallery"
+        ],
+        "benefits": [
+          "3-minute graduation film",
+          "Vertical reel for social media",
+          "10 premium prints"
+        ],
+        "featured": false,
+        "ctaText": "Book Premium",
+        "ctaLink": "#contact"
+      }
+    ]
+  },
+  "reels": {
+    "label": "Watch",
+    "heading": "Latest Graduation Reels",
+    "description": "Short films from recent graduations. Tap a reel to watch with sound.",
+    "items": [
+      {
+        "id": "reel-1",
+        "title": "Class celebration",
+        "description": "Highlights from the ceremony.",
+        "videoUrl": "/media/5400721_Coll_wavebreak_People_1920x1080_mp4.mp4",
+        "posterUrl": "/images/Fashionable-Group-of-Friends-with-Stylish-Clothes-at-Music-Festival1.jpg.webp",
+        "visible": true
+      },
+      {
+        "id": "reel-2",
+        "title": "Graduation day film",
+        "description": "The day in under a minute.",
+        "videoUrl": "/media/hmr-audition-promo-video_mp4.mp4",
+        "posterUrl": "/images/frican-students-walking-outdoors.avif",
+        "visible": true
+      },
+      {
+        "id": "reel-3",
+        "title": "Friends on campus",
+        "description": "",
+        "videoUrl": "/media/5400721_Coll_wavebreak_People_1920x1080_mp4.mp4",
+        "posterUrl": "/images/2148761764.avif",
+        "visible": true
+      },
+      {
+        "id": "reel-4",
+        "title": "The walk",
+        "description": "",
+        "videoUrl": "/media/hmr-audition-promo-video_mp4.mp4",
+        "posterUrl": "/images/47184.avif",
+        "visible": true
+      }
+    ]
+  },
+  "photos": {
+    "label": "Recent work",
+    "heading": "Latest Graduation Photos",
+    "description": "Fresh from this season’s sessions.",
+    "items": [
+      {
+        "id": "photo-1",
+        "url": "/images/1.avif",
+        "title": "",
+        "caption": "",
+        "visible": true
+      },
+      {
+        "id": "photo-2",
+        "url": "/images/audition-homepage-img.avif",
+        "title": "",
+        "caption": "",
+        "visible": true
+      },
+      {
+        "id": "photo-3",
+        "url": "/images/2149145024.avif",
+        "title": "",
+        "caption": "",
+        "visible": true
+      },
+      {
+        "id": "photo-4",
+        "url": "/images/2150627964.avif",
+        "title": "",
+        "caption": "",
+        "visible": true
+      },
+      {
+        "id": "photo-5",
+        "url": "/images/1163-1.avif",
+        "title": "",
+        "caption": "",
+        "visible": true
+      },
+      {
+        "id": "photo-6",
+        "url": "/images/2617.avif",
+        "title": "",
+        "caption": "",
+        "visible": true
+      },
+      {
+        "id": "photo-7",
+        "url": "/images/47184.avif",
+        "title": "",
+        "caption": "",
+        "visible": true
+      },
+      {
+        "id": "photo-8",
+        "url": "/images/2148761764.avif",
+        "title": "",
+        "caption": "",
+        "visible": true
+      },
+      {
+        "id": "photo-9",
+        "url": "/images/Fashionable-Group-of-Friends-with-Stylish-Clothes-at-Music-Festival1.jpg.webp",
+        "title": "",
+        "caption": "",
+        "visible": true
+      },
+      {
+        "id": "photo-10",
+        "url": "/images/frican-students-walking-outdoors.avif",
+        "title": "",
+        "caption": "",
+        "visible": true
+      }
+    ]
+  }
+}

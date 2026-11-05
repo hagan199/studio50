@@ -35,6 +35,15 @@
       "label": "Live Productions",
       "href": "#liveproductions",
       "order": 6
+    },
+    {
+      "id": "menu-graduation",
+      "label": "Graduation",
+      "href": "/graduation",
+      "order": 7
     }
+  ],
+  "migrations": [
+    "graduation-menu-link"
   ]
 }
