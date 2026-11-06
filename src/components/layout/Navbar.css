@@ -4,10 +4,23 @@
   left: 0;
   right: 0;
   z-index: 100;
+  transition: box-shadow 0.4s ease;
+}
+
+/* The frosted background lives on a pseudo-element, not on .navbar itself:
+   backdrop-filter makes an element the containing block for its fixed
+   children, which shrank the mobile slide-out menu and its overlay to the
+   88px bar and pushed the first links off the top of the screen. */
+.navbar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
   background-color: var(--navbar-bg, rgba(255, 255, 255, 0.92));
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  transition: box-shadow 0.4s ease, background-color 0.4s ease;
+  transition: background-color 0.4s ease;
+  pointer-events: none;
 }
 
 .navbar.scrolled {
@@ -174,6 +187,36 @@
 
 .menu-button.active span:nth-child(3) {
   transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Small desktops / landscape tablets: the full menu (seven links since the
+   Graduation page) is wider than the bar between the mobile breakpoint and
+   ~1200px and was pushing the last link off-screen. Tighten the spacing only. */
+@media screen and (min-width: 992px) and (max-width: 1199px) {
+  .nav-container {
+    width: 94%;
+    gap: 12px;
+  }
+
+  .nav-menu {
+    gap: 0;
+    min-width: 0;
+  }
+
+  .nav-link {
+    padding: 8px 8px;
+    letter-spacing: 0.2px;
+  }
+
+  .nav-link::after {
+    left: 8px;
+    right: 8px;
+  }
+
+  .nav-cta {
+    padding: 10px 16px;
+    letter-spacing: 0.2px;
+  }
 }
 
 @media screen and (max-width: 991px) {

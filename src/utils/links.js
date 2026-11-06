@@ -4,6 +4,13 @@
 
 export const isExternalHref = (href = '') => /^(https?:|mailto:|tel:|\/\/)/i.test(href);
 
+/**
+ * Anchor id for a service ("Graphic Design" -> "graphicdesign"). The services
+ * grid renders these ids and the menu editor offers them as link targets.
+ */
+export const serviceAnchorId = (title) =>
+  String(title ?? '').toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9]/g, '');
+
 export const isHomeHref = (href = '') => href === '' || href === '#' || href === '/';
 
 export const isAnchorHref = (href = '') => href.startsWith('#') && href.length > 1;
