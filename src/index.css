@@ -61,6 +61,10 @@
 /* ── Base ────────────────────────────────── */
 html {
   scroll-behavior: smooth;
+  /* The navbar is fixed (88px tall). Without this the browser's own jump to a
+     #section on page load tucks the section heading underneath it. Matches the
+     navbar height + 10px gap that Navbar.jsx uses for its scrolling. */
+  scroll-padding-top: 98px;
 }
 
 body {

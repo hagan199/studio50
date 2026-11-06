@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import api from '../../utils/api';
+import api, { pendingRequests } from '../../utils/api';
 import { isExternalHref, isHomeHref, isRouteHref, resolveSiteHref } from '../../utils/links';
 import './Navbar.css';
 
@@ -13,6 +13,13 @@ const fallbackNavLinks = [
   { label: 'Auditions', href: '#auditions' },
   { label: 'Contact Us', href: '#contact' },
 ];
+
+// Cross-page "/#section" arrival: keep re-aligning until API requests are done
+// and the target has not moved for HASH_SETTLE_MS, giving up after
+// HASH_ALIGN_MAX_MS regardless.
+const HASH_SETTLE_MS = 600;
+const HASH_ALIGN_MAX_MS = 8000;
+const USER_SCROLL_EVENTS = ['wheel', 'touchmove', 'keydown', 'mousedown'];
 
 function findElement(href) {
   if (!href || href === '#' || href === '/') return null;
@@ -46,16 +53,18 @@ function findElement(href) {
   return null;
 }
 
+// Scroll position that puts el just below the fixed navbar.
+function targetTop(el) {
+  const navHeight = document.querySelector('.navbar')?.offsetHeight || 65;
+  return Math.max(0, Math.round(el.getBoundingClientRect().top + window.scrollY - navHeight - 10));
+}
+
 function scrollToHref(href) {
   if (!href || href === '#' || href === '/') {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } else {
     const el = findElement(href);
-    if (el) {
-      const navHeight = document.querySelector('.navbar')?.offsetHeight || 65;
-      const top = el.getBoundingClientRect().top + window.scrollY - navHeight - 10;
-      window.scrollTo({ top, behavior: 'smooth' });
-    }
+    if (el) window.scrollTo({ top: targetTop(el), behavior: 'smooth' });
   }
 }
 
@@ -113,22 +122,44 @@ export default function Navbar() {
       .catch(() => {});
   }, []);
 
-  // Arriving on the homepage from another page with "/#section": the sections
-  // render after their content loads, so wait for the target to exist.
+  // Arriving on the homepage from another page with "/#section". Each section
+  // renders only once its own API data arrives, so the target can exist while
+  // the sections above it are still empty — scrolling to it once lands near
+  // the top of the page. Keep it aligned while the layout fills in, and stop
+  // as soon as the user scrolls themselves.
   useEffect(() => {
     if (!isHome || !location.hash) return;
-    let tries = 0;
+    const hash = location.hash;
+    const started = Date.now();
+    let lastTop = null;
+    let settledAt = null;
     let timer;
-    const attempt = () => {
-      if (findElement(location.hash) || tries >= 20) {
-        scrollToHref(location.hash);
-        return;
-      }
-      tries += 1;
-      timer = setTimeout(attempt, 150);
+
+    const stop = () => {
+      clearTimeout(timer);
+      USER_SCROLL_EVENTS.forEach((type) => window.removeEventListener(type, stop));
     };
-    attempt();
-    return () => clearTimeout(timer);
+    USER_SCROLL_EVENTS.forEach((type) => window.addEventListener(type, stop, { passive: true }));
+
+    const align = () => {
+      const el = findElement(hash);
+      if (el) {
+        const top = targetTop(el);
+        if (lastTop === null || Math.abs(top - lastTop) > 2) {
+          // Instant, not smooth: a smooth scroll aimed at a moving target
+          // falls short when content above it loads mid-animation.
+          window.scrollTo({ top, behavior: 'instant' });
+          lastTop = top;
+          settledAt = Date.now();
+        }
+      }
+      const settled =
+        settledAt !== null && pendingRequests() === 0 && Date.now() - settledAt > HASH_SETTLE_MS;
+      if (settled || Date.now() - started > HASH_ALIGN_MAX_MS) return stop();
+      timer = setTimeout(align, 100);
+    };
+    align();
+    return stop;
   }, [isHome, location.hash, location.key]);
 
   // Active section tracking via IntersectionObserver

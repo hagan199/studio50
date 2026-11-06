@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, useRef } from 'react';
 import api from '../../utils/api';
+import { serviceAnchorId } from '../../utils/links';
 import useAdminSave from '../../hooks/useAdminSave';
 import AdminToast from './AdminToast';
 import AdminSaveBar from './AdminSaveBar';
@@ -16,10 +17,6 @@ const STATIC_ANCHORS = [
   { value: '/graduation', label: 'Graduation page' },
 ];
 
-function toAnchorId(title) {
-  return title?.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9]/g, '') || '';
-}
-
 export default function MenuEditor() {
   const [data, setData] = useState(null);
   const [dirty, setDirty] = useState(false);
@@ -34,7 +31,7 @@ export default function MenuEditor() {
       const serviceAnchors = (res.data?.items || [])
         .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
         .map((svc) => ({
-          value: `#${toAnchorId(svc.title)}`,
+          value: `#${serviceAnchorId(svc.title)}`,
           label: `${svc.title} (service)`,
         }));
       setAnchors([...STATIC_ANCHORS, ...serviceAnchors]);

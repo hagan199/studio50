@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import api from '../../utils/api';
+import { serviceAnchorId } from '../../utils/links';
 import './ServicesSection.css';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -106,7 +107,7 @@ export default function ServicesSection() {
             .map((service) => (
               <div
                 key={service.id}
-                id={service.title?.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9]/g, '')}
+                id={serviceAnchorId(service.title)}
                 className="service-card"
                 onMouseEnter={(e) => handleCardHover(e, true)}
                 onMouseLeave={(e) => handleCardHover(e, false)}

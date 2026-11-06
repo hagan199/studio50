@@ -2,15 +2,33 @@ import { useEffect, useRef, useState } from 'react';
 import api from '../../utils/api';
 import useScrollAnimation from '../../hooks/useScrollAnimation';
 import { prefersReducedMotion } from '../../utils/motion';
+import { serviceAnchorId } from '../../utils/links';
 import './MarqueeSection.css';
+
+// Ids the homepage sections already use; a service with one of these names
+// must not add a second element with the same id.
+const SECTION_IDS = new Set(['services', 'awards', 'about', 'auditions', 'programs', 'contact', 'main', 'root']);
 
 export default function MarqueeSection() {
   const [data, setData] = useState(null);
+  const [serviceAnchors, setServiceAnchors] = useState([]);
   const marqueeRef = useRef(null);
   const animRef = useScrollAnimation([data]);
 
   useEffect(() => {
-    api.get('/api/content').then((res) => setData(res.data.marquee)).catch(() => {});
+    api.get('/api/content').then((res) => {
+      setData(res.data.marquee);
+      // Menu links such as #photography were generated for the services grid.
+      // While that grid is switched off (the default — see HomePage), this
+      // block is the services section, so it carries those anchors instead.
+      // When the grid is on it owns the ids, and duplicates would steal them.
+      const gridShown = res.data.sections?.find((s) => s.id === 'services')?.visible === true;
+      if (gridShown) return;
+      api.get('/api/services').then((svc) => {
+        const ids = (svc.data?.items || []).map((item) => serviceAnchorId(item.title)).filter(Boolean);
+        setServiceAnchors([...new Set(ids)].filter((id) => !SECTION_IDS.has(id)));
+      }).catch(() => {});
+    }).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -51,6 +69,7 @@ export default function MarqueeSection() {
     <section className="scroll-div gray" id="services" ref={animRef}>
       {/* Keeps older #awards links working now that this is the services block */}
       <span id="awards" aria-hidden="true" />
+      {serviceAnchors.map((id) => <span key={id} id={id} aria-hidden="true" />)}
       <div className="short-container">
         <h2 className="section-heading dark" data-animate="fade-up">{data.heading}</h2>
         <p className="section-title small dark" data-animate="fade-up" data-delay="0.1">
