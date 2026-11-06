@@ -15,6 +15,7 @@ import ContactSection from '../components/sections/ContactSection';
 import Footer from '../components/layout/Footer';
 import BackToTop from '../components/ui/BackToTop';
 import EditableSection from '../components/ui/EditableSection';
+import { DEFAULT_SECTIONS, resolveSections } from '../utils/sections';
 
 const SECTION_LABELS = {
   hero: 'Hero',
@@ -42,21 +43,6 @@ const SECTION_MAP = {
   services: ServicesSection,
 };
 
-const DEFAULT_SECTIONS = [
-  { id: 'hero', visible: true, order: 0 },
-  { id: 'marquee', visible: true, order: 1 },
-  { id: 'auditionProcess', visible: true, order: 2 },
-  { id: 'whyHMR', visible: true, order: 3 },
-  { id: 'latestContent', visible: true, order: 4 },
-  { id: 'credibility', visible: true, order: 5 },
-  { id: 'roadmap', visible: true, order: 6 },
-  { id: 'cta', visible: true, order: 7 },
-  { id: 'contact', visible: true, order: 8 },
-  // The services grid stays in SECTION_MAP so it can be switched back on from
-  // the CMS, but it no longer renders by default.
-  { id: 'services', visible: false, order: 9 },
-];
-
 export default function HomePage() {
   const [sections, setSections] = useState(DEFAULT_SECTIONS);
   const [searchParams] = useSearchParams();
@@ -64,9 +50,7 @@ export default function HomePage() {
 
   useEffect(() => {
     api.get('/api/content')
-      .then((res) => {
-        if (res.data.sections?.length) setSections(res.data.sections);
-      })
+      .then((res) => setSections(resolveSections(res.data)))
       .catch(() => {});
   }, []);
 

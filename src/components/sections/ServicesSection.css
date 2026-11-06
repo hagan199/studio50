@@ -140,3 +140,13 @@
     padding: 32px 24px;
   }
 }
+
+/* Ring shown briefly on the card a menu link scrolled to (see Navbar.jsx) */
+.service-card.nav-target-flash {
+  animation: service-card-flash 2.6s ease-out 0.35s;
+}
+
+@keyframes service-card-flash {
+  0%, 70% { box-shadow: 0 0 0 3px var(--navbar-active-color, #fb3131); }
+  100% { box-shadow: 0 0 0 3px transparent; }
+}

@@ -3,6 +3,7 @@ import api from '../../utils/api';
 import useScrollAnimation from '../../hooks/useScrollAnimation';
 import { prefersReducedMotion } from '../../utils/motion';
 import { serviceAnchorId } from '../../utils/links';
+import { isSectionVisible } from '../../utils/sections';
 import './MarqueeSection.css';
 
 // Ids the homepage sections already use; a service with one of these names
@@ -12,18 +13,21 @@ const SECTION_IDS = new Set(['services', 'awards', 'about', 'auditions', 'progra
 export default function MarqueeSection() {
   const [data, setData] = useState(null);
   const [serviceAnchors, setServiceAnchors] = useState([]);
+  const [gridShown, setGridShown] = useState(true);
   const marqueeRef = useRef(null);
   const animRef = useScrollAnimation([data]);
 
   useEffect(() => {
     api.get('/api/content').then((res) => {
       setData(res.data.marquee);
-      // Menu links such as #photography were generated for the services grid.
-      // While that grid is switched off (the default — see HomePage), this
-      // block is the services section, so it carries those anchors instead.
-      // When the grid is on it owns the ids, and duplicates would steal them.
-      const gridShown = res.data.sections?.find((s) => s.id === 'services')?.visible === true;
-      if (gridShown) return;
+      // Menu links such as #photography point at the services grid's cards.
+      // If the CMS switches that grid off, this block stands in as the
+      // services section and carries those anchors (and #services) instead.
+      // While the grid is shown it owns all of them — duplicates placed up
+      // here, above the grid, would capture the links.
+      const shown = isSectionVisible(res.data, 'services');
+      setGridShown(shown);
+      if (shown) return;
       api.get('/api/services').then((svc) => {
         const ids = (svc.data?.items || []).map((item) => serviceAnchorId(item.title)).filter(Boolean);
         setServiceAnchors([...new Set(ids)].filter((id) => !SECTION_IDS.has(id)));
@@ -66,10 +70,10 @@ export default function MarqueeSection() {
     ));
 
   return (
-    <section className="scroll-div gray" id="services" ref={animRef}>
-      {/* Keeps older #awards links working now that this is the services block */}
+    <section className="scroll-div gray" id={gridShown ? undefined : 'services'} ref={animRef}>
+      {/* Keeps older #awards links working */}
       <span id="awards" aria-hidden="true" />
-      {serviceAnchors.map((id) => <span key={id} id={id} aria-hidden="true" />)}
+      {!gridShown && serviceAnchors.map((id) => <span key={id} id={id} aria-hidden="true" />)}
       <div className="short-container">
         <h2 className="section-heading dark" data-animate="fade-up">{data.heading}</h2>
         <p className="section-title small dark" data-animate="fade-up" data-delay="0.1">

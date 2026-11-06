@@ -1,25 +1,38 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import api, { pendingRequests } from '../../utils/api';
-import { isExternalHref, isHomeHref, isRouteHref, resolveSiteHref } from '../../utils/links';
+import { isAnchorHref, isExternalHref, isHomeHref, isRouteHref, resolveSiteHref } from '../../utils/links';
 import './Navbar.css';
 
+// Only used if /api/menu fails — never rendered while the real menu loads,
+// otherwise its different order shows for a moment and the links jump.
 const fallbackNavLinks = [
   { label: 'Home', href: '#' },
-  { label: 'Graduation', href: '/graduation' },
   { label: 'About Us', href: '#about' },
   { label: 'Programs & Zonal Activities', href: '#programs' },
   { label: 'Awards & Partners', href: '#awards' },
   { label: 'Auditions', href: '#auditions' },
   { label: 'Contact Us', href: '#contact' },
+  { label: 'Graduation', href: '/graduation' },
 ];
 
-// Cross-page "/#section" arrival: keep re-aligning until API requests are done
-// and the target has not moved for HASH_SETTLE_MS, giving up after
-// HASH_ALIGN_MAX_MS regardless.
+const DEFAULT_NAVIGATION = { ctaText: 'Get in Touch', ctaLink: '#contact' };
+
+// Every page renders its own Navbar, so it remounts on each route change.
+// Keep the last menu/brand here so a remount starts from what was already on
+// screen instead of blanking or flashing defaults; each mount still refetches.
+const navCache = { links: null, brand: null, navigation: null };
+
+// Landing correction (see keepAligned). Cross-page "/#section" arrivals hold
+// the target for HASH_ALIGN_MAX_MS while the page loads; on-page clicks for
+// CLICK_ALIGN_MAX_MS after their smooth scroll. "Settled" = API requests done
+// and the target in place for HASH_SETTLE_MS.
 const HASH_SETTLE_MS = 600;
 const HASH_ALIGN_MAX_MS = 8000;
+const CLICK_ALIGN_MAX_MS = 4000;
 const USER_SCROLL_EVENTS = ['wheel', 'touchmove', 'keydown', 'mousedown'];
+// Longest a clicked link stays lit while its smooth scroll travels.
+const CLICK_LOCK_MS = 2500;
 
 function findElement(href) {
   if (!href || href === '#' || href === '/') return null;
@@ -53,10 +66,86 @@ function findElement(href) {
   return null;
 }
 
-// Scroll position that puts el just below the fixed navbar.
+// Scroll position that puts el just below the fixed navbar. Uses the layout
+// position (offsetTop chain), not getBoundingClientRect: scroll-in animations
+// start elements shifted (e.g. service cards begin 50px low), and aiming at
+// that shifted spot leaves the target under the navbar once it slides up.
+function layoutTop(el) {
+  let top = 0;
+  for (let node = el; node; node = node.offsetParent) top += node.offsetTop;
+  return top;
+}
+
 function targetTop(el) {
   const navHeight = document.querySelector('.navbar')?.offsetHeight || 65;
-  return Math.max(0, Math.round(el.getBoundingClientRect().top + window.scrollY - navHeight - 10));
+  return Math.max(0, Math.round(layoutTop(el) - navHeight - 10));
+}
+
+// Briefly ring the element a link scrolled to. Service cards sit three to a
+// row on desktop, so the row alone doesn't show which card was asked for.
+function flashTarget(el) {
+  if (!el || !el.classList.contains('service-card')) return;
+  el.classList.remove('nav-target-flash');
+  void el.offsetWidth; // restart the animation if it is already running
+  el.classList.add('nav-target-flash');
+  el.addEventListener('animationend', () => el.classList.remove('nav-target-flash'), { once: true });
+}
+
+/**
+ * Keep the element from resolve() just below the navbar while the page around
+ * it is still changing: sections render as their data arrives and lazy images
+ * grow as they load, both of which move the target after a scroll was aimed.
+ * Corrections are instant and only made while no scroll is in motion, so a
+ * smooth scroll is never cut short. Ends after maxMs, or as soon as the user
+ * scrolls, taps, clicks or presses a key. Returns a stop function.
+ */
+function keepAligned(resolve, { maxMs, waitForMotion = false, onSettled = null }) {
+  const started = Date.now();
+  let prevY = waitForMotion ? window.scrollY : null;
+  let settledAt = null;
+  let done = false;
+  let timer;
+
+  const stop = () => {
+    if (done) return;
+    done = true;
+    clearTimeout(timer);
+    USER_SCROLL_EVENTS.forEach((type) => window.removeEventListener(type, stop));
+  };
+  USER_SCROLL_EVENTS.forEach((type) => window.addEventListener(type, stop, { passive: true }));
+
+  const tick = () => {
+    if (done) return;
+    const el = resolve();
+    const y = window.scrollY;
+    const idle = prevY === null || Math.abs(y - prevY) < 1;
+    prevY = y;
+    if (el && idle) {
+      // Compare with where the page actually is, not where we last aimed: an
+      // early scroll can be capped by a page that hasn't grown yet.
+      const maxY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+      const want = Math.min(targetTop(el), maxY);
+      if (Math.abs(y - want) > 2) {
+        // Instant, not smooth: a smooth scroll aimed at a moving target falls short.
+        window.scrollTo({ top: want, behavior: 'instant' });
+        prevY = want;
+        settledAt = null;
+      } else if (settledAt === null) {
+        settledAt = Date.now();
+      }
+    }
+    if (onSettled && settledAt !== null && pendingRequests() === 0 && Date.now() - settledAt > HASH_SETTLE_MS) {
+      onSettled(el);
+      onSettled = null;
+    }
+    if (Date.now() - started > maxMs) return stop();
+    timer = setTimeout(tick, 100);
+  };
+  // With waitForMotion the first check comes after a smooth scroll has begun,
+  // so it sees the motion and waits for it to finish.
+  if (waitForMotion) timer = setTimeout(tick, 150);
+  else tick();
+  return stop;
 }
 
 function scrollToHref(href) {
@@ -64,21 +153,24 @@ function scrollToHref(href) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } else {
     const el = findElement(href);
-    if (el) window.scrollTo({ top: targetTop(el), behavior: 'smooth' });
+    if (el) {
+      window.scrollTo({ top: targetTop(el), behavior: 'smooth' });
+      flashTarget(el);
+    }
   }
 }
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [brand, setBrand] = useState(null);
-  const [contentLoaded, setContentLoaded] = useState(false);
-  const [navigation, setNavigation] = useState({
-    ctaText: 'Get in Touch',
-    ctaLink: '#auditions',
-  });
-  const [navLinks, setNavLinks] = useState(fallbackNavLinks);
+  const [brand, setBrand] = useState(navCache.brand);
+  const [contentLoaded, setContentLoaded] = useState(navCache.brand !== null);
+  const [navigation, setNavigation] = useState(navCache.navigation || DEFAULT_NAVIGATION);
+  const [navLinks, setNavLinks] = useState(navCache.links || []);
   const [activeHref, setActiveHref] = useState('#');
+  const preferredHrefRef = useRef(null); // last link picked; wins ties for "active"
+  const clickLockRef = useRef(null); // { href, until } while a click's scroll runs
+  const clickAlignStopRef = useRef(null); // stops the post-click landing correction
   const location = useLocation();
   const navigate = useNavigate();
   const isHome = location.pathname === '/';
@@ -98,13 +190,16 @@ export default function Navbar() {
   useEffect(() => {
     api.get('/api/content')
       .then((res) => {
-        setBrand(res.data.brand);
-        setNavigation((prev) => ({
-          ...prev,
-          ...(res.data.navigation || {}),
-        }));
+        const nextBrand = res.data.brand || {};
+        const nextNavigation = { ...DEFAULT_NAVIGATION, ...(res.data.navigation || {}) };
+        navCache.brand = nextBrand;
+        navCache.navigation = nextNavigation;
+        setBrand(nextBrand);
+        setNavigation(nextNavigation);
       })
-      .catch(() => setBrand({ name: 'Hype My Region', logoUrl: '/images/hmr-logo-new.avif' }))
+      .catch(() => {
+        if (!navCache.brand) setBrand({ name: 'Hype My Region', logoUrl: '/images/hmr-logo-new.avif' });
+      })
       .finally(() => setContentLoaded(true));
   }, []);
 
@@ -117,9 +212,13 @@ export default function Navbar() {
           .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
           .map((item) => ({ label: item.label, href: item.href }))
           .filter((item) => item.label && item.href);
-        if (items.length) setNavLinks(items);
+        const next = items.length ? items : fallbackNavLinks;
+        navCache.links = next;
+        setNavLinks(next);
       })
-      .catch(() => {});
+      .catch(() => {
+        if (!navCache.links) setNavLinks(fallbackNavLinks);
+      });
   }, []);
 
   // Arriving on the homepage from another page with "/#section". Each section
@@ -130,69 +229,76 @@ export default function Navbar() {
   useEffect(() => {
     if (!isHome || !location.hash) return;
     const hash = location.hash;
-    const started = Date.now();
-    let lastTop = null;
-    let settledAt = null;
-    let timer;
-
-    const stop = () => {
-      clearTimeout(timer);
-      USER_SCROLL_EVENTS.forEach((type) => window.removeEventListener(type, stop));
-    };
-    USER_SCROLL_EVENTS.forEach((type) => window.addEventListener(type, stop, { passive: true }));
-
-    const align = () => {
-      const el = findElement(hash);
-      if (el) {
-        const top = targetTop(el);
-        if (lastTop === null || Math.abs(top - lastTop) > 2) {
-          // Instant, not smooth: a smooth scroll aimed at a moving target
-          // falls short when content above it loads mid-animation.
-          window.scrollTo({ top, behavior: 'instant' });
-          lastTop = top;
-          settledAt = Date.now();
-        }
-      }
-      const settled =
-        settledAt !== null && pendingRequests() === 0 && Date.now() - settledAt > HASH_SETTLE_MS;
-      if (settled || Date.now() - started > HASH_ALIGN_MAX_MS) return stop();
-      timer = setTimeout(align, 100);
-    };
-    align();
-    return stop;
+    preferredHrefRef.current = hash;
+    return keepAligned(() => findElement(hash), {
+      maxMs: HASH_ALIGN_MAX_MS,
+      onSettled: flashTarget,
+    });
   }, [isHome, location.hash, location.key]);
 
-  // Active section tracking via IntersectionObserver
+  // Stop any in-flight alignment from an earlier click when leaving the page.
+  useEffect(() => () => clickAlignStopRef.current?.(), []);
+
+  // Active link tracking. The active link is the one whose target sits under
+  // the navbar line. Several targets can share that line (service cards are
+  // three to a row on desktop); then the link the user picked wins, otherwise
+  // the first in menu order. (An IntersectionObserver used to do this and lit
+  // whichever card entered its band last — often not the one clicked.)
   useEffect(() => {
     // Anchors only refer to homepage sections; elsewhere a fuzzy id match
     // would light up the wrong link.
     if (!isHome) return;
-    const sectionHrefs = navLinks
-      .filter((l) => l.href.startsWith('#') && l.href.length > 1)
-      .map((l) => l.href);
+    const hrefs = navLinks.map((l) => l.href).filter(isAnchorHref);
+    let frame = 0;
 
-    // Map each href to the element it resolves to
-    const hrefToEl = new Map();
-    sectionHrefs.forEach((href) => {
+    // Layout positions, not getBoundingClientRect, so a card still mid
+    // entrance animation counts where it is about to settle.
+    const underLine = (href, line) => {
       const el = findElement(href);
-      if (el) hrefToEl.set(el, href);
-    });
+      if (!el) return false;
+      // Zero-height anchor spans stand for the section that contains them.
+      const box = el.offsetHeight === 0 && el.parentElement ? el.parentElement : el;
+      const top = layoutTop(el) - window.scrollY;
+      const bottom = layoutTop(box) + box.offsetHeight - window.scrollY;
+      return top <= line && bottom > line;
+    };
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const href = hrefToEl.get(entry.target);
-            if (href) setActiveHref(href);
-          }
-        });
-      },
-      { threshold: 0.25, rootMargin: '-70px 0px -45% 0px' }
-    );
+    const compute = () => {
+      frame = 0;
+      const line = (document.querySelector('.navbar')?.offsetHeight || 65) + 20;
+      const hits = hrefs.filter((href) => underLine(href, line));
+      const atTop = window.scrollY < 50;
 
-    hrefToEl.forEach((_, el) => observer.observe(el));
+      // While a click's smooth scroll is travelling, keep the clicked link lit
+      // instead of flashing every section passed on the way.
+      const lock = clickLockRef.current;
+      if (lock) {
+        const reached = isHomeHref(lock.href) ? atTop : hits.includes(lock.href);
+        if (reached || Date.now() > lock.until) clickLockRef.current = null;
+        else return;
+      }
 
-    return () => observer.disconnect();
+      if (atTop) return setActiveHref('#');
+      setActiveHref(hits.includes(preferredHrefRef.current) ? preferredHrefRef.current : hits[0] || '');
+    };
+
+    const schedule = () => { if (!frame) frame = requestAnimationFrame(compute); };
+    const release = () => { clickLockRef.current = null; };
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    USER_SCROLL_EVENTS.forEach((type) => window.addEventListener(type, release, { passive: true }));
+    // Sections fill in after load and move things without any scroll event.
+    const resizeObserver = new ResizeObserver(schedule);
+    resizeObserver.observe(document.body);
+    schedule();
+
+    return () => {
+      cancelAnimationFrame(frame);
+      resizeObserver.disconnect();
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
+      USER_SCROLL_EVENTS.forEach((type) => window.removeEventListener(type, release));
+    };
   }, [navLinks, isHome]);
 
   // Lock body scroll when mobile menu is open
@@ -215,12 +321,27 @@ export default function Navbar() {
       window.scrollTo({ top: 0 });
       return;
     }
+    preferredHrefRef.current = href;
     if (!isHome) {
       navigate(resolveSiteHref(href, location.pathname));
       if (isHomeHref(href)) window.scrollTo({ top: 0 });
       return;
     }
-    requestAnimationFrame(() => scrollToHref(href));
+    clickLockRef.current = { href, until: Date.now() + CLICK_LOCK_MS };
+    setActiveHref(isHomeHref(href) ? '#' : href);
+    clickAlignStopRef.current?.();
+    clickAlignStopRef.current = null;
+    requestAnimationFrame(() => {
+      scrollToHref(href);
+      // Lazy images above the target can load while the smooth scroll runs
+      // and push it down; correct the landing once the scroll has finished.
+      if (!isHomeHref(href)) {
+        clickAlignStopRef.current = keepAligned(() => findElement(href), {
+          maxMs: CLICK_ALIGN_MAX_MS,
+          waitForMotion: true,
+        });
+      }
+    });
   }, [isHome, location.pathname, navigate]);
 
   const isActive = (href) => {
