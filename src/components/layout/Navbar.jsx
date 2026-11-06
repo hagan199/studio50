@@ -279,7 +279,14 @@ export default function Navbar() {
       }
 
       if (atTop) return setActiveHref('#');
-      setActiveHref(hits.includes(preferredHrefRef.current) ? preferredHrefRef.current : hits[0] || '');
+      if (hits.includes(preferredHrefRef.current)) return setActiveHref(preferredHrefRef.current);
+      // Targets can nest (Photography's "What we do" sits inside About): the
+      // one starting nearest the line is the most specific. Ties keep menu order.
+      const best = hits.reduce((pick, href) => {
+        if (!pick) return href;
+        return layoutTop(findElement(href)) > layoutTop(findElement(pick)) ? href : pick;
+      }, null);
+      setActiveHref(best || '');
     };
 
     const schedule = () => { if (!frame) frame = requestAnimationFrame(compute); };

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../utils/api';
 import useScrollAnimation from '../../hooks/useScrollAnimation';
+import ServiceAnchor from '../ui/ServiceAnchor';
 import './Roadmap.css';
 
 const STAGE_ICONS = [
@@ -24,7 +25,8 @@ export default function Roadmap() {
   if (!data) return null;
 
   return (
-    <section className="section pro" ref={ref}>
+    <section className="section pro" id="roadmap" ref={ref}>
+      <ServiceAnchor id="liveproductions" />
       <div className="roadmap-images">
         {data.stages.map((stage, idx) => (
           <img

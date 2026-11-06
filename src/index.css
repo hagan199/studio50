@@ -92,6 +92,17 @@ body.nav-open {
   overflow: hidden;
 }
 
+/* Zero-size landing point for a menu link (ServiceAnchor). Absolutely
+   positioned so it never adds a gap inside flex/grid layouts; with no offsets
+   it stays at the top of its parent, which is where the link should land. */
+.service-anchor {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
 a {
   text-decoration: none;
   color: inherit;

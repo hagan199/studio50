@@ -2,13 +2,13 @@
   "sections": [
     {
       "id": "hero",
-      "label": "Hero Section",
+      "label": "Hero",
       "visible": true,
       "order": 0
     },
     {
-      "id": "services",
-      "label": "Services",
+      "id": "marquee",
+      "label": "Marquee",
       "visible": true,
       "order": 1
     },
@@ -37,22 +37,28 @@
       "order": 5
     },
     {
-      "id": "marquee",
-      "label": "What HMR Seeks",
-      "visible": true,
-      "order": 6
-    },
-    {
       "id": "roadmap",
       "label": "Roadmap",
       "visible": true,
-      "order": 7
+      "order": 6
     },
     {
       "id": "cta",
       "label": "CTA Section",
       "visible": true,
+      "order": 7
+    },
+    {
+      "id": "contact",
+      "label": "Contact",
+      "visible": true,
       "order": 8
+    },
+    {
+      "id": "services",
+      "label": "Services Grid",
+      "visible": false,
+      "order": 9
     }
   ],
   "brand": {
@@ -175,7 +181,7 @@
     ]
   },
   "marquee": {
-    "heading": "What HMR Seeks",
+    "heading": "Our Services",
     "subheading": "HMR welcomes youth-led ideas, talents and enterprise solutions that demonstrate clear potential to create jobs, strengthen communities, and generate measurable social or economic impact at the community, regional or national level.",
     "footerNote": "HMR places priority on impact-driven, bankable ideas and solutions over performance-only or entertainment-focused submissions.",
     "categories": [
