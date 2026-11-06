@@ -5,6 +5,7 @@ import useAdminSave from '../../hooks/useAdminSave';
 import AdminToast from './AdminToast';
 import AdminSaveBar from './AdminSaveBar';
 import { Section, LoadingSkeleton } from './AdminSection';
+import { resolveSections } from '../../utils/sections';
 
 export default function ContentEditor() {
   const [content, setContent] = useState(null);
@@ -15,9 +16,12 @@ export default function ContentEditor() {
     api.get('/api/content')
       .then((res) => setContent({
         ...res.data,
+        // Show the layout the homepage is actually using, even before one has
+        // been saved, so Page Layout can toggle and reorder it.
+        sections: resolveSections(res.data).map((s) => ({ ...s })),
         navigation: {
           ctaText: 'Get in Touch',
-          ctaLink: '#auditions',
+          ctaLink: '#contact',
           ...(res.data.navigation || {}),
         },
       }))
