@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../utils/api';
 import useScrollAnimation from '../../hooks/useScrollAnimation';
+import ServiceAnchor from '../ui/ServiceAnchor';
 import './WhyHMR.css';
 
 const CheckIcon = () => (
@@ -40,6 +41,7 @@ export default function WhyHMR() {
         </div>
         <div className="div-line"></div>
         <div className="section-child-flex" data-animate="fade-left">
+          <ServiceAnchor id="photography" />
           <h3 className="test-text">{data.whatTitle}</h3>
           <p className="section-title small red">
             {data.whatIntro}

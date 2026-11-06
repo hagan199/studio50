@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../utils/api';
 import useScrollAnimation from '../../hooks/useScrollAnimation';
+import ServiceAnchor from '../ui/ServiceAnchor';
 import './LatestContent.css';
 
 export default function LatestContent() {
@@ -15,6 +16,7 @@ export default function LatestContent() {
 
   return (
     <section className="section latest-content" id="programs" ref={ref}>
+      <ServiceAnchor id="videography" />
       <div className="short-container">
         <h2 className="section-heading black" data-animate="fade-up">{data.heading}</h2>
       </div>
