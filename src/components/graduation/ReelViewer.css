@@ -1,0 +1,249 @@
+.reel-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  background: rgba(6, 6, 6, 0.94);
+  animation: reel-viewer-in 0.3s var(--ease-smooth, ease) both;
+  outline: none;
+  overflow: hidden;
+}
+
+@keyframes reel-viewer-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.reel-viewer__backdrop {
+  position: absolute;
+  inset: -40px;
+  background-size: cover;
+  background-position: center;
+  filter: blur(40px) brightness(0.35);
+  pointer-events: none;
+}
+
+.reel-viewer__frame {
+  position: relative;
+  height: min(88vh, 900px);
+  aspect-ratio: 9 / 16;
+  max-width: 92vw;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
+  animation: reel-frame-in 0.45s var(--ease-smooth, ease) both;
+}
+
+@keyframes reel-frame-in {
+  from { transform: translateY(24px) scale(0.97); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
+.reel-viewer__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  cursor: pointer;
+}
+
+.reel-viewer__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: background 0.2s ease, transform 0.25s var(--ease-bounce, ease);
+}
+
+.reel-viewer__btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.06);
+}
+
+.reel-viewer__top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px;
+  background: linear-gradient(rgba(0, 0, 0, 0.45), transparent);
+}
+
+.reel-viewer__count {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding-left: 6px;
+}
+
+.reel-viewer__top .reel-viewer__btn {
+  margin-left: auto;
+}
+
+.reel-viewer__bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 60px 14px 14px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  color: #fff;
+}
+
+.reel-viewer__info {
+  padding: 0 6px 12px;
+}
+
+.reel-viewer__info h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.reel-viewer__info p {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.5;
+}
+
+.reel-viewer__controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reel-viewer__time {
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.8);
+  white-space: nowrap;
+}
+
+.reel-viewer__seek {
+  flex: 1;
+  min-width: 0;
+  height: 4px;
+  appearance: none;
+  -webkit-appearance: none;
+  border-radius: 4px;
+  background: linear-gradient(
+    to right,
+    #fff 0,
+    #fff var(--progress, 0%),
+    rgba(255, 255, 255, 0.25) var(--progress, 0%)
+  );
+  cursor: pointer;
+}
+
+.reel-viewer__seek::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  border: none;
+}
+
+.reel-viewer__seek::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  border: none;
+}
+
+.reel-viewer__bigplay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 76px;
+  height: 76px;
+  margin: -38px 0 0 -38px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 5px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+
+.reel-viewer__spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 38px;
+  height: 38px;
+  margin: -19px 0 0 -19px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #fff;
+  animation: reel-spin 0.8s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes reel-spin {
+  to { transform: rotate(360deg); }
+}
+
+.reel-viewer__nav {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reel-viewer__nav .reel-viewer__btn {
+  width: 48px;
+  height: 48px;
+}
+
+/* Phones: the reel takes the whole screen, like a native reels app. */
+@media screen and (max-width: 767px) {
+  .reel-viewer {
+    background: #000;
+  }
+
+  .reel-viewer__frame {
+    height: 100%;
+    width: 100%;
+    max-width: none;
+    aspect-ratio: auto;
+    border-radius: 0;
+  }
+
+  .reel-viewer__bottom {
+    padding-bottom: max(14px, env(safe-area-inset-bottom));
+  }
+
+  .reel-viewer__nav {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .reel-viewer__nav .reel-viewer__btn {
+    width: 40px;
+    height: 40px;
+  }
+}

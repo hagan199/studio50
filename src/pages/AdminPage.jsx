@@ -7,6 +7,7 @@ import ThemeEditor from '../components/admin/ThemeEditor';
 import ImageUploader from '../components/admin/ImageUploader';
 import MenuEditor from '../components/admin/MenuEditor';
 import SeoEditor from '../components/admin/SeoEditor';
+import GraduationEditor from '../components/admin/GraduationEditor';
 
 export default function AdminPage() {
   return (
@@ -14,6 +15,7 @@ export default function AdminPage() {
       <Route element={<AdminLayout />}>
         <Route index element={<ContentEditor />} />
         <Route path="menu" element={<MenuEditor />} />
+        <Route path="graduation" element={<GraduationEditor />} />
         <Route path="services" element={<ServicesEditor />} />
         <Route path="contact" element={<ContactEditor />} />
         <Route path="theme" element={<ThemeEditor />} />

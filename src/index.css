@@ -72,7 +72,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  animation: page-fade-in 0.55s var(--ease-smooth) both;
+  /* `backwards`, not `both`: a transform kept on <body> after the animation
+     makes it the containing block for position: fixed, so the navbar and
+     modals would scroll away with the page. */
+  animation: page-fade-in 0.55s var(--ease-smooth) backwards;
 }
 
 @keyframes page-fade-in {

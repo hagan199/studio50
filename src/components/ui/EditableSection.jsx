@@ -1,0 +1,22 @@
+/**
+ * In the admin live preview (?edit=1) each section is wrapped so a click
+ * tells the CMS which editor to open. Outside edit mode it renders as-is.
+ */
+export default function EditableSection({ editMode, section, label, children }) {
+  if (!editMode) return children;
+  return (
+    <div
+      className="edit-wrap"
+      onClick={() => window.parent.postMessage({ type: 'ADMIN_EDIT_SECTION', section }, '*')}
+    >
+      <div className="edit-wrap__badge">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+        Edit {label || section}
+      </div>
+      {children}
+    </div>
+  );
+}

@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useLocation } from 'react-router-dom';
 import api from '../../utils/api';
+import { resolveSiteHref } from '../../utils/links';
 import './ContactSection.css';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -14,6 +16,7 @@ const SOCIAL_ICONS = {
 };
 
 export default function ContactSection() {
+  const { pathname } = useLocation();
   const [contact, setContact] = useState(null);
   const [brand, setBrand] = useState(null);
   const [menu, setMenu] = useState([]);
@@ -105,7 +108,7 @@ export default function ContactSection() {
               <h4 className="contact__col-title">Quick Links</h4>
               <nav className="contact__nav">
                 {menu.map((item) => (
-                  <a key={item.id} href={item.href} className="contact__nav-link">{item.label}</a>
+                  <a key={item.id} href={resolveSiteHref(item.href, pathname)} className="contact__nav-link">{item.label}</a>
                 ))}
               </nav>
             </div>

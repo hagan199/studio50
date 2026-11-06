@@ -1,6 +1,8 @@
 import './Footer.css';
 import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import api from '../../utils/api';
+import { resolveSiteHref } from '../../utils/links';
 
 const fallbackNavLinks = [
   { label: 'Home', href: '#' },
@@ -43,6 +45,7 @@ const SOCIAL_ICONS = {
 };
 
 export default function Footer() {
+  const { pathname } = useLocation();
   const [navLinks, setNavLinks] = useState(fallbackNavLinks);
   const [brand, setBrand] = useState(null);
   const [footerData, setFooterData] = useState(null);
@@ -87,7 +90,7 @@ export default function Footer() {
         <div className="footer__grid">
           {/* Brand */}
           <div className="footer__brand-col">
-            <a href="#" className="footer__logo-link">
+            <a href={resolveSiteHref('#', pathname)} className="footer__logo-link">
               {contentLoaded && (
                 <img
                   src={brand?.logoUrl || '/images/hmr-logo-new.avif'}
@@ -128,7 +131,7 @@ export default function Footer() {
             <h4 className="footer__heading">Quick Links</h4>
             <nav className="footer__nav">
               {navLinks.map((link) => (
-                <a key={link.label} href={link.href} className="footer__link">
+                <a key={link.label} href={resolveSiteHref(link.href, pathname)} className="footer__link">
                   {link.label}
                 </a>
               ))}

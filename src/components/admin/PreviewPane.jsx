@@ -12,9 +12,10 @@ const SECTION_ROUTES = {
   cta: '/admin',
   contact: '/admin/contact',
   services: '/admin/services',
+  graduation: '/admin/graduation',
 };
 
-export default function PreviewPane({ onClose }) {
+export default function PreviewPane({ onClose, page = '/' }) {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -53,7 +54,7 @@ export default function PreviewPane({ onClose }) {
       </div>
       <div className="admin-preview__frame-wrap">
         <iframe
-          src="/?edit=1"
+          src={`${page}?edit=1`}
           className="admin-preview__frame"
           title="Site Preview"
         />

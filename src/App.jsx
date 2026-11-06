@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
+import GraduationPage from './pages/GraduationPage';
 import AdminLogin from './components/admin/AdminLogin';
 import AdminPage from './pages/AdminPage';
 import api from './utils/api';
@@ -77,6 +78,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
+      <Route path="/graduation" element={<GraduationPage />} />
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/admin/*" element={<AdminPage />} />
     </Routes>

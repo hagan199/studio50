@@ -1,9 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
+import { isExternalHref, isHomeHref, isRouteHref, resolveSiteHref } from '../../utils/links';
 import './Navbar.css';
 
 const fallbackNavLinks = [
   { label: 'Home', href: '#' },
+  { label: 'Graduation', href: '/graduation' },
   { label: 'About Us', href: '#about' },
   { label: 'Programs & Zonal Activities', href: '#programs' },
   { label: 'Awards & Partners', href: '#awards' },
@@ -67,6 +70,9 @@ export default function Navbar() {
   });
   const [navLinks, setNavLinks] = useState(fallbackNavLinks);
   const [activeHref, setActiveHref] = useState('#');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isHome = location.pathname === '/';
 
   // Scroll position + progress bar
   useEffect(() => {
@@ -107,8 +113,29 @@ export default function Navbar() {
       .catch(() => {});
   }, []);
 
+  // Arriving on the homepage from another page with "/#section": the sections
+  // render after their content loads, so wait for the target to exist.
+  useEffect(() => {
+    if (!isHome || !location.hash) return;
+    let tries = 0;
+    let timer;
+    const attempt = () => {
+      if (findElement(location.hash) || tries >= 20) {
+        scrollToHref(location.hash);
+        return;
+      }
+      tries += 1;
+      timer = setTimeout(attempt, 150);
+    };
+    attempt();
+    return () => clearTimeout(timer);
+  }, [isHome, location.hash, location.key]);
+
   // Active section tracking via IntersectionObserver
   useEffect(() => {
+    // Anchors only refer to homepage sections; elsewhere a fuzzy id match
+    // would light up the wrong link.
+    if (!isHome) return;
     const sectionHrefs = navLinks
       .filter((l) => l.href.startsWith('#') && l.href.length > 1)
       .map((l) => l.href);
@@ -135,7 +162,7 @@ export default function Navbar() {
     hrefToEl.forEach((_, el) => observer.observe(el));
 
     return () => observer.disconnect();
-  }, [navLinks]);
+  }, [navLinks, isHome]);
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
@@ -146,22 +173,39 @@ export default function Navbar() {
   const closeMenu = useCallback(() => setMenuOpen(false), []);
 
   const handleNavClick = useCallback((e, href) => {
-    e.preventDefault();
     setMenuOpen(false);
     document.body.classList.remove('nav-open');
+    // External links and modified clicks (new tab etc.) keep browser behaviour.
+    if (isExternalHref(href) || e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+    e.preventDefault();
+
+    if (isRouteHref(href)) {
+      if (location.pathname !== href) navigate(href);
+      window.scrollTo({ top: 0 });
+      return;
+    }
+    if (!isHome) {
+      navigate(resolveSiteHref(href, location.pathname));
+      if (isHomeHref(href)) window.scrollTo({ top: 0 });
+      return;
+    }
     requestAnimationFrame(() => scrollToHref(href));
-  }, []);
+  }, [isHome, location.pathname, navigate]);
 
   const isActive = (href) => {
-    if (href === '#' || href === '/') return activeHref === '#';
+    if (isRouteHref(href)) return location.pathname === href;
+    if (!isHome) return false;
+    if (isHomeHref(href)) return activeHref === '#';
     return activeHref === href;
   };
+
+  const linkHref = (href) => resolveSiteHref(href, location.pathname);
 
   return (
     <nav className={`navbar${scrolled ? ' scrolled' : ''}`}>
       <div className="nav-progress" aria-hidden="true" />
       <div className="nav-container">
-        <a href="#" className="brand-link" onClick={(e) => handleNavClick(e, '#')} aria-label={brand?.name || 'Home'}>
+        <a href={linkHref('#')} className="brand-link" onClick={(e) => handleNavClick(e, '#')} aria-label={brand?.name || 'Home'}>
           {contentLoaded && (
             <img
               src={brand?.logoUrl || '/images/hmr-logo-new.avif'}
@@ -175,18 +219,19 @@ export default function Navbar() {
           {navLinks.map((link) => (
             <a
               key={link.label}
-              href={link.href}
+              href={linkHref(link.href)}
               className={`nav-link${isActive(link.href) ? ' active' : ''}`}
+              aria-current={isRouteHref(link.href) && isActive(link.href) ? 'page' : undefined}
               onClick={(e) => handleNavClick(e, link.href)}
             >
               {link.label}
             </a>
           ))}
-          <a href={navigation.ctaLink} className="nav-link cta-link mobile-only" onClick={(e) => handleNavClick(e, navigation.ctaLink)}>
+          <a href={linkHref(navigation.ctaLink)} className="nav-link cta-link mobile-only" onClick={(e) => handleNavClick(e, navigation.ctaLink)}>
             {navigation.ctaText}
           </a>
         </div>
-        <a href={navigation.ctaLink} className="nav-cta desktop-only" onClick={(e) => handleNavClick(e, navigation.ctaLink)}>
+        <a href={linkHref(navigation.ctaLink)} className="nav-cta desktop-only" onClick={(e) => handleNavClick(e, navigation.ctaLink)}>
           {navigation.ctaText}
         </a>
         <button

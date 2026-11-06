@@ -1759,3 +1759,109 @@ select.admin-field__input option {
   width: 18px;
   height: 18px;
 }
+
+/* ==================== Graduation editor ==================== */
+.grad-admin-note {
+  font-size: 0.82rem;
+  color: #888;
+  margin: 0 0 12px;
+}
+
+.grad-admin-count {
+  font-size: 0.75rem;
+  color: #777;
+  white-space: nowrap;
+}
+
+.grad-admin-hidden {
+  opacity: 0.6;
+}
+
+.grad-admin-photos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.grad-admin-photo {
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+}
+
+.grad-admin-photo__thumb {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background: #111;
+}
+
+.grad-admin-photo__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.grad-admin-photo__index {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.grad-admin-photo__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+}
+
+.grad-admin-photo__body .admin-field__input {
+  padding: 8px 10px;
+  font-size: 0.82rem;
+}
+
+.grad-admin-photo__actions {
+  display: flex;
+  gap: 6px;
+}
+
+.grad-admin-photo__actions .admin-btn--danger {
+  margin-left: auto;
+}
+
+.admin-video-field__preview {
+  border-radius: 10px;
+  overflow: hidden;
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.admin-video-field__preview video {
+  width: 100%;
+  max-height: 220px;
+  display: block;
+  background: #000;
+}
+
+/* Under the player rather than over it, so the native controls stay usable */
+.admin-video-field__preview .admin-image-field__thumb-actions {
+  position: static;
+  opacity: 1;
+  background: none;
+  justify-content: flex-start;
+}

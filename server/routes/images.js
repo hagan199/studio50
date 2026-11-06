@@ -2,41 +2,12 @@ import { Router } from "express";
 import multer from "multer";
 import path from "path";
 import fs from "fs/promises";
-import { fileURLToPath } from "url";
 import { authMiddleware } from "../middleware/auth.js";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-// In production, UPLOADS_DIR should point to a Railway persistent volume (e.g. /data/uploads)
-const uploadsDir = process.env.UPLOADS_DIR || path.join(__dirname, "..", "uploads");
-
-// Category and filename both end up in a filesystem path, so neither may
-// contain separators or traversal segments.
-function safeCategory(value) {
-  const cleaned = String(value || "general")
-    .toLowerCase()
-    .replace(/[^a-z0-9-_]/g, "");
-  return cleaned || "general";
-}
-
-function safeFilename(originalname) {
-  const base = path.basename(String(originalname || "image"));
-  const ext = path.extname(base).toLowerCase();
-  const stem = base
-    .slice(0, base.length - ext.length)
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 60);
-  return `${Date.now()}-${stem || "image"}${ext}`;
-}
-
-// Resolved path must stay inside uploadsDir.
-function resolveInsideUploads(...segments) {
-  const target = path.resolve(uploadsDir, ...segments);
-  const root = path.resolve(uploadsDir);
-  if (target !== root && !target.startsWith(root + path.sep)) return null;
-  return target;
-}
+import {
+  safeCategory,
+  safeFilename,
+  resolveInsideUploads,
+} from "../utils/uploads.js";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -47,7 +18,7 @@ const storage = multer.diskStorage({
       .catch(cb);
   },
   filename: (req, file, cb) => {
-    cb(null, safeFilename(file.originalname));
+    cb(null, safeFilename(file.originalname, "image"));
   },
 });
 
