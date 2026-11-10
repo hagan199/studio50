@@ -9,6 +9,7 @@ import ContactSection from '../components/sections/ContactSection';
 import GraduationHero from '../components/graduation/GraduationHero';
 import GraduationGallery from '../components/graduation/GraduationGallery';
 import GraduationPackages from '../components/graduation/GraduationPackages';
+import GraduationAdditionalServices from '../components/graduation/GraduationAdditionalServices';
 import GraduationReels from '../components/graduation/GraduationReels';
 import GraduationPhotos from '../components/graduation/GraduationPhotos';
 import '../components/graduation/Graduation.css';
@@ -17,12 +18,13 @@ const SECTIONS = {
   hero: { label: 'Graduation Hero', render: (d, brand) => <GraduationHero hero={d?.hero} brand={brand} /> },
   gallery: { label: 'Graduation Gallery', render: (d) => <GraduationGallery gallery={d.gallery} /> },
   packages: { label: 'Graduation Packages', render: (d) => <GraduationPackages packages={d.packages} /> },
+  additionalServices: { label: 'Additional Services', render: (d) => <GraduationAdditionalServices additionalServices={d.additionalServices} /> },
   reels: { label: 'Graduation Reels', render: (d) => <GraduationReels reels={d.reels} /> },
   photos: { label: 'Graduation Photos', render: (d) => <GraduationPhotos photos={d.photos} /> },
   contact: { label: 'Contact', render: () => <ContactSection /> },
 };
 
-const DEFAULT_ORDER = ['hero', 'gallery', 'packages', 'reels', 'photos', 'contact'];
+const DEFAULT_ORDER = ['hero', 'gallery', 'packages', 'additionalServices', 'reels', 'photos', 'contact'];
 
 export default function GraduationPage() {
   const [data, setData] = useState(null);

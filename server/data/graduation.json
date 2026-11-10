@@ -19,22 +19,28 @@
       "order": 2
     },
     {
+      "id": "additionalServices",
+      "label": "Additional Services",
+      "visible": true,
+      "order": 3
+    },
+    {
       "id": "reels",
       "label": "Latest Reels",
       "visible": true,
-      "order": 3
+      "order": 4
     },
     {
       "id": "photos",
       "label": "Latest Photos",
       "visible": true,
-      "order": 4
+      "order": 5
     },
     {
       "id": "contact",
       "label": "Contact",
       "visible": true,
-      "order": 5
+      "order": 6
     }
   ],
   "hero": {
@@ -345,6 +351,45 @@
         "title": "",
         "caption": "",
         "visible": true
+      }
+    ]
+  },
+  "additionalServices": {
+    "label": "More Options",
+    "heading": "ADDITIONAL SERVICES & CUSTOM SESSIONS",
+    "intro": "Looking for something extra? We also offer:",
+    "closing": "These services are available on request and may attract additional charges. Contact Studio 50 Global for enquiries and bookings.",
+    "ctaText": "Get in Touch",
+    "ctaLink": "#contact",
+    "visible": true,
+    "items": [
+      {
+        "id": "svc-1",
+        "name": "Studio Photography Sessions",
+        "description": "Professional studio portraits taken in our fully equipped studio — perfect for a polished, controlled look.",
+        "image": "",
+        "enabled": true
+      },
+      {
+        "id": "svc-2",
+        "name": "Group Photography Sessions",
+        "description": "Coordinated group shoots for departments, cohorts or friend groups celebrating together.",
+        "image": "",
+        "enabled": true
+      },
+      {
+        "id": "svc-3",
+        "name": "Custom Graduation Frames",
+        "description": "Beautifully crafted personalised frames to display your graduation portraits at home or in the office.",
+        "image": "",
+        "enabled": true
+      },
+      {
+        "id": "svc-4",
+        "name": "Graduation Reel-Only Sessions",
+        "description": "A dedicated videography session focused exclusively on producing your graduation highlight reel.",
+        "image": "",
+        "enabled": true
       }
     ]
   }

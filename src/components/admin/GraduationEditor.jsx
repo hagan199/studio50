@@ -114,6 +114,10 @@ export default function GraduationEditor() {
         ...data.packages,
         items: data.packages.items.map((p) => ({ ...p, inclusions: cleanLines(p.inclusions), benefits: cleanLines(p.benefits) })),
       },
+      additionalServices: {
+        ...data.additionalServices,
+        items: (data.additionalServices?.items || []).filter((s) => s?.name?.trim()),
+      },
     };
     await api.put('/api/graduation', cleaned);
     // Showing the cleaned copy is not an edit, so don't flag it dirty.
@@ -177,7 +181,7 @@ export default function GraduationEditor() {
   if (loadError) return <div className="admin-alert admin-alert--error">{loadError}</div>;
   if (!data) return <LoadingSkeleton />;
 
-  const { hero, gallery, packages, reels, photos } = data;
+  const { hero, gallery, packages, additionalServices, reels, photos } = data;
   const sortedSections = [...data.sections].sort((a, b) => a.order - b.order);
   const collections = gallery.collections || [];
 
@@ -357,6 +361,93 @@ export default function GraduationEditor() {
           description: '', inclusions: [], benefits: [], featured: false, ctaText: 'Book now', ctaLink: '#contact',
         }])}>
           + Add package
+        </button>
+      </Section>
+
+      {/* ── Additional Services & Custom Sessions ── */}
+      <Section title="Additional Services & Custom Sessions" count={(additionalServices?.items || []).length}>
+        <Field label="Eyebrow Label">
+          <TextInput value={additionalServices?.label} onChange={(v) => setField('additionalServices', 'label', v)} placeholder="e.g. More Options" />
+        </Field>
+        <Field label="Section Heading">
+          <TextInput value={additionalServices?.heading} onChange={(v) => setField('additionalServices', 'heading', v)} />
+        </Field>
+        <Field label="Introductory Text">
+          <TextArea rows={2} value={additionalServices?.intro} onChange={(v) => setField('additionalServices', 'intro', v)} placeholder="e.g. Looking for something extra? We also offer:" />
+        </Field>
+        <Field label="Closing Information">
+          <TextArea rows={3} value={additionalServices?.closing} onChange={(v) => setField('additionalServices', 'closing', v)} />
+        </Field>
+        <div className="admin-grid-2">
+          <Field label="CTA Button Text" hint="Leave empty to hide">
+            <TextInput value={additionalServices?.ctaText} onChange={(v) => setField('additionalServices', 'ctaText', v)} placeholder="Get in Touch" />
+          </Field>
+          <Field label="CTA Button Link" hint="#contact or a full URL">
+            <TextInput value={additionalServices?.ctaLink} onChange={(v) => setField('additionalServices', 'ctaLink', v)} />
+          </Field>
+        </div>
+        <label className="admin-checkbox">
+          <input
+            type="checkbox"
+            checked={additionalServices?.visible !== false}
+            onChange={(e) => setField('additionalServices', 'visible', e.target.checked)}
+          />
+          Show this section on the page
+        </label>
+
+        <h4 className="admin-item-card__heading" style={{ marginTop: 24 }}>Services</h4>
+        <p className="grad-admin-note">Add or manage individual services. Untick "Enabled" to hide a service without deleting it.</p>
+
+        {(additionalServices?.items || []).map((svc, i) => {
+          const setSvc = (patch) => patchItem('additionalServices', 'items', i, patch);
+          return (
+            <div key={svc.id} className={`admin-item-card${svc.enabled === false ? ' grad-admin-hidden' : ''}`}>
+              <div className="admin-item-card__header">
+                <span className="admin-item-card__title">{svc.name || `Service ${i + 1}`}{svc.enabled === false ? ' · Disabled' : ''}</span>
+                <ItemControls
+                  index={i}
+                  total={(additionalServices?.items || []).length}
+                  label={svc.name || `service ${i + 1}`}
+                  onMove={(dir) => moveItem('additionalServices', 'items', i, dir)}
+                  onRemove={() => removeItem('additionalServices', 'items', i)}
+                />
+              </div>
+              <Field label="Service Name">
+                <TextInput value={svc.name} onChange={(v) => setSvc({ name: v })} placeholder="e.g. Studio Photography Sessions" />
+              </Field>
+              <Field label="Description" hint="Optional short description shown on the card">
+                <TextArea rows={3} value={svc.description} onChange={(v) => setSvc({ description: v })} />
+              </Field>
+              <ImageField
+                label="Service Image (optional — icon shown if empty)"
+                value={svc.image}
+                category={UPLOAD_CATEGORY}
+                onChange={(image) => setSvc({ image })}
+              />
+              <label className="admin-checkbox">
+                <input
+                  type="checkbox"
+                  checked={svc.enabled !== false}
+                  onChange={(e) => setSvc({ enabled: e.target.checked })}
+                />
+                Enabled (shown on page)
+              </label>
+            </div>
+          );
+        })}
+
+        <button
+          type="button"
+          className="admin-btn admin-btn--secondary"
+          onClick={() => addItems('additionalServices', 'items', [{
+            id: newId('svc'),
+            name: '',
+            description: '',
+            image: '',
+            enabled: true,
+          }])}
+        >
+          + Add service
         </button>
       </Section>
 
