@@ -5,7 +5,7 @@ import { getDataPath } from '../data/dataDir.js';
 
 const dataPath = getDataPath('graduation.json');
 
-const REQUIRED_KEYS = ['sections', 'hero', 'gallery', 'packages', 'reels', 'photos'];
+const REQUIRED_KEYS = ['sections', 'hero', 'gallery', 'packages', 'additionalServices', 'reels', 'photos'];
 
 const router = Router();
 
