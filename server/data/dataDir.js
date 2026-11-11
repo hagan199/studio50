@@ -38,6 +38,7 @@ export async function initDataDir() {
   await runMigration("graduation.json", "additional-services-fill-defaults", fillAdditionalServicesDefaults);
   await runMigration("menu.json", "team-menu-link", addTeamMenuLink);
   await runMigration("content.json", "team-homepage-section", addTeamHomepageSection);
+  await runMigration("content.json", "hide-legacy-cta-section", hideLegacyCtaSection);
 }
 
 /**
@@ -118,6 +119,19 @@ function addTeamHomepageSection(content) {
   content.sections = content.sections.map((s) => ((s.order ?? 0) >= order ? { ...s, order: (s.order ?? 0) + 1 } : s));
   content.sections.push({ id: "team", label: "Our Team", visible: true, order });
   return "Added Our Team section to homepage layout";
+}
+
+/**
+ * The homepage CTA block ("Ready to join the movement…") predates the
+ * Get in Touch footer, which now carries the page's call to action. Shown
+ * together, the homepage ended differently from every other page. Hide it
+ * once; its text is kept and it can be switched back on in Page Layout.
+ */
+function hideLegacyCtaSection(content) {
+  const cta = Array.isArray(content.sections) && content.sections.find((s) => s.id === "cta");
+  if (!cta || cta.visible === false) return "Homepage CTA section already hidden";
+  cta.visible = false;
+  return "Hid homepage CTA section (content kept; re-enable in Page Layout)";
 }
 
 /**

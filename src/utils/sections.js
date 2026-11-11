@@ -11,7 +11,8 @@ export const DEFAULT_SECTIONS = [
   { id: 'credibility', label: 'Credibility', visible: true, order: 5 },
   { id: 'roadmap', label: 'Roadmap', visible: true, order: 6 },
   { id: 'team', label: 'Our Team', visible: true, order: 7 },
-  { id: 'cta', label: 'CTA Section', visible: true, order: 8 },
+  // Off by default: the Get in Touch footer carries the call to action.
+  { id: 'cta', label: 'CTA Section', visible: false, order: 8 },
   { id: 'contact', label: 'Contact', visible: true, order: 9 },
   // Card grid, one card per service. Off by default; it can be switched on from
   // the admin Page Layout panel. While it is off, the menu's service links are

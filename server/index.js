@@ -80,8 +80,29 @@ const hasDist = fs.existsSync(distDir);
 
 // Serve the built React app when available (Railway/Nixpacks often builds dist during deploy)
 if (process.env.NODE_ENV === "production" || hasDist) {
-  app.use(express.static(distDir));
+  // index.html names the current JS/CSS bundles, so the browser must check
+  // for a new one on every load; otherwise a cached copy keeps pointing at the
+  // previous deploy's bundles. The bundles themselves have content hashes in
+  // their names (a new build means new file names), so they can be cached for
+  // good.
+  const noCacheHtml = (res) => {
+    res.set("Cache-Control", "no-cache, must-revalidate");
+  };
+  app.use(
+    express.static(distDir, {
+      setHeaders: (res, filePath) => {
+        if (filePath.endsWith(".html")) noCacheHtml(res);
+        else if (filePath.includes(`${path.sep}assets${path.sep}`)) {
+          res.set("Cache-Control", "public, max-age=31536000, immutable");
+        }
+      },
+    }),
+  );
+  // Unknown /assets files (e.g. a bundle from a previous deploy) must 404
+  // instead of receiving index.html as "JavaScript".
+  app.use("/assets", (req, res) => res.status(404).end());
   app.get("*", (req, res) => {
+    noCacheHtml(res);
     res.sendFile(path.join(distDir, "index.html"));
   });
 }

@@ -45,18 +45,29 @@ const SECTION_MAP = {
   team: TeamSection,
 };
 
+// The last saved layout, kept across client-side navigation so returning to
+// the homepage does not wait on the API again.
+let layoutCache = null;
+
 export default function HomePage() {
-  const [sections, setSections] = useState(DEFAULT_SECTIONS);
+  // Do not render anything until the CMS layout is known. Starting from
+  // DEFAULT_SECTIONS (every section visible, default order) made sections the
+  // CMS hides flash on each refresh, then disappear when the layout arrived.
+  const [sections, setSections] = useState(layoutCache);
   const [searchParams] = useSearchParams();
   const editMode = searchParams.get('edit') === '1';
 
   useEffect(() => {
     api.get('/api/content')
-      .then((res) => setSections(resolveSections(res.data)))
-      .catch(() => {});
+      .then((res) => {
+        layoutCache = resolveSections(res.data);
+        setSections(layoutCache);
+      })
+      // API unreachable: fall back to the default layout rather than a blank page.
+      .catch(() => setSections((current) => current || DEFAULT_SECTIONS));
   }, []);
 
-  const visibleSections = sections
+  const visibleSections = (sections || [])
     .filter((s) => s.visible)
     .sort((a, b) => a.order - b.order);
 
