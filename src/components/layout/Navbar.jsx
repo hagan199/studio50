@@ -12,8 +12,9 @@ const fallbackNavLinks = [
   { label: 'Programs & Zonal Activities', href: '#programs' },
   { label: 'Awards & Partners', href: '#awards' },
   { label: 'Auditions', href: '#auditions' },
+  { label: 'Our Team', href: '#team' },
   { label: 'Contact Us', href: '#contact' },
-  { label: 'Graduation', href: '/graduation' },
+  { label: 'Graduation', href: '/graduation' }, 
 ];
 
 const DEFAULT_NAVIGATION = { ctaText: 'Get in Touch', ctaLink: '#contact' };

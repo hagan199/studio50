@@ -1,0 +1,31 @@
+{
+  "section": {
+    "label": "The People Behind Studio50",
+    "heading": "Our Team",
+    "description": "Photographers, filmmakers, designers and producers who turn ideas into stories worth sharing.",
+    "ctaText": "View Portfolio",
+    "visible": true
+  },
+  "members": [
+    {
+      "id": "member-1794412740957-j2x5",
+      "slug": "maccarthy-benisa",
+      "name": "Maccarthy Benisa",
+      "position": "Senior Videographer",
+      "photo": "/uploads/team/1794412955364-gemini-generated-image-pg0daypg0daypg0d.webp",
+      "coverImage": "/uploads/team/1794412966708-noqtech-flyer-single-contact.webp",
+      "shortIntro": "Senior Videographer ",
+      "intro": "First Aide to the President of Ghana",
+      "bio": "Church learder- Rev. minister",
+      "skills": [
+        "Trumpeter, Musicain"
+      ],
+      "links": [],
+      "email": "",
+      "enquiryText": "",
+      "enquiryLink": "",
+      "published": true,
+      "projects": []
+    }
+  ]
+}

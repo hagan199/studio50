@@ -14,6 +14,7 @@ const STATIC_ANCHORS = [
   { value: '#programs', label: 'Programs' },
   { value: '#roadmap', label: 'Roadmap' },
   { value: '#awards', label: 'Awards & Marquee' },
+  { value: '#team', label: 'Our Team' },
   { value: '#contact', label: 'Contact' },
   { value: '/graduation', label: 'Graduation page' },
 ];

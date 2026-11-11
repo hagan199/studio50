@@ -10,12 +10,13 @@ export const DEFAULT_SECTIONS = [
   { id: 'latestContent', label: 'Latest Content', visible: true, order: 4 },
   { id: 'credibility', label: 'Credibility', visible: true, order: 5 },
   { id: 'roadmap', label: 'Roadmap', visible: true, order: 6 },
-  { id: 'cta', label: 'CTA Section', visible: true, order: 7 },
-  { id: 'contact', label: 'Contact', visible: true, order: 8 },
+  { id: 'team', label: 'Our Team', visible: true, order: 7 },
+  { id: 'cta', label: 'CTA Section', visible: true, order: 8 },
+  { id: 'contact', label: 'Contact', visible: true, order: 9 },
   // Card grid, one card per service. Off by default; it can be switched on from
   // the admin Page Layout panel. While it is off, the menu's service links are
   // spread over the sections above (see SERVICE_LINK_TARGETS).
-  { id: 'services', label: 'Services Grid', visible: false, order: 9 },
+  { id: 'services', label: 'Services Grid', visible: false, order: 10 },
 ];
 
 /**

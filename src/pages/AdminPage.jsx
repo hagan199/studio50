@@ -8,6 +8,7 @@ import ImageUploader from '../components/admin/ImageUploader';
 import MenuEditor from '../components/admin/MenuEditor';
 import SeoEditor from '../components/admin/SeoEditor';
 import GraduationEditor from '../components/admin/GraduationEditor';
+import TeamEditor from '../components/admin/TeamEditor';
 
 export default function AdminPage() {
   return (
@@ -16,6 +17,7 @@ export default function AdminPage() {
         <Route index element={<ContentEditor />} />
         <Route path="menu" element={<MenuEditor />} />
         <Route path="graduation" element={<GraduationEditor />} />
+        <Route path="team" element={<TeamEditor />} />
         <Route path="services" element={<ServicesEditor />} />
         <Route path="contact" element={<ContactEditor />} />
         <Route path="theme" element={<ThemeEditor />} />

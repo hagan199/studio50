@@ -1865,3 +1865,174 @@ select.admin-field__input option {
   background: none;
   justify-content: flex-start;
 }
+
+/* ==================== Gallery field (multi-image) ==================== */
+.admin-gallery-field__count {
+  margin-left: 8px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #777;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.admin-gallery-field__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.admin-gallery-field__item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.admin-gallery-field__item .admin-field__input {
+  padding: 7px 9px;
+  font-size: 0.8rem;
+}
+
+.admin-gallery-field__thumb {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #111;
+}
+
+.admin-gallery-field__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.admin-gallery-field__index {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.72);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.admin-gallery-field__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.admin-gallery-field__actions .admin-btn--danger {
+  margin-left: auto;
+}
+
+/* ==================== Shared editor bits ==================== */
+.admin-alert--warning {
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  color: #fbbf24;
+}
+
+.admin-status-pill {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.admin-status-pill--live { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
+.admin-status-pill--draft { background: rgba(255, 255, 255, 0.08); color: #999; }
+
+.admin-toggle-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.admin-toggle-row .admin-checkbox {
+  margin: 0;
+}
+
+/* ==================== Team editor ==================== */
+.team-admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.team-admin-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.team-admin-row__photo {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #222;
+}
+
+.team-admin-row__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.team-admin-row__name {
+  display: block;
+  font-weight: 700;
+  color: #ddd;
+  font-size: 0.9rem;
+}
+
+.team-admin-row__meta {
+  display: block;
+  font-size: 0.78rem;
+  color: #777;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.team-admin-row__actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.team-admin-back {
+  margin-bottom: 16px;
+}
+
+@media (max-width: 640px) {
+  .team-admin-row {
+    flex-wrap: wrap;
+  }
+
+  .team-admin-row__actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

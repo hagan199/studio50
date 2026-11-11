@@ -13,6 +13,7 @@ const SECTION_ROUTES = {
   contact: '/admin/contact',
   services: '/admin/services',
   graduation: '/admin/graduation',
+  team: '/admin/team',
 };
 
 export default function PreviewPane({ onClose, page = '/' }) {

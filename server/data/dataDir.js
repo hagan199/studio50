@@ -18,7 +18,7 @@ const defaultDir = __dirname;
 export async function initDataDir() {
   await fs.mkdir(dataDir, { recursive: true });
 
-  const defaults = ["content.json", "services.json", "contact.json", "menu.json", "theme.json", "seo.json", "graduation.json"];
+  const defaults = ["content.json", "services.json", "contact.json", "menu.json", "theme.json", "seo.json", "graduation.json", "team.json"];
 
   for (const file of defaults) {
     const target = path.join(dataDir, file);
@@ -35,6 +35,89 @@ export async function initDataDir() {
 
   await addGraduationMenuLink();
   await migrateGraduationAdditionalServices();
+  await runMigration("graduation.json", "additional-services-fill-defaults", fillAdditionalServicesDefaults);
+  await runMigration("menu.json", "team-menu-link", addTeamMenuLink);
+  await runMigration("content.json", "team-homepage-section", addTeamHomepageSection);
+}
+
+/**
+ * Apply `apply(data)` to a JSON file in the persistent dir exactly once.
+ * The migration name is recorded in the file's `migrations` list, so a later
+ * admin edit (e.g. removing a seeded link) is never undone by a redeploy.
+ * `apply` mutates data and returns a short log message (or nothing).
+ */
+async function runMigration(file, name, apply) {
+  const target = path.join(dataDir, file);
+  try {
+    const data = JSON.parse(await fs.readFile(target, "utf-8"));
+    const applied = Array.isArray(data.migrations) ? data.migrations : [];
+    if (applied.includes(name)) return;
+
+    const message = await apply(data);
+    data.migrations = [...applied, name];
+
+    const tmp = `${target}.tmp`;
+    await fs.writeFile(tmp, JSON.stringify(data, null, 2));
+    await fs.rename(tmp, target);
+    console.log(`[data] ${file}: ${message || name}`);
+  } catch (err) {
+    console.warn(`[data] Migration ${name} on ${file} failed:`, err.message);
+  }
+}
+
+/**
+ * A graduation.json saved by the CMS before the Additional Services block
+ * existed can hold a partial block (e.g. only a label and an empty items
+ * list, with no `visible` flag). The block-level migration above skips it
+ * because the key exists, and the section never rendered. Fill in only the
+ * fields that are missing; values an admin has typed are left alone.
+ */
+async function fillAdditionalServicesDefaults(data) {
+  const defaults = JSON.parse(await fs.readFile(path.join(defaultDir, "graduation.json"), "utf-8")).additionalServices;
+  const block = data.additionalServices && typeof data.additionalServices === "object" ? data.additionalServices : {};
+  const filled = [];
+
+  for (const key of ["label", "heading", "intro", "closing", "ctaText", "ctaLink", "visible"]) {
+    if (block[key] === undefined && defaults[key] !== undefined) {
+      block[key] = defaults[key];
+      filled.push(key);
+    }
+  }
+  if (!Array.isArray(block.items) || block.items.length === 0) {
+    block.items = defaults.items;
+    filled.push("items");
+  }
+
+  data.additionalServices = block;
+  return filled.length ? `Filled additionalServices defaults: ${filled.join(", ")}` : "additionalServices already complete";
+}
+
+/** Add the "Our Team" link (#team) to the menu, just before Graduation. */
+function addTeamMenuLink(menu) {
+  const items = Array.isArray(menu.items) ? menu.items : [];
+  if (items.some((item) => item.href === "#team")) return "Our Team link already present";
+
+  const grad = items.find((item) => item.href === "/graduation");
+  const order = grad ? grad.order ?? 0 : items.reduce((max, item) => Math.max(max, item.order ?? 0), 0) + 1;
+  if (grad) {
+    for (const item of items) if ((item.order ?? 0) >= order) item.order = (item.order ?? 0) + 1;
+  }
+  items.push({ id: "menu-team", label: "Our Team", href: "#team", order });
+  menu.items = items;
+  return "Added Our Team link to menu";
+}
+
+/** Add the Our Team block to a saved homepage layout, before the CTA/Contact. */
+function addTeamHomepageSection(content) {
+  if (!Array.isArray(content.sections) || content.sections.some((s) => s.id === "team")) {
+    return "Homepage layout already has (or does not need) a team section";
+  }
+  const sorted = [...content.sections].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  const before = sorted.find((s) => s.id === "cta") || sorted.find((s) => s.id === "contact");
+  const order = before ? before.order : sorted.length;
+  content.sections = content.sections.map((s) => ((s.order ?? 0) >= order ? { ...s, order: (s.order ?? 0) + 1 } : s));
+  content.sections.push({ id: "team", label: "Our Team", visible: true, order });
+  return "Added Our Team section to homepage layout";
 }
 
 /**

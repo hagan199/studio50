@@ -15,6 +15,7 @@ import menuRoutes from "./routes/menu.js";
 import seoRoutes from "./routes/seo.js";
 import graduationRoutes from "./routes/graduation.js";
 import videosRoutes from "./routes/videos.js";
+import teamRoutes from "./routes/team.js";
 import { initDataDir } from "./data/dataDir.js";
 
 dotenv.config();
@@ -71,6 +72,7 @@ app.use("/api/menu", menuRoutes);
 app.use("/api/seo", seoRoutes);
 app.use("/api/graduation", graduationRoutes);
 app.use("/api/videos", videosRoutes);
+app.use("/api/team", teamRoutes);
 
 // Serve React build in production
 const distDir = path.join(__dirname, "..", "dist");

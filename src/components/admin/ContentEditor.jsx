@@ -6,6 +6,8 @@ import AdminToast from './AdminToast';
 import AdminSaveBar from './AdminSaveBar';
 import { Section, LoadingSkeleton } from './AdminSection';
 import { resolveSections } from '../../utils/sections';
+import { resolveFooter, DEFAULT_EXISTS_LABEL } from '../../utils/footer';
+import LatestContentEditor from './LatestContentEditor';
 
 export default function ContentEditor() {
   const [content, setContent] = useState(null);
@@ -24,6 +26,14 @@ export default function ContentEditor() {
           ctaLink: '#contact',
           ...(res.data.navigation || {}),
         },
+        // Show the footer text the site is actually using, even before saved.
+        footer: resolveFooter(res.data),
+        ...(res.data.whyHMR && {
+          whyHMR: {
+            ...res.data.whyHMR,
+            existsLabel: res.data.whyHMR.existsLabel ?? DEFAULT_EXISTS_LABEL,
+          },
+        }),
       }))
       .catch(() => {});
   }, []);
@@ -295,6 +305,11 @@ export default function ContentEditor() {
             <label className="admin-field__label">Why Intro Text</label>
             <textarea className="admin-field__textarea" rows={3} value={content.whyHMR.whyIntro} onChange={(e) => update('whyHMR', 'whyIntro', e.target.value)} />
           </div>
+          <div className="admin-field">
+            <label className="admin-field__label">List Heading</label>
+            <input className="admin-field__input" value={content.whyHMR.existsLabel ?? ''} onChange={(e) => update('whyHMR', 'existsLabel', e.target.value)} placeholder={DEFAULT_EXISTS_LABEL} />
+            <span className="admin-field__hint">Shown above the list below, e.g. "Studio50 exists to:". Leave empty to hide it.</span>
+          </div>
           <h4 className="admin-item-card__heading">Why Items</h4>
           {content.whyHMR.whyItems.map((item, i) => (
             <div key={i} className="admin-list-row">
@@ -325,64 +340,11 @@ export default function ContentEditor() {
 
       {/* Latest Content */}
       {content.latestContent && (
-        <Section title="Latest Content" count={content.latestContent.items.length}>
-          <div className="admin-field">
-            <label className="admin-field__label">Heading</label>
-            <input className="admin-field__input" value={content.latestContent.heading} onChange={(e) => update('latestContent', 'heading', e.target.value)} />
-          </div>
-          {content.latestContent.items.map((item, i) => (
-            <div key={item.id} className="admin-item-card">
-              <div className="admin-item-card__header">
-                <strong className="admin-item-card__title">Item {i + 1}</strong>
-                <button className="admin-btn admin-btn--danger admin-btn--sm" onClick={() => removeArrayObj('latestContent', 'items', i)}>Remove</button>
-              </div>
-              <div className="admin-grid-2">
-                <div className="admin-field">
-                  <label className="admin-field__label">Type</label>
-                  <select className="admin-field__input" value={item.type} onChange={(e) => updateArrayObj('latestContent', 'items', i, 'type', e.target.value)}>
-                    <option value="video">Video</option>
-                    <option value="image">Image</option>
-                  </select>
-                </div>
-                <div className="admin-field">
-                  <label className="admin-field__label">Tag</label>
-                  <input className="admin-field__input" value={item.tag} onChange={(e) => updateArrayObj('latestContent', 'items', i, 'tag', e.target.value)} />
-                </div>
-              </div>
-              <div className="admin-grid-2">
-                <div className="admin-field">
-                  <label className="admin-field__label">Title</label>
-                  <input className="admin-field__input" value={item.title} onChange={(e) => updateArrayObj('latestContent', 'items', i, 'title', e.target.value)} />
-                </div>
-                <div className="admin-field">
-                  <label className="admin-field__label">Subtitle</label>
-                  <input className="admin-field__input" value={item.subtitle} onChange={(e) => updateArrayObj('latestContent', 'items', i, 'subtitle', e.target.value)} />
-                </div>
-              </div>
-              {item.type === 'video' ? (
-                <>
-                  <ImageField label="Poster Image" value={item.poster || ''} onChange={(url) => updateArrayObj('latestContent', 'items', i, 'poster', url)} category="content" />
-                  <div className="admin-grid-2">
-                    <div className="admin-field">
-                      <label className="admin-field__label">Video MP4 URL</label>
-                      <input className="admin-field__input" value={item.videoMp4 || ''} onChange={(e) => updateArrayObj('latestContent', 'items', i, 'videoMp4', e.target.value)} />
-                    </div>
-                    <div className="admin-field">
-                      <label className="admin-field__label">Video WebM URL</label>
-                      <input className="admin-field__input" value={item.videoWebm || ''} onChange={(e) => updateArrayObj('latestContent', 'items', i, 'videoWebm', e.target.value)} />
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <ImageField label="Image" value={item.imageUrl || ''} onChange={(url) => updateArrayObj('latestContent', 'items', i, 'imageUrl', url)} category="content" />
-              )}
-              <label className="admin-checkbox">
-                <input type="checkbox" checked={item.wide || false} onChange={(e) => updateArrayObj('latestContent', 'items', i, 'wide', e.target.checked)} />
-                Wide layout (spans full width)
-              </label>
-            </div>
-          ))}
-          <button className="admin-btn admin-btn--secondary" onClick={() => addArrayObj('latestContent', 'items', { type: 'image', title: '', subtitle: '', tag: '', imageUrl: '', wide: false })}>+ Add Item</button>
+        <Section title="Latest Content" count={(content.latestContent.items || []).length}>
+          <LatestContentEditor
+            section={content.latestContent}
+            onChange={(latestContent) => setContent((prev) => ({ ...prev, latestContent }))}
+          />
         </Section>
       )}
 
@@ -522,37 +484,64 @@ export default function ContentEditor() {
         </Section>
       )}
 
-      {/* Footer */}
-      {content.footer && (
-        <Section title="Footer">
+      {/* Footer ("Get in Touch") */}
+      <Section title="Footer — Get in Touch">
+        <p className="grad-admin-note">
+          The footer shown at the bottom of every page. Phone, WhatsApp, email and social links are edited under <strong>Contact</strong>.
+        </p>
+        <label className="admin-checkbox">
+          <input type="checkbox" checked={content.footer.visible !== false} onChange={(e) => update('footer', 'visible', e.target.checked)} />
+          Show the footer on all pages
+        </label>
+        <div className="admin-field">
+          <label className="admin-field__label">Small Heading</label>
+          <input className="admin-field__input" value={content.footer.label} onChange={(e) => update('footer', 'label', e.target.value)} placeholder="Get in Touch" />
+        </div>
+        <div className="admin-grid-2">
           <div className="admin-field">
-            <label className="admin-field__label">Email</label>
-            <input className="admin-field__input" value={content.footer.email} onChange={(e) => update('footer', 'email', e.target.value)} />
+            <label className="admin-field__label">Title — first line</label>
+            <input className="admin-field__input" value={content.footer.headingLine1} onChange={(e) => update('footer', 'headingLine1', e.target.value)} placeholder="Let's Create" />
           </div>
           <div className="admin-field">
-            <label className="admin-field__label">Copyright Text</label>
-            <input className="admin-field__input" value={content.footer.copyrightText} onChange={(e) => update('footer', 'copyrightText', e.target.value)} />
+            <label className="admin-field__label">Title — second line</label>
+            <input className="admin-field__input" value={content.footer.headingLine2} onChange={(e) => update('footer', 'headingLine2', e.target.value)} placeholder="Something" />
+          </div>
+        </div>
+        <div className="admin-field">
+          <label className="admin-field__label">Title — highlighted word</label>
+          <input className="admin-field__input" value={content.footer.headingHighlight} onChange={(e) => update('footer', 'headingHighlight', e.target.value)} placeholder="Amazing" />
+          <span className="admin-field__hint">Shown in italics in the accent colour at the end of the second line.</span>
+        </div>
+        <div className="admin-field">
+          <label className="admin-field__label">Description</label>
+          <textarea className="admin-field__textarea" rows={3} value={content.footer.description} onChange={(e) => update('footer', 'description', e.target.value)} />
+        </div>
+        <div className="admin-grid-2">
+          <div className="admin-field">
+            <label className="admin-field__label">CTA Button Text</label>
+            <input className="admin-field__input" value={content.footer.ctaText} onChange={(e) => update('footer', 'ctaText', e.target.value)} placeholder="WhatsApp Us" />
           </div>
           <div className="admin-field">
-            <label className="admin-field__label">Disclaimer Title</label>
-            <input className="admin-field__input" value={content.footer.disclaimerTitle} onChange={(e) => update('footer', 'disclaimerTitle', e.target.value)} />
+            <label className="admin-field__label">CTA Button Link</label>
+            <input className="admin-field__input" value={content.footer.ctaLink} onChange={(e) => update('footer', 'ctaLink', e.target.value)} placeholder="Empty = WhatsApp link from Contact" />
+            <span className="admin-field__hint">Any URL, #section, mailto: or tel: link. Leave empty to use the WhatsApp link.</span>
           </div>
-          <div className="admin-field">
-            <label className="admin-field__label">Disclaimer Text</label>
-            <textarea className="admin-field__textarea" rows={4} value={content.footer.disclaimerText} onChange={(e) => update('footer', 'disclaimerText', e.target.value)} />
-          </div>
-          <div className="admin-grid-2">
-            <div className="admin-field">
-              <label className="admin-field__label">Privacy Policy URL</label>
-              <input className="admin-field__input" value={content.footer.privacyPolicyUrl} onChange={(e) => update('footer', 'privacyPolicyUrl', e.target.value)} />
-            </div>
-            <div className="admin-field">
-              <label className="admin-field__label">Terms & Conditions URL</label>
-              <input className="admin-field__input" value={content.footer.termsUrl} onChange={(e) => update('footer', 'termsUrl', e.target.value)} />
-            </div>
-          </div>
-        </Section>
-      )}
+        </div>
+        <div className="admin-toggle-row">
+          <label className="admin-checkbox">
+            <input type="checkbox" checked={content.footer.showCta !== false} onChange={(e) => update('footer', 'showCta', e.target.checked)} />
+            Show CTA button
+          </label>
+          <label className="admin-checkbox">
+            <input type="checkbox" checked={content.footer.showPhone !== false} onChange={(e) => update('footer', 'showPhone', e.target.checked)} />
+            Show phone number
+          </label>
+          <label className="admin-checkbox">
+            <input type="checkbox" checked={content.footer.showEmail !== false} onChange={(e) => update('footer', 'showEmail', e.target.checked)} />
+            Show email
+          </label>
+        </div>
+      </Section>
 
       <AdminSaveBar saving={saving} onSave={save} dirty={dirty} />
     </div>

@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import api from '../utils/api';
 import Navbar from '../components/layout/Navbar';
-import Footer from '../components/layout/Footer';
 import BackToTop from '../components/ui/BackToTop';
 import EditableSection from '../components/ui/EditableSection';
 import ContactSection from '../components/sections/ContactSection';
@@ -54,7 +53,6 @@ export default function GraduationPage() {
             ))
           : <GraduationHero hero={null} />}
       </main>
-      <Footer />
       <BackToTop />
     </div>
   );

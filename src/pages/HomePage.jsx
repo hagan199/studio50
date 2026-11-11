@@ -12,7 +12,7 @@ import Roadmap from '../components/sections/Roadmap';
 import ServicesSection from '../components/sections/ServicesSection';
 import CTASection from '../components/sections/CTASection';
 import ContactSection from '../components/sections/ContactSection';
-import Footer from '../components/layout/Footer';
+import TeamSection from '../components/sections/TeamSection';
 import BackToTop from '../components/ui/BackToTop';
 import EditableSection from '../components/ui/EditableSection';
 import { DEFAULT_SECTIONS, resolveSections } from '../utils/sections';
@@ -28,6 +28,7 @@ const SECTION_LABELS = {
   cta: 'CTA Section',
   contact: 'Contact',
   services: 'Services',
+  team: 'Our Team',
 };
 
 const SECTION_MAP = {
@@ -41,6 +42,7 @@ const SECTION_MAP = {
   cta: CTASection,
   contact: ContactSection,
   services: ServicesSection,
+  team: TeamSection,
 };
 
 export default function HomePage() {
@@ -73,7 +75,6 @@ export default function HomePage() {
         );
       })}
       </main>
-      <Footer />
       <BackToTop />
     </>
   );

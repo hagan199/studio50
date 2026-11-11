@@ -95,7 +95,12 @@ export default function GraduationEditor() {
 
   useEffect(() => {
     api.get('/api/graduation')
-      .then((res) => setData(res.data))
+      // A block saved before the section existed can be partial; give the
+      // editor a complete shape so what the checkbox shows is what the page does.
+      .then((res) => setData({
+        ...res.data,
+        additionalServices: { visible: true, items: [], ...(res.data.additionalServices || {}) },
+      }))
       .catch(() => setLoadError('Could not load graduation content. Is the server running?'));
   }, []);
 

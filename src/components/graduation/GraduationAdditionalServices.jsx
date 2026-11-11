@@ -43,9 +43,13 @@ const ICON_KEYS = ['studio', 'group', 'frame', 'reel'];
 export default function GraduationAdditionalServices({ additionalServices }) {
   const ref = useScrollAnimation([additionalServices]);
 
-  if (!additionalServices?.visible) return null;
+  // Same rule as the CMS checkbox: shown unless explicitly switched off. A
+  // block saved before `visible` existed has no flag at all and must show.
+  if (!additionalServices || additionalServices.visible === false) return null;
 
   const items = (additionalServices.items || []).filter((s) => s?.name && s.enabled !== false);
+  const hasContent = items.length > 0 || additionalServices.heading || additionalServices.intro || additionalServices.closing;
+  if (!hasContent) return null;
 
   return (
     <section className="grad-section grad-additional-services" id="graduation-additional-services" ref={ref}>

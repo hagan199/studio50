@@ -40,10 +40,17 @@
       "id": "menu-graduation",
       "label": "Graduation",
       "href": "/graduation",
+      "order": 8
+    },
+    {
+      "id": "menu-team",
+      "label": "Our Team",
+      "href": "#team",
       "order": 7
     }
   ],
   "migrations": [
-    "graduation-menu-link"
+    "graduation-menu-link",
+    "team-menu-link"
   ]
 }

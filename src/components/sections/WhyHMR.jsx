@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../../utils/api';
 import useScrollAnimation from '../../hooks/useScrollAnimation';
 import ServiceAnchor from '../ui/ServiceAnchor';
+import { DEFAULT_EXISTS_LABEL } from '../../utils/footer';
 import './WhyHMR.css';
 
 const CheckIcon = () => (
@@ -29,7 +30,11 @@ export default function WhyHMR() {
           <p className="section-paragraph">
             {data.whyIntro}
           </p>
-          <p className="section-paragraph">HMR exists to:</p>
+          {(() => {
+            // Saved text wins (an empty string hides the line); unsaved = default.
+            const label = data.existsLabel ?? DEFAULT_EXISTS_LABEL;
+            return label ? <p className="section-paragraph">{label}</p> : null;
+          })()}
           <ul className="content-list-w" data-animate="stagger-children" data-stagger="0.08" data-delay="0.2">
             {data.whyItems.map((item) => (
               <li key={item} className="content-list-item">

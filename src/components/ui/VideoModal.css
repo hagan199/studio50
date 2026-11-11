@@ -1,0 +1,101 @@
+.video-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(6, 6, 6, 0.95);
+  backdrop-filter: blur(6px);
+  animation: video-modal-in 0.3s var(--ease-smooth, ease) both;
+  outline: none;
+}
+
+@keyframes video-modal-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.video-modal__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 72px 5vw 32px;
+}
+
+.video-modal__frame {
+  width: min(100%, calc((100vh - 200px) * 16 / 9));
+  max-width: 1280px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
+  animation: video-modal-rise 0.45s var(--ease-smooth, ease) both;
+}
+
+@keyframes video-modal-rise {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+.video-modal__video {
+  display: block;
+  width: 100%;
+  max-height: calc(100vh - 200px);
+  background: #000;
+}
+
+.video-modal__info {
+  max-width: 760px;
+  margin-top: 18px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.video-modal__info h3 {
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.video-modal__info p {
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.video-modal__close {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.25s var(--ease-bounce, ease);
+}
+
+.video-modal__close:hover {
+  background: rgba(255, 255, 255, 0.18);
+  transform: scale(1.06);
+}
+
+@media screen and (max-width: 767px) {
+  .video-modal__inner {
+    padding: 70px 12px 24px;
+  }
+
+  .video-modal__frame {
+    width: 100%;
+  }
+}

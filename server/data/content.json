@@ -46,19 +46,25 @@
       "id": "cta",
       "label": "CTA Section",
       "visible": true,
-      "order": 7
+      "order": 8
     },
     {
       "id": "contact",
       "label": "Contact",
       "visible": true,
-      "order": 8
+      "order": 9
     },
     {
       "id": "services",
       "label": "Services Grid",
       "visible": false,
-      "order": 9
+      "order": 10
+    },
+    {
+      "id": "team",
+      "label": "Our Team",
+      "visible": true,
+      "order": 7
     }
   ],
   "brand": {
@@ -276,5 +282,8 @@
     "disclaimerText": "Registration for auditions does not constitute a purchase of any prize or guarantee of advancement. All outcomes are determined through merit-based judging.",
     "privacyPolicyUrl": "#",
     "termsUrl": "#"
-  }
+  },
+  "migrations": [
+    "team-homepage-section"
+  ]
 }
